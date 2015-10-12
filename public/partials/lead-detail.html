@@ -1,0 +1,40 @@
+<div class="page-header">
+    <h1 ng-bind-html="title | unsafe">{{title}}</h1>
+</div>
+
+<div class="toolbar row">
+	<button id="goBack" class="btn btn-primary" ng-click="goBack()"><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span> Go Back</button>
+	<button id="save" class="btn btn-success" ng-click="save()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save</button>
+	<div class="col-md-4" style="text-align: right; float: right;">
+		<p>Last updated on {{lead.updated_at}}</p>
+		<p ng-show="tradeshow != undefined">Registered on Tradeshow <em><a href="#/tradeshows/{{tradeshow.id}}/edit">{{tradeshow.name}}</a></em></p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6 form-item"><label for="first_name">First Name</label><input type="text" name="first_name" ng-model="lead.first_name" /></div>
+	<div class="col-md-6 form-item"><label for="last_name">Last Name</label><input type="text" name="last_name" ng-model="lead.last_name" /></div>
+	<div class="col-md-6 form-item"><label for="title">Title</label><input type="text" name="title" ng-model="lead.title" /></div>
+	<div class="col-md-6 form-item"><label for="company_name">Company Name</label><input type="text" name="company_name" ng-model="lead.company_name" /></div>
+	<div class="col-md-6 form-item"><label for="representative_name">Representative Name</label><input size="3" type="text" name="representative_name" ng-model="lead.representative_name" /></div>
+	<div class="col-md-6 form-item"><label for="phone_number">Phone Number</label><input type="phone" name="phone_number" ng-model="lead.phone_number" /></div>
+	<div class="col-md-6 form-item"><label for="email_address">Email Address</label><input type="email" name="email_address" ng-model="lead.email_address" /></div>
+	<div class="col-md-6 form-item"><label for="company_email_address">Company Email Address</label><input type="email" name="company_email_address" ng-model="lead.company_email_address" /></div>
+	<div class="col-md-6 form-item"><label for="address1">Address 1</label><input type="text" name="address1" ng-model="lead.address1" /></div>
+	<div class="col-md-6 form-item"><label for="address2">Address 2</label><input type="text" name="address2" ng-model="lead.address2" /></div>	
+	<div class="col-md-6 form-item"><label for="city">City</label><input type="text" name="city" ng-model="lead.city" /></div>
+	<div class="col-md-6 form-item"><label for="state">State</label><input type="text" name="state" ng-model="lead.state" /></div>	
+	<div class="col-md-6 form-item"><label for="zip_code">Zip Code</label><input type="text" name="zip_code" ng-model="lead.zip_code" /></div>	
+	<div class="col-md-6 form-item">
+		<label for="existing_customer">Existing Customer</label>
+		<input bs type="checkbox" name="existing_customer" ng-model="lead.existing_customer" ng-true-value="1" ng-false-value="0" />
+	</div>
+	<div class="col-md-6 form-item">
+		<label for="contact_by_phone">Contact By Phone</label>
+		<input bs type="checkbox" name="contact_by_phone" ng-model="lead.contact_by_phone" ng-true-value="1" ng-false-value="0" />
+	</div>	
+	<div class="col-md-6 form-item">
+		<label for="contact_by_email">Contact By Email</label>
+		<input bs type="checkbox" name="contact_by_email" ng-model="lead.contact_by_email" ng-true-value="1" ng-false-value="0" />
+	</div>		
+</div>
