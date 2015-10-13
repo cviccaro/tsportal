@@ -25,23 +25,26 @@
 			last_page = 0,
 			pages = [];
 		return {
-			retreiveLeads: function(pageNumber, orderBy, orderByReverse, success) {
+			retrieveLeads: function(pageNumber, perPage, orderBy, orderByReverse, success) {
 				if(pageNumber===undefined){
 					pageNumber = '1';
 				}
 				if (orderBy===undefined) {
 					orderBy = 'id';
 				}
-				if (orderByReverse==undefined) {
+				if (orderByReverse===undefined) {
 					orderByReverse = 0;
 				}
-				pages = [];
+				if (perPage===undefined) {
+					perPage = 15;
+				}
 				return $http.
-					get('api/tradeshows/' + currentTradeshowId + '/leads?page='+pageNumber+'&orderBy=' +orderBy + '&orderByReverse=' + parseInt(orderByReverse)).
+					get('api/tradeshows/' + currentTradeshowId + '/leads?page='+pageNumber+'&perPage='+perPage+'&orderBy=' +orderBy + '&orderByReverse=' + parseInt(orderByReverse)).
 					success(function(payload) {
 						leads = payload.data;
 						current_page = payload.current_page;
 						last_page = payload.last_page;
+						pages = [];
 						for(var i=1;i<=payload.last_page;i++) {          
 							pages.push(i);
 						}

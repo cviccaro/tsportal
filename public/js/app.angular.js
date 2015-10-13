@@ -25,8 +25,8 @@ tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtIn
                     skipAuthorization: true,
                     method: 'POST',
                     params: {
-                        email: 'philips@wesco.com',
-                        password: 'wescoapp'
+                        email: 'api_user@jpenterprises.com',
+                        password: 'p5trAfra'
                     }
                   }).then(function(response) {
                     var token = response.data.token;
@@ -84,7 +84,7 @@ tsportal.directive('tradeshowPagination', function(){
 tsportal.directive('leadPagination', function(){  
    return{
       restrict: 'E',
-      template: '<ul class="pagination" ng-show="leadCurrentPage != undefined">'+
+      template: '<ul class="pagination" ng-show="leadCurrentPage != undefined && leadTotalPages != undefined">'+
         '<li ng-show="leadCurrentPage != 1"><a href="javascript:void(0)" ng-click="refreshLeads(1)">&laquo;</a></li>'+
         '<li ng-show="leadCurrentPage != 1"><a href="javascript:void(0)" ng-click="refreshLeads(leadCurrentPage-1)">&lsaquo; Prev</a></li>'+
         '<li ng-repeat="i in leadRange" ng-class="{active : leadCurrentPage == i}">'+

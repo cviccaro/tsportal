@@ -1,41 +1,82 @@
 // @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "compass";
 
-table>tbody>tr.clickable {
+.logo 
+{
+	margin-top: 10px;
+	margin-right: 15px;
+	width: 70px;
+	float: left;
+}
+.navbar-default 
+{
+	background-color:#333;
+	.navbar-brand 
+	{
+		color: #fff;	
+		font-weight: 300;
+	}	
+}
+#navbar ul li a 
+{
+	color: #fff;
+}
+table>tbody>tr.clickable 
+{
 	cursor: pointer;
-	&:hover {
+	&:hover
+	{
 		background-color: rgba(144, 195, 212, 0.5);
 	}
-	&.active > td {
+	&.active > td
+	{
 		background-color: rgba(144, 195, 212, 0.75);
 	}
 }
-
-.form-item > label {
-	margin-right: 0.5em
-}
-
 .form-item {
 	margin-bottom: 1em;
-	label {
+	label 
+	{
 		display:block;
+		margin-right: 0.5em;
 	}
 	input[type="text"],
 	input[type="phone"],
-	input[type="email"] {
+	input[type="email"] 
+	{
 		display:block;
 		width: 100%;
 		padding:2.5px 5px;
 	}
 }
-
-.toolbar {
+.toolbar
+{
 	margin: 0.5em 0 1.5em 0;
 	padding-bottom: 10px;
     border-bottom: 1px solid #eee;
-}
+    &.buttons 
+    {
+		margin: 0 0 1em 0;
+    }
+    &.filters 
+    {
 
-.loading-indicator {
+    }
+}
+.toolbar-item 
+{
+	float: left;
+	margin-right: 0.5em;
+	&.right {
+		margin-left: 0.5em;
+		float: right;
+		&:last-child {
+			margin-left: 0;
+		}
+	}
+}
+.loading-indicator
+{
 	width: 100%;
 	position: absolute;
 	height: 100%;
@@ -47,59 +88,62 @@ table>tbody>tr.clickable {
 	@include transition(all linear 0.5s);
 	opacity: 1;
 	text-align: center;
-	&.ng-hide {
+	&.ng-hide
+	{
 		opacity: 0;
 	}
-	.loading-title {
+	.loading-title
+	{
 		margin: 0 auto;
 		font-size: 22px;
 		font-weight: normal;
 	}
-	.loading-indicator-body {
+	.loading-indicator-body
+	{
 		position: relative;
 		top: 45%;
 	}
-	.wave-spinner {
+	.wave-spinner
+	{
 		margin: 25px auto;
 	}
 }
-
-.red {
+.red
+{
 	color: red;
 }
-.green {
+.green
+{
 	color:#5cb85c;
 }
-
-.ngdialog-content {
+.ngdialog-content
+{
 	text-align: center;
 }
-.icon-large {
+.icon-large
+{
 	font-size: 28px;
 	margin: 0;
 	position: relative;
 	top: 8px;
 	margin-right: 1em;
 }
-.icon-float {
+.icon-float
+{
 	float: left;
 }
-
-.ngdialog.ngdialog-theme-default.dialog-save {
-	.ngdialog-content {
+.ngdialog.ngdialog-theme-default.dialog-save
+{
+	.ngdialog-content
+	{
 		min-height: 72px;
 		width: 375px;
 	}
 }
-
-.dialog-buttons {
+.dialog-buttons 
+{
 	margin: 1em 0 0 0;
 }
-
-.page-button-toolbar {
-	margin: 0 0 1em 0;
-}
-
 .form-signin
 {
     max-width: 330px;
@@ -120,9 +164,7 @@ table>tbody>tr.clickable {
     font-size: 16px;
     height: auto;
     padding: 10px;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+    @include box-sizing(border-box);
 }
 .form-signin .form-control:focus
 {
@@ -144,10 +186,6 @@ table>tbody>tr.clickable {
 {
     margin-top: 20px;
     padding: 40px 0px 20px 0px;
-    background-color: #f7f7f7;
-    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
 }
 .login-title
 {
@@ -166,12 +204,18 @@ table>tbody>tr.clickable {
     -webkit-border-radius: 50%;
     border-radius: 50%;
 }
-.need-help
+.need-help 
 {
     margin-top: 10px;
 }
-.new-account
+.new-account 
 {
     display: block;
     margin-top: 10px;
+}
+
+.pull-left.checkbox 
+{
+	position: relative;
+	left: 20px;
 }

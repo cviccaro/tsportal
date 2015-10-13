@@ -12,7 +12,8 @@
         "dingo/api": "1.0.*@dev",
         "tymon/jwt-auth": "0.5.*",
         "prettus/laravel-request-logger": "1.0.*",
-        "maatwebsite/excel": "~2.0.0"
+        "maatwebsite/excel": "~2.0.0",
+        "phpseclib/phpseclib": "~0.3.10"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

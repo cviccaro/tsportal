@@ -17,12 +17,13 @@
 	tradeshowControllers.controller('TradeshowController', ['$rootScope', '$scope', 'Tradeshow', '$http', 'leadGetter', 'ngDialog', function($rootScope, $scope, Tradeshow, $http, leadGetter, ngDialog) {
 		$scope.orderBy = 'id';
 		$scope.orderByReverse = '0';
+		$scope.perPage = '15';
 		$scope.getTradeshows = function(pageNumber){
 
 			if(pageNumber===undefined){
 				pageNumber = '1';
 			}
-			$http.get('api/tradeshows?page='+pageNumber+'&orderBy=' + $scope.orderBy + '&orderByReverse=' + parseInt($scope.orderByReverse)).
+			$http.get('api/tradeshows?page='+pageNumber+'&perPage=' + $scope.perPage + '&orderBy=' + $scope.orderBy + '&orderByReverse=' + parseInt($scope.orderByReverse)).
 			then(function(payload) {
 				var response = payload.data;
 				$scope.tradeshows        = response.data;
@@ -60,11 +61,11 @@
 		$scope.getLeads = function getLeads(tradeshow, pageNumber) {
 			$scope.selectedTradeshow = tradeshow;
 			leadGetter.setCurrentTradeshowId(tradeshow.id);
-			leadGetter.retreiveLeads(1, 'id', 0, $scope.handleLeads);
+			leadGetter.retrieveLeads(pageNumber, 50, 'id', 0, $scope.handleLeads);
 		};
 
 		$scope.refreshLeads = function refreshLeads(pageNumber) {
-			leadGetter.retrieveLeads(pageNumber, 'id', 0, $scope.handleLeads);
+			leadGetter.retrieveLeads(pageNumber, 50, 'id', 0, $scope.handleLeads);
 		};
 		// pluck tradeshow from tradeshows array
 		$scope.pluckTradeshow = function pluckTradeshow(tradeshow_id) {
@@ -128,8 +129,9 @@
 			$event.preventDefault();
 			$event.stopPropagation();
 			leadGetter.setCurrentTradeshowId(tradeshow_id);
-			leadGetter.getLeads(1, function(response) {
+			leadGetter.retrieveLeads(1, 15, 'id', 0, function(response) {
 				var leads = response.data;
+				console.log(response);
 				if (leads.length) {
 					window.location.href = '/tradeshows/' + tradeshow_id + '/report';
 				}
@@ -156,7 +158,9 @@
 		$scope.model = 'tradeshow';
 		$scope.orderBy = 'id';
 		$scope.orderByReverse = '0';
-
+		$scope.perPage = '15';
+		$scope.leadCount = 0;
+		$scope.isNew = false;
 		Tradeshow.
 			get({tradeshowId:$stateParams.tradeshowId}).
 			$promise.
@@ -167,8 +171,11 @@
 					jQuery('input[name="active"]').bootstrapSwitch('state', true)
 				}
 				$scope.getLeads();
+				$scope.setTitle();
 			});
-
+		$scope.setTitle = function setTitle() {
+			$scope.title = 'Editing Tradeshow <em>' + $scope.tradeshow.name + '</em>';
+		};
 		$scope.goBack = function goBack() {
 			window.location.hash = '#/tradeshows';
 		};
@@ -176,9 +183,9 @@
 			$rootScope.workingMessage = 'Saving';
 			$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
 			Tradeshow.save($scope.tradeshow).$promise.then(function(payload) {
-				console.log('payload after-update: ', payload)
+				//console.log('payload after-update: ', payload)
 				$scope.tradeshow = payload.tradeshow;
-
+				$scope.setTitle();
 				$('.loading-indicator').fadeOut(100).addClass('ng-hide');
 				ngDialog.open(
 					{	
@@ -197,16 +204,34 @@
 			$scope.leads = leadGetter.getLeads();
 			$scope.leadTotalPages = leadGetter.getLastPage();
 			$scope.leadCurrentPage = leadGetter.getCurrentPage();
+			if ($scope.leadCount === 0) { 
+				$scope.leadCount = $scope.leadTotalPages * $scope.leads.length;
+			}
 		};
 
 		$scope.getLeads = function getLeads(pageNumber) {
 			$scope.selectedTradeshow = $scope.tradeshow;
 			leadGetter.setCurrentTradeshowId($scope.tradeshow.id);
-			leadGetter.retreiveLeads(1, $scope.orderBy, $scope.orderByReverse, $scope.handleLeads);
+			leadGetter.retrieveLeads(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse, $scope.handleLeads);
 		};
 
-		$scope.refreshLeads = function refreshLeads() {
-			leadGetter.retreiveLeads(1, $scope.orderBy, $scope.orderByReverse, $scope.handleLeads);
+		$scope.refreshLeads = function refreshLeads(pageNumber) {
+			leadGetter.retrieveLeads(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse, $scope.handleLeads);
+		}
+
+		$scope.updatePagination = function updatePagination() {
+			if ($scope.leadCurrentPage != 1) {
+				$scope.refreshLeads(1);
+			}
+			// $scope.leadCount = $scope.filteredLeads.length
+			// var last_page = Math.ceil($scope.leadCount / $scope.perPage);
+			// var pages = [];
+			// for (var i=1;i<=last_page; i++) {
+			// 	pages.push(i);
+			// }
+			// $scope.leadRange = pages;
+			// $scope.leadTotalPages = pages.length;
+			// console.log($scope.filteredLeads);
 		}
 	}]);
 
@@ -221,7 +246,8 @@
 	 * @return {[type]}              [description]
 	 */
 	tradeshowControllers.controller('TradeshowCreateController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', function($rootScope, $scope, Tradeshow, $stateParams, ngDialog) {
-
+		$scope.isNew = true;
+		$scope.model = 'tradeshow';
 		$scope.goBack = function goBack() {
 			window.location.hash = '#/tradeshows';
 		};
@@ -229,6 +255,9 @@
 			console.log($scope.tradeshow);
 			$rootScope.workingMessage = 'Saving new';
 			$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
+			if (!$scope.tradeshow.hasOwnProperty('active')) {
+				$scope.tradeshow.active = $('input[name="active"]')[0].checked;
+			}
 			Tradeshow.create($scope.tradeshow).$promise.then(function(payload) {
 				var tradeshow_id = payload.tradeshow.id;
 				$('.loading-indicator').fadeOut(100).addClass('ng-hide');

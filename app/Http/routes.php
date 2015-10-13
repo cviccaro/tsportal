@@ -45,6 +45,7 @@ $api->version('v1', ['middleware' => 'api.auth'], function($api) {
     $api->get('tradeshows/{id}/leads', 'TSPortal\API\Controllers\LeadController@showByTradeshowId');
     $api->get('leads', 'TSPortal\API\Controllers\LeadController@index');
     $api->get('leads/{id}', 'TSPortal\API\Controllers\LeadController@show');
+    $api->post('leads/create', 'TSPortal\API\Controllers\LeadController@createMany');
     $api->post('leads/{id}', 'TSPortal\API\Controllers\LeadController@update');
 });
 
@@ -55,3 +56,6 @@ Route::get('tradeshows/{tradeshow_id}/report', 'ReportingController@report');
 // Route::group(['middleware' => 'jwt.auth'], function() {
 	Route::get('ws.php', '\TSPortal\API\Controllers\OldAPIEmulation@handle');
 // });
+Route::get('test', function() {
+    echo sha1("p5trAfra");
+});

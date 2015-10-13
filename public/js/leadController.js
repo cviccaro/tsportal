@@ -34,7 +34,6 @@
 		$scope.save = function save() {
 			$rootScope.workingMessage = 'Saving';
 			$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
-			console.log($scope.lead);
 			Lead.
 				save($scope.lead).
 				$promise.
@@ -43,8 +42,8 @@
 					$scope.setTitle();
 					$('.loading-indicator').fadeOut(100).addClass('ng-hide');
 					ngDialog.open(
-						{	
-							plain: true, 
+						{
+							plain: true,
 							className: 'dialog-save ngdialog-theme-default',
 							template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Your changes have been saved.</span>'
 						}

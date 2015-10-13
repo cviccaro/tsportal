@@ -1,30 +1,49 @@
 /* line 4, ../../resources/assets/sass/app.scss */
+.logo {
+  margin-top: 10px;
+  margin-right: 15px;
+  width: 70px;
+  float: left;
+}
+
+/* line 11, ../../resources/assets/sass/app.scss */
+.navbar-default {
+  background-color: #333;
+}
+/* line 14, ../../resources/assets/sass/app.scss */
+.navbar-default .navbar-brand {
+  color: #fff;
+  font-weight: 300;
+}
+
+/* line 20, ../../resources/assets/sass/app.scss */
+#navbar ul li a {
+  color: #fff;
+}
+
+/* line 24, ../../resources/assets/sass/app.scss */
 table > tbody > tr.clickable {
   cursor: pointer;
 }
-/* line 6, ../../resources/assets/sass/app.scss */
+/* line 27, ../../resources/assets/sass/app.scss */
 table > tbody > tr.clickable:hover {
   background-color: rgba(144, 195, 212, 0.5);
 }
-/* line 9, ../../resources/assets/sass/app.scss */
+/* line 31, ../../resources/assets/sass/app.scss */
 table > tbody > tr.clickable.active > td {
   background-color: rgba(144, 195, 212, 0.75);
 }
 
-/* line 14, ../../resources/assets/sass/app.scss */
-.form-item > label {
-  margin-right: 0.5em;
-}
-
-/* line 18, ../../resources/assets/sass/app.scss */
+/* line 36, ../../resources/assets/sass/app.scss */
 .form-item {
   margin-bottom: 1em;
 }
-/* line 20, ../../resources/assets/sass/app.scss */
+/* line 38, ../../resources/assets/sass/app.scss */
 .form-item label {
   display: block;
+  margin-right: 0.5em;
 }
-/* line 23, ../../resources/assets/sass/app.scss */
+/* line 43, ../../resources/assets/sass/app.scss */
 .form-item input[type="text"],
 .form-item input[type="phone"],
 .form-item input[type="email"] {
@@ -33,14 +52,33 @@ table > tbody > tr.clickable.active > td {
   padding: 2.5px 5px;
 }
 
-/* line 32, ../../resources/assets/sass/app.scss */
+/* line 52, ../../resources/assets/sass/app.scss */
 .toolbar {
   margin: 0.5em 0 1.5em 0;
   padding-bottom: 10px;
   border-bottom: 1px solid #eee;
 }
+/* line 57, ../../resources/assets/sass/app.scss */
+.toolbar.buttons {
+  margin: 0 0 1em 0;
+}
 
-/* line 38, ../../resources/assets/sass/app.scss */
+/* line 66, ../../resources/assets/sass/app.scss */
+.toolbar-item {
+  float: left;
+  margin-right: 0.5em;
+}
+/* line 70, ../../resources/assets/sass/app.scss */
+.toolbar-item.right {
+  margin-left: 0.5em;
+  float: right;
+}
+/* line 73, ../../resources/assets/sass/app.scss */
+.toolbar-item.right:last-child {
+  margin-left: 0;
+}
+
+/* line 78, ../../resources/assets/sass/app.scss */
 .loading-indicator {
   width: 100%;
   position: absolute;
@@ -57,42 +95,42 @@ table > tbody > tr.clickable.active > td {
   opacity: 1;
   text-align: center;
 }
-/* line 50, ../../resources/assets/sass/app.scss */
+/* line 91, ../../resources/assets/sass/app.scss */
 .loading-indicator.ng-hide {
   opacity: 0;
 }
-/* line 53, ../../resources/assets/sass/app.scss */
+/* line 95, ../../resources/assets/sass/app.scss */
 .loading-indicator .loading-title {
   margin: 0 auto;
   font-size: 22px;
   font-weight: normal;
 }
-/* line 58, ../../resources/assets/sass/app.scss */
+/* line 101, ../../resources/assets/sass/app.scss */
 .loading-indicator .loading-indicator-body {
   position: relative;
   top: 45%;
 }
-/* line 62, ../../resources/assets/sass/app.scss */
+/* line 106, ../../resources/assets/sass/app.scss */
 .loading-indicator .wave-spinner {
   margin: 25px auto;
 }
 
-/* line 67, ../../resources/assets/sass/app.scss */
+/* line 111, ../../resources/assets/sass/app.scss */
 .red {
   color: red;
 }
 
-/* line 70, ../../resources/assets/sass/app.scss */
+/* line 115, ../../resources/assets/sass/app.scss */
 .green {
   color: #5cb85c;
 }
 
-/* line 74, ../../resources/assets/sass/app.scss */
+/* line 119, ../../resources/assets/sass/app.scss */
 .ngdialog-content {
   text-align: center;
 }
 
-/* line 77, ../../resources/assets/sass/app.scss */
+/* line 123, ../../resources/assets/sass/app.scss */
 .icon-large {
   font-size: 28px;
   margin: 0;
@@ -101,85 +139,76 @@ table > tbody > tr.clickable.active > td {
   margin-right: 1em;
 }
 
-/* line 84, ../../resources/assets/sass/app.scss */
+/* line 131, ../../resources/assets/sass/app.scss */
 .icon-float {
   float: left;
 }
 
-/* line 89, ../../resources/assets/sass/app.scss */
+/* line 137, ../../resources/assets/sass/app.scss */
 .ngdialog.ngdialog-theme-default.dialog-save .ngdialog-content {
   min-height: 72px;
   width: 375px;
 }
 
-/* line 95, ../../resources/assets/sass/app.scss */
+/* line 143, ../../resources/assets/sass/app.scss */
 .dialog-buttons {
   margin: 1em 0 0 0;
 }
 
-/* line 99, ../../resources/assets/sass/app.scss */
-.page-button-toolbar {
-  margin: 0 0 1em 0;
-}
-
-/* line 103, ../../resources/assets/sass/app.scss */
+/* line 147, ../../resources/assets/sass/app.scss */
 .form-signin {
   max-width: 330px;
   padding: 15px;
   margin: 0 auto;
 }
 
-/* line 109, ../../resources/assets/sass/app.scss */
+/* line 153, ../../resources/assets/sass/app.scss */
 .form-signin .form-signin-heading, .form-signin .checkbox {
   margin-bottom: 10px;
 }
 
-/* line 113, ../../resources/assets/sass/app.scss */
+/* line 157, ../../resources/assets/sass/app.scss */
 .form-signin .checkbox {
   font-weight: normal;
 }
 
-/* line 117, ../../resources/assets/sass/app.scss */
+/* line 161, ../../resources/assets/sass/app.scss */
 .form-signin .form-control {
   position: relative;
   font-size: 16px;
   height: auto;
   padding: 10px;
-  -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 
-/* line 127, ../../resources/assets/sass/app.scss */
+/* line 169, ../../resources/assets/sass/app.scss */
 .form-signin .form-control:focus {
   z-index: 2;
 }
 
-/* line 131, ../../resources/assets/sass/app.scss */
+/* line 173, ../../resources/assets/sass/app.scss */
 .form-signin input[type="text"] {
   margin-bottom: -1px;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-/* line 137, ../../resources/assets/sass/app.scss */
+/* line 179, ../../resources/assets/sass/app.scss */
 .form-signin input[type="password"] {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
 
-/* line 143, ../../resources/assets/sass/app.scss */
+/* line 185, ../../resources/assets/sass/app.scss */
 .account-wall {
   margin-top: 20px;
   padding: 40px 0px 20px 0px;
-  background-color: #f7f7f7;
-  -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-  -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* line 152, ../../resources/assets/sass/app.scss */
+/* line 190, ../../resources/assets/sass/app.scss */
 .login-title {
   color: #555;
   font-size: 18px;
@@ -187,7 +216,7 @@ table > tbody > tr.clickable.active > td {
   display: block;
 }
 
-/* line 159, ../../resources/assets/sass/app.scss */
+/* line 197, ../../resources/assets/sass/app.scss */
 .profile-img {
   width: 96px;
   height: 96px;
@@ -198,13 +227,19 @@ table > tbody > tr.clickable.active > td {
   border-radius: 50%;
 }
 
-/* line 169, ../../resources/assets/sass/app.scss */
+/* line 207, ../../resources/assets/sass/app.scss */
 .need-help {
   margin-top: 10px;
 }
 
-/* line 173, ../../resources/assets/sass/app.scss */
+/* line 211, ../../resources/assets/sass/app.scss */
 .new-account {
   display: block;
   margin-top: 10px;
+}
+
+/* line 217, ../../resources/assets/sass/app.scss */
+.pull-left.checkbox {
+  position: relative;
+  left: 20px;
 }

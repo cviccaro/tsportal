@@ -20,7 +20,8 @@ class TradeshowController extends Controller {
 	{
 		$orderBy = $request->input('orderBy', 'id');
 		$direction = $request->input('orderByReverse', 0) == 0 ? 'asc' : 'desc';
-		$tradeshows = Tradeshow::orderBy($orderBy, $direction)->paginate(15);
+		$paginate = $request->input('perPage', 15);
+		$tradeshows = Tradeshow::orderBy($orderBy, $direction)->paginate($paginate);
 		return $tradeshows;
 	}
 

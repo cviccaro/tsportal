@@ -1,16 +1,38 @@
     <div class="page-header">
         <h1>Tradeshows</h1>
     </div>
-<div class="page-button-toolbar"><a class="btn btn-success" href="#/tradeshows/create" >Create</a></div>
-<select ng-model="orderBy" ng-change="refreshTradeshows()">
-  <option value="id">Age</option>
-  <option value="name">Name</option>
-  <option value="location">Location</option>
-</select>
-<select ng-model="orderByReverse" ng-change="refreshTradeshows()">
-  <option value="0">Descending</option>
-  <option value="1">Ascending</option>
-</select>
+    <div class="toolbar buttons">
+        <p class="help">Click a tradeshow row to preview its leads.  They will appear below the tradeshow table.<br />Click the edit button to see a more detailed view of the tradeshow and its leads.</p>
+        <a class="btn btn-success" href="#/tradeshows/create" >Create</a>
+    </div>
+    <div class="toolbar filters clearfix">
+        <div class="toolbar-item">
+            <span>Sort</span>
+            <select ng-model="orderBy" ng-change="refreshTradeshows()">
+              <option value="id">Age</option>
+              <option value="name">Name</option>
+              <option value="location">Location</option>
+              <option value="active">Active</option>
+            </select>
+            <select ng-model="orderByReverse" ng-change="refreshTradeshows()">
+              <option value="0">Descending</option>
+              <option value="1">Ascending</option>
+            </select>
+        </div>
+        <div class="toolbar-item right">
+            <span>Items Per Page</span>
+            <select ng-model="perPage" ng-change="refreshTradeshows()">
+                <option value="15">15</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+        <div class="toolbar-item right">
+            <span>Search</span>
+            <input type="text" ng-model="query" ng-model-options="{debounce: 500}" />
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <table class="table table-striped">
@@ -20,13 +42,13 @@
                         <th>NAME</th>
                         <th>LOCATION</th>
                         <th>ACTIVE</th>
-                        <th class="text-right">OPTIONS</th>
+                        <th class="text-right">ACTIONS</th>
                     </tr>
                 </thead>
 
                 <tbody>
 
-                <tr markable ng-repeat="tradeshow in tradeshows" ng-click="getLeads(tradeshow)" data-id="{{tradeshow.id}}" class="clickable">
+                <tr markable ng-repeat="tradeshow in tradeshows | filter:query" ng-click="getLeads(tradeshow)" data-id="{{tradeshow.id}}" class="clickable">
                     <td class="tradeshow-id">{{tradeshow.id}}</td>
                     <td>{{tradeshow.name}}</td>
                     <td>{{tradeshow.location}}</td>
@@ -34,11 +56,11 @@
                         <span ng-show="{{tradeshow.active}}" class="green">Active</span>
                         <span ng-hide="{{tradeshow.active}}" class="red">Inactive</span>
                     </td>
-
                     <td class="text-right">
-                        <a class="btn btn-primary" ng-click="generateReport(tradeshow.id, $event)">Report</a>
                         <a class="btn btn-warning" href="#/tradeshows/{{tradeshow.id}}/edit">Edit</a>
                         <a class="btn btn-danger" href="" ng-click="deleteTradeshow(tradeshow.id, $event)">Delete</a>
+                        &nbsp;&nbsp;&nbsp;
+                        <a class="btn btn-primary" ng-click="generateReport(tradeshow.id, $event)">Excel Report</a>
                     </td>
                 </tr>
                 </tbody>

@@ -25,6 +25,11 @@ class ApiAuthController extends Controller {
 	public function authenticate(Request $request) {
 		$credentials = $request->only('email', 'password');
 
+		// $rsa = new \Crypt_RSA();
+		// //$rsa->loadKey(file_get_contents(base_path() . '/rsa_1024_priv.pem'));
+		// $rsa->loadKey(file_get_contents(base_path() . '/rsa_1024_pub.pem'));
+		// $credentials['email'] = $rsa->decrypt($credentials['email']);
+		// $credentials['password'] = $rsa->decrypt($credentials['password']);
 		try {
 			if (! $token = JWTAuth::attempt($credentials)) {
 				return response()->json(['error' => 'invalid_credentials'], 401);

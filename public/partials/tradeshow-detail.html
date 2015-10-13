@@ -1,10 +1,13 @@
 <div class="page-header">
-    <h1>{{title}}</h1>
+    <h1 ng-bind-html="title | unsafe">{{title}}</h1>
 </div>
 
-<div class="toolbar">
+<div class="row toolbar">
 	<button id="goBack" class="btn btn-primary" ng-click="goBack()"><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span> Go Back</button>
 	<button id="save" class="btn btn-success" ng-click="save()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save</button>
+    <div class="col-md-4" style="text-align: right; float: right;" ng-show="!isNew">
+        <p>Last updated on {{tradeshow.updated_at}}</p>
+    </div>
 </div>
 
 <div class="row">
@@ -16,46 +19,66 @@
 	</div>
 </div>
 
-<div class="page-header">
-    <h1>Leads</h1>
-</div>
-<select ng-model="orderBy" ng-change="refreshLeads()">
-  <option value="id">Newest</option>
-  <option value="last_name">Surname</option>
-</select>
-<select ng-model="orderByReverse" ng-change="refreshLeads()">
-  <option value="0">Descending</option>
-  <option value="1">Ascending</option>
-</select>
-<div class="row">
-    <div class="col-md-12">
-        <table class="table table-striped">
-            <thead>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Created on</th>
-                <th>Actions</th>
-            </thead>
-            <tbody>
-                <tr ng-show="leads.length" ng-repeat="lead in leads">
-                    <td>{{lead.first_name}}</td>
-                    <td>{{lead.last_name}}</td>
-                    <td>{{lead.email_address}}</td>
-                    <td>{{lead.phone_number}}</td>
-                    <td>{{lead.timestamp}}</td>
-                    <td>
-                    	<a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
-                    </td>
-                </tr>
-                <tr ng-show="!leads.length">
-                    <td colspan="6">No leads available.</td>
-                </tr>
-            </tbody>
-        </table>
-        <div>
-             <lead-pagination></lead-pagination>
-           </div>
+<div class="lead-container" ng-show="!isNew">
+    <div class="page-header">
+        <h1>Leads <span ng-show="leads.length">({{leadCount}})</span></h1>
+    </div>
+    <div class="toolbar filters clearfix">
+        <div class="toolbar-item">
+            <span>Sort</span>
+            <select ng-model="orderBy" ng-change="refreshLeads()">
+              <option value="id">Newest</option>
+              <option value="last_name">Surname</option>
+            </select>
+            <select ng-model="orderByReverse" ng-change="refreshLeads()">
+              <option value="0">Descending</option>
+              <option value="1">Ascending</option>
+            </select>
+        </div>
+        <div class="toolbar-item right">
+            <span>Items Per Page</span>
+            <select ng-model="perPage" ng-change="refreshLeads()">
+                <option value="15">15</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+        <div class="toolbar-item right">
+            <span>Search</span>
+            <input type="text" ng-model="query" ng-change="updatePagination()" />
+        </div>        
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <thead>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Created on</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                    <tr ng-show="leads.length" ng-repeat="lead in (filteredLeads = (leads | filter:query))">
+                        <td>{{lead.first_name}}</td>
+                        <td>{{lead.last_name}}</td>
+                        <td>{{lead.email_address}}</td>
+                        <td>{{lead.phone_number}}</td>
+                        <td>{{lead.timestamp}}</td>
+                        <td>
+                        	<a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
+                        </td>
+                    </tr>
+                    <tr ng-show="!leads.length">
+                        <td colspan="6">No leads available.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div>
+                 <lead-pagination></lead-pagination>
+               </div>
+        </div>
     </div>
 </div>
