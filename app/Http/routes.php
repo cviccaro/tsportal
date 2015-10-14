@@ -12,12 +12,13 @@
 */
 
 Route::get('/', function () {
-    if (Auth::guest()) {
-    	return redirect()->action('Auth\AuthController@getLogin');
-    }
-    else {
-    	return view('angular');
-    }
+    return view('angular');
+    // if (Auth::guest()) {
+    // 	return redirect()->action('Auth\AuthController@getLogin');
+    // }
+    // else {
+    // 	return view('angular');
+    // }
 });
 
 /**
@@ -55,7 +56,5 @@ Route::get('tradeshows/{tradeshow_id}/report', 'ReportingController@report');
 
 // Route::group(['middleware' => 'jwt.auth'], function() {
 	Route::get('ws.php', '\TSPortal\API\Controllers\OldAPIEmulation@handle');
+    Route::post('ws.php', '\TSPortal\API\Controllers\OldAPIEmulation@handle');
 // });
-Route::get('test', function() {
-    echo sha1("p5trAfra");
-});

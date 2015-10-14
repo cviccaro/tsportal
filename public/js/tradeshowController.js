@@ -14,10 +14,15 @@
 	 * @param  {String} ngDialog   [description]
 	 * @return {[type]}            [description]
 	 */
-	tradeshowControllers.controller('TradeshowController', ['$rootScope', '$scope', 'Tradeshow', '$http', 'leadGetter', 'ngDialog', function($rootScope, $scope, Tradeshow, $http, leadGetter, ngDialog) {
+	tradeshowControllers.controller('TradeshowController', ['$rootScope', '$scope', 'Tradeshow', '$http', 'leadGetter', 'ngDialog', '$state', function($rootScope, $scope, Tradeshow, $http, leadGetter, ngDialog, $state) {
 		$scope.orderBy = 'id';
 		$scope.orderByReverse = '0';
 		$scope.perPage = '15';
+		$rootScope.isLoggedIn = true;
+
+		if (localStorage.getItem('satellizer_token') == null) {
+			$state.go('auth', {});
+		}
 		$scope.getTradeshows = function(pageNumber){
 
 			if(pageNumber===undefined){
@@ -154,13 +159,18 @@
 	 * @param  {[type]} ngDialog)    [description]
 	 * @return {[type]}              [description]
 	 */
-	tradeshowControllers.controller('TradeshowDetailController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadGetter', function($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadGetter) {
+	tradeshowControllers.controller('TradeshowDetailController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadGetter', '$state', function($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadGetter, $state) {
 		$scope.model = 'tradeshow';
 		$scope.orderBy = 'id';
 		$scope.orderByReverse = '0';
 		$scope.perPage = '15';
 		$scope.leadCount = 0;
 		$scope.isNew = false;
+
+		if (localStorage.getItem('satellizer_token') == null) {
+			$state.go('auth', {});
+		}
+
 		Tradeshow.
 			get({tradeshowId:$stateParams.tradeshowId}).
 			$promise.
@@ -245,9 +255,14 @@
 	 * @param  {[type]} ngDialog)    [description]
 	 * @return {[type]}              [description]
 	 */
-	tradeshowControllers.controller('TradeshowCreateController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', function($rootScope, $scope, Tradeshow, $stateParams, ngDialog) {
+	tradeshowControllers.controller('TradeshowCreateController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', '$state', function($rootScope, $scope, Tradeshow, $stateParams, ngDialog, $state) {
 		$scope.isNew = true;
 		$scope.model = 'tradeshow';
+
+		if (localStorage.getItem('satellizer_token') == null) {
+			$state.go('auth', {});
+		}
+
 		$scope.goBack = function goBack() {
 			window.location.hash = '#/tradeshows';
 		};

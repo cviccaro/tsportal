@@ -2,12 +2,17 @@
 	'use strict';
 
 	var leadControllers = angular.module('leadControllers', ['ngDialog']);
-	leadControllers.controller('LeadController', ['$rootScope', '$scope', 'leadGetter', '$stateParams', 'Lead', 'ngDialog', 'Tradeshow', function($rootScope, $scope, leadGetter, $stateParams, Lead, ngDialog, Tradeshow) {
+	leadControllers.controller('LeadController', ['$rootScope', '$scope', 'leadGetter', '$stateParams', 'Lead', 'ngDialog', 'Tradeshow', '$state', function($rootScope, $scope, leadGetter, $stateParams, Lead, ngDialog, Tradeshow, $state) {
 		$scope.model = 'lead';
 		$scope.title = 'Editing Lead';
 		$scope.setTitle = function setTitle() {
 			$scope.title = 'Editing Lead <em>' + $scope.lead.first_name + ' ' + $scope.lead.last_name + '</em>';
 		};
+
+		if (localStorage.getItem('satellizer_token') == null) {
+			$state.go('auth', {});
+		}
+
 		Lead.
 			get({id: $stateParams.id}).
 			$promise.

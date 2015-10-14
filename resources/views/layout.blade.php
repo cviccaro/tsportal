@@ -41,12 +41,11 @@
                     <div id="navbar" class="collapse navbar-collapse">
                         <ul class="nav navbar-nav">
                             <li><a href="/#/">Home</a></li>
-                            <li>
-                            @if (Auth::guest())
-                                <a href="<?php echo action('Auth\AuthController@getLogin'); ?>">Login</a>
-                            @else
-                                <a href="<?php echo action('Auth\AuthController@getLogout'); ?>">Logout</a>
-                            @endif 
+                            <li ng-show="!isLoggedIn">
+                                <a href="/#/auth">Login</a>
+                            </li>
+                            <li ng-show="isLoggedIn">
+                                <a href="/#/logout">Logout</a>
                             </li>
                         </ul>
                     </div><!--/.nav-collapse -->
@@ -54,9 +53,6 @@
             </nav>
             @yield('content')
         </div>        
-    <input type="hidden" id="publicKey" value="-----BEGIN RSA PUBLIC KEY-----
-MIGJAoGBANBOJHmXh+2uzX6vFPgKp+U01rSVoZia/wm3tX788smU0Ss6ZfbmEEmW Z+sC5wg9y5cQWO8Ou4dA0oAcVjgKKr9sLd8E3ybjt9+C23sFbgWCxeF6cqvbSWdt bS1qs4lp8elYqOnVrkwrC2h6OQRs+g0O8LIJTFkP1wEKKB17g14BAgMBAAE=
------END RSA PUBLIC KEY-----" />
     <!-- Application Dependencies -->
     <script src="/bower_components/angular/angular.js"></script>
     
@@ -66,11 +62,13 @@ MIGJAoGBANBOJHmXh+2uzX6vFPgKp+U01rSVoZia/wm3tX788smU0Ss6ZfbmEEmW Z+sC5wg9y5cQWO8
     <script src="/bower_components/angular-jwt/dist/angular-jwt.min.js"></script>
     <script src="/bower_components/ng-dialog/js/ngDialog.min.js"></script>
     <script src="/bower_components/angular-spinkit/build/angular-spinkit.min.js"></script>
+    <script src="/bower_components/satellizer/satellizer.min.js"></script>
 
     <!-- Application Components -->
     <script type="text/javascript" src="/js/services.js"></script>
     <script type="text/javascript" src="/js/tradeshowController.js"></script>
     <script type="text/javascript" src="/js/leadController.js"></script>
+    <script type="text/javascript" src="/js/authController.js"></script>
     <script type="text/javascript" src="/js/app.angular.js"></script>
 </body>
 </html>

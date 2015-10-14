@@ -2,8 +2,10 @@
 
 var tsportal = angular.module('tsportal', [
     'ui.router',
+    'satellizer',
     'tradeshowServices',
     'leadServices',
+    'authControllers',
     'tradeshowControllers',
     'leadControllers',
     'angular-jwt',
@@ -12,38 +14,26 @@ var tsportal = angular.module('tsportal', [
     'ngDialog'
 ]);
 
-tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtInterceptorProvider',
-    function($stateProvider, $urlRouterProvider, $httpProvider, jwtInterceptorProvider) {
-        // Configure JWT
-        jwtInterceptorProvider.tokenGetter = ['jwtHelper', '$http', function(jwtHelper, $http) {
-            var idToken = localStorage.getItem('id_token');
-            if (idToken == null || jwtHelper.isTokenExpired(idToken)) {
-                // This is a promise of a JWT id_token
-                  return $http({
-                    url: '/api/authenticate',
-                    // This makes it so that this request doesn't send the JWT
-                    skipAuthorization: true,
-                    method: 'POST',
-                    params: {
-                        email: 'api_user@jpenterprises.com',
-                        password: 'p5trAfra'
-                    }
-                  }).then(function(response) {
-                    var token = response.data.token;
-                    localStorage.setItem('id_token', token);
-                    return token;
-                  });
-            } 
-            else {
-              return idToken;
-            }
-        }];
-        $httpProvider.interceptors.push('jwtInterceptor');
+tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtInterceptorProvider', '$authProvider',
+    function($stateProvider, $urlRouterProvider, $httpProvider, jwtInterceptorProvider, $authProvider) {
+        // Satellizer configuration that specifies which API
+        // route the JWT should be retrieved from
+        $authProvider.loginUrl = '/api/authenticate';
 
         // Router States
-        $urlRouterProvider.otherwise('/tradeshows');
+        $urlRouterProvider.otherwise('/auth');
 
         $stateProvider.
+            state('auth', {
+                url: '/auth',
+                templateUrl: '../partials/login-form.html',
+                controller: 'AuthController'
+            }).
+            state('logout', {
+                url: '/logout',
+                template:'',
+                controller: 'LogoutController'
+            }).
             state('tradeshows', {
                 url: '/tradeshows',
                 templateUrl: '../partials/tradeshow-list.html',
