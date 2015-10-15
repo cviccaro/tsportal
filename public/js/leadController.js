@@ -2,7 +2,7 @@
 	'use strict';
 
 	var leadControllers = angular.module('leadControllers', ['ngDialog']);
-	leadControllers.controller('LeadController', ['$rootScope', '$scope', 'leadGetter', '$stateParams', 'Lead', 'ngDialog', 'Tradeshow', '$state', function($rootScope, $scope, leadGetter, $stateParams, Lead, ngDialog, Tradeshow, $state) {
+	leadControllers.controller('LeadController', ['$rootScope', '$scope', 'leadGetter', '$stateParams', 'Lead', 'ngDialog', 'Tradeshow', '$state', function LeadController($rootScope, $scope, leadGetter, $stateParams, Lead, ngDialog, Tradeshow, $state) {
 		$scope.model = 'lead';
 		$scope.title = 'Editing Lead';
 		$scope.setTitle = function setTitle() {

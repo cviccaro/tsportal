@@ -8,6 +8,9 @@
             <div class="form-group">
                 <input type="password" class="form-control" placeholder="Password" ng-model="password">
             </div>
+            <div class="has-error" ng-show="errors.length">
+                <div class="help-block">The email or password entered was incorrect.</div>
+            </div>
             <button class="btn btn-primary" ng-click="login()">Submit</button>
         </form>
     </div>

@@ -4,6 +4,7 @@
 <title>Tradeshow Portal</title>
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/paper/bootstrap.min.css">
 
     <!-- jQuery -->
     <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -11,10 +12,7 @@
 
     <!-- Bootstrap Switch -->
     <link rel="stylesheet" type="text/css" href="/css/bootstrap-switch.min.css" />
-    <script type="text/javascript" src="/js/bootstrap-switch.js"></script>
-
-    <!-- JSEncrypt -->
-    <script type="text/javascript" src="/js/jsencrypt.js"></script>
+    <script type="text/javascript" src="/js/bootstrap-switch.min.js"></script>
 
     <!-- Application Styles -->
     <link rel="stylesheet" type="text/css" href="/bower_components/angular-spinkit/build/angular-spinkit.min.css" />
@@ -22,6 +20,11 @@
     <link rel="stylesheet" type="text/css" href="/bower_components/ng-dialog/css/ngDialog-theme-default.min.css" />
     <link rel="stylesheet" type="text/css" href="/css/app.css" />
     
+    <!-- IE9 Satellizer Support -->
+    <!--[if lte IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/Base64/0.3.0/base64.min.js"></script>
+    <![endif]-->
+
 </head>
 <body>
 
@@ -40,7 +43,7 @@
                     </div>
                     <div id="navbar" class="collapse navbar-collapse">
                         <ul class="nav navbar-nav">
-                            <li><a href="/#/">Home</a></li>
+                            <li><a href="/#/tradeshows">Home</a></li>
                             <li ng-show="!isLoggedIn">
                                 <a href="/#/auth">Login</a>
                             </li>

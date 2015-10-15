@@ -2,7 +2,7 @@
         <h1>Tradeshows</h1>
     </div>
     <div class="toolbar buttons">
-        <p class="help">Click a tradeshow row to preview its leads.  They will appear below the tradeshow table.<br />Click the edit button to see a more detailed view of the tradeshow and its leads.</p>
+        <p class="help">Clicking a row in the tradeshow table will display a preview of its Leads below the table.<br />Click the edit button to see a more detailed view of the tradeshow and its leads.</p>
         <a class="btn btn-success" href="#/tradeshows/create" >Create</a>
     </div>
     <div class="toolbar filters clearfix">
@@ -79,11 +79,12 @@
             <div class="col-md-12">
                 <table class="table table-striped">
                     <thead>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Created on</th>
+                        <th>FIRST NAME</th>
+                        <th>LAST NAME</th>
+                        <th>EMAIL</th>
+                        <th>PHONE</th>
+                        <th>CREATED</th>
+                        <th>ACTIONS</th>
                     </thead>
                     <tbody>
                         <tr ng-show="leads.length" ng-repeat="lead in leads">
@@ -92,9 +93,12 @@
                             <td>{{lead.email_address}}</td>
                             <td>{{lead.phone_number}}</td>
                             <td>{{lead.timestamp}}</td>
+                            <td>
+                                <a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
+                            </td>                            
                         </tr>
                         <tr ng-show="!leads.length">
-                            <td colspan="5">No leads available.</td>
+                            <td colspan="6">No leads available.</td>
                         </tr>
                     </tbody>
                 </table>

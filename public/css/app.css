@@ -243,3 +243,47 @@ table > tbody > tr.clickable.active > td {
   position: relative;
   left: 20px;
 }
+
+/* line 223, ../../resources/assets/sass/app.scss */
+.navbar {
+  min-height: 50px;
+  border: 0;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+}
+
+/* line 229, ../../resources/assets/sass/app.scss */
+.navbar-header {
+  float: left;
+  padding-left: 15px;
+}
+
+/* line 234, ../../resources/assets/sass/app.scss */
+.navbar-brand {
+  height: 50px;
+  padding: 0 15px;
+  font-size: inherit;
+  line-height: 50px;
+}
+
+/* line 241, ../../resources/assets/sass/app.scss */
+.navbar-nav {
+  float: left;
+  margin: 0;
+}
+
+/* line 246, ../../resources/assets/sass/app.scss */
+.navbar-nav > li {
+  float: left;
+}
+
+/* line 250, ../../resources/assets/sass/app.scss */
+.navbar-nav > li > a {
+  padding: 0 15px;
+  line-height: 50px;
+}
+
+/* line 255, ../../resources/assets/sass/app.scss */
+.navbar-text {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}

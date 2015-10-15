@@ -5,25 +5,27 @@
 
 	/**
 	 * Tradeshow List Controller
-	 * --------------------
 	 * @param  {[type]} $rootScope [description]
 	 * @param  {[type]} $scope     [description]
 	 * @param  {[type]} Tradeshow  [description]
 	 * @param  {[type]} $http      [description]
 	 * @param  {[type]} leadGetter [description]
-	 * @param  {String} ngDialog   [description]
+	 * @param  {[type]} ngDialog   [description]
+	 * @param  {String} $state
 	 * @return {[type]}            [description]
 	 */
-	tradeshowControllers.controller('TradeshowController', ['$rootScope', '$scope', 'Tradeshow', '$http', 'leadGetter', 'ngDialog', '$state', function($rootScope, $scope, Tradeshow, $http, leadGetter, ngDialog, $state) {
+	tradeshowControllers.controller('TradeshowController', ['$rootScope', '$scope', 'Tradeshow', '$http', 'leadGetter', 'ngDialog', '$state', function TradeshowController($rootScope, $scope, Tradeshow, $http, leadGetter, ngDialog, $state) {
 		$scope.orderBy = 'id';
 		$scope.orderByReverse = '0';
 		$scope.perPage = '15';
-		$rootScope.isLoggedIn = true;
 
 		if (localStorage.getItem('satellizer_token') == null) {
 			$state.go('auth', {});
+			$('.loading-indicator').fadeOut(100).addClass('ng-hide');
 		}
-		$scope.getTradeshows = function(pageNumber){
+		$rootScope.isLoggedIn = true;
+
+		$scope.getTradeshows = function getTradeshows(pageNumber){
 
 			if(pageNumber===undefined){
 				pageNumber = '1';
@@ -50,13 +52,15 @@
 
 		};
 
-		$scope.getTradeshows();
+		if (localStorage.getItem('satellizer_token') !== null) {
+			$scope.getTradeshows();
+		}
 
 		$scope.refreshTradeshows = function refreshTradeshows() {
 			$scope.getTradeshows($scope.currentPage);
 		}
 
-		$scope.handleLeads = function() {
+		$scope.handleLeads = function handleLeads() {
 			$scope.leadRange = leadGetter.getRange();
 			$scope.leads = leadGetter.getLeads();
 			$scope.leadTotalPages = leadGetter.getLastPage();
@@ -130,13 +134,12 @@
 			})
 		};
 
-		$scope.generateReport = function(tradeshow_id, $event) {
+		$scope.generateReport = function generateReport(tradeshow_id, $event) {
 			$event.preventDefault();
 			$event.stopPropagation();
 			leadGetter.setCurrentTradeshowId(tradeshow_id);
 			leadGetter.retrieveLeads(1, 15, 'id', 0, function(response) {
 				var leads = response.data;
-				console.log(response);
 				if (leads.length) {
 					window.location.href = '/tradeshows/' + tradeshow_id + '/report';
 				}
@@ -145,21 +148,22 @@
 				}
 			});
 
-			console.log('generate report for tradeshow ' + tradeshow_id);
+			//console.log('generate report for tradeshow ' + tradeshow_id);
 		}
 	}]);
 
 	/**
 	 * Tradeshow Edit Controller
-	 * ---------------
 	 * @param  {[type]} $rootScope   [description]
 	 * @param  {[type]} $scope       [description]
 	 * @param  {[type]} Tradeshow    [description]
 	 * @param  {[type]} $stateParams [description]
-	 * @param  {[type]} ngDialog)    [description]
+	 * @param  {[type]} ngDialog     [description]
+	 * @param  {[type]} leadGetter   [description]
+	 * @param  {String} $state)      
 	 * @return {[type]}              [description]
 	 */
-	tradeshowControllers.controller('TradeshowDetailController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadGetter', '$state', function($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadGetter, $state) {
+	tradeshowControllers.controller('TradeshowDetailController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadGetter', '$state', function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadGetter, $state) {
 		$scope.model = 'tradeshow';
 		$scope.orderBy = 'id';
 		$scope.orderByReverse = '0';
@@ -255,7 +259,7 @@
 	 * @param  {[type]} ngDialog)    [description]
 	 * @return {[type]}              [description]
 	 */
-	tradeshowControllers.controller('TradeshowCreateController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', '$state', function($rootScope, $scope, Tradeshow, $stateParams, ngDialog, $state) {
+	tradeshowControllers.controller('TradeshowCreateController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', '$state', function TradeshowCreateController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, $state) {
 		$scope.isNew = true;
 		$scope.model = 'tradeshow';
 
@@ -267,7 +271,7 @@
 			window.location.hash = '#/tradeshows';
 		};
 		$scope.save = function save() {
-			console.log($scope.tradeshow);
+			//console.log($scope.tradeshow);
 			$rootScope.workingMessage = 'Saving new';
 			$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
 			if (!$scope.tradeshow.hasOwnProperty('active')) {

@@ -11,14 +11,9 @@
 |
 */
 
+// Root route
 Route::get('/', function () {
     return view('angular');
-    // if (Auth::guest()) {
-    // 	return redirect()->action('Auth\AuthController@getLogin');
-    // }
-    // else {
-    // 	return view('angular');
-    // }
 });
 
 /**
@@ -53,8 +48,11 @@ $api->version('v1', ['middleware' => 'api.auth'], function($api) {
 Route::get('tradeshows/{tradeshow_id}/report', 'ReportingController@report');
 
 // Emulate old API
+// Old API had no authentication so unfortunately API calls using ws.php will not be authenticated
+// WS.php support will be phased out in upcoming updates to iOS app
 
 // Route::group(['middleware' => 'jwt.auth'], function() {
 	Route::get('ws.php', '\TSPortal\API\Controllers\OldAPIEmulation@handle');
     Route::post('ws.php', '\TSPortal\API\Controllers\OldAPIEmulation@handle');
 // });
+// 
