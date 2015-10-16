@@ -48,7 +48,7 @@
 
                 <tbody>
 
-                <tr markable ng-repeat="tradeshow in tradeshows | filter:query" ng-click="getLeads(tradeshow)" data-id="{{tradeshow.id}}" class="clickable">
+                <tr markable ng-repeat="tradeshow in tradeshows | filter:query" ng-click="getLeads(tradeshow.id)" data-id="{{tradeshow.id}}" class="clickable">
                     <td class="tradeshow-id">{{tradeshow.id}}</td>
                     <td>{{tradeshow.name}}</td>
                     <td>{{tradeshow.location}}</td>
@@ -60,7 +60,7 @@
                         <a class="btn btn-warning" href="#/tradeshows/{{tradeshow.id}}/edit">Edit</a>
                         <a class="btn btn-danger" href="" ng-click="deleteTradeshow(tradeshow.id, $event)">Delete</a>
                         &nbsp;&nbsp;&nbsp;
-                        <a class="btn btn-primary" ng-click="generateReport(tradeshow.id, $event)">Excel Report</a>
+                        <a class="btn btn-primary" ng-click="downloadReport(tradeshow.id, $event)">Excel Report</a>
                     </td>
                 </tr>
                 </tbody>

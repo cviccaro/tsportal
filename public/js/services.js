@@ -1,4 +1,22 @@
 (function() {
+	var jwtRefreshService = angular.module('jwtRefreshService', []);
+	jwtRefreshService.factory('jwtRefreshService', ['$http', 'authService', function($http, authService) {
+		return {
+			refresh: function(token) {
+				$http({
+					method: 'GET',
+					url: 'api/authenticate/refresh',
+					headers: {
+						'Authorization': 'Bearer ' + token
+					}
+				}).then(function(payload) {
+					localStorage.setItem('satellizer_token', payload.data.token);
+					localStorage.setItem('_satellizer_token', payload.data.token);
+					authService.loginConfirmed();
+				})
+			}
+		}
+	}]);
 	var tradeshowServices = angular.module('tradeshowServices', ['ngResource']);
 	tradeshowServices.factory('Tradeshow', ['$resource', function($resource) {
 		return $resource('api/tradeshows/:tradeshowId', {tradeshowId: '@id'}, {

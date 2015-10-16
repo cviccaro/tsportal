@@ -3,7 +3,7 @@
 
 	angular.
 		module('authControllers', ['satellizer']).
-		controller('AuthController', ['$auth', '$state', '$scope', function($auth, $state, $scope) {
+		controller('AuthController', ['$auth', '$state', '$scope', '$rootScope', function($auth, $state, $scope, $rootScope) {
 			$scope.errors = [];
 			if (localStorage.getItem('satellizer_token') != null) {
 				$state.go('tradeshows', {});
@@ -19,7 +19,9 @@
 				// Use satellizer's $auth service to login
 				$auth.
 					login(credentials).
-					then(function(data) {
+					then(function(payload) {
+						// set a copy of the token to use for refresh requests
+						localStorage.setItem('_satellizer_token', payload.data.token);
 						$state.go('tradeshows', {});
 					},
 					function(payload) {

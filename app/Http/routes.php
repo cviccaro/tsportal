@@ -28,7 +28,7 @@ Route::get('auth/logout', 'Auth\AuthController@getLogout');
  */
 Route::group(['prefix' => 'api'], function() {
     Route::post('authenticate', 'ApiAuthController@authenticate');
-    Route::get('refresh','ApiAuthController@refresh');
+    Route::get('authenticate/refresh','ApiAuthController@refresh');
 });
 
 $api = app('Dingo\Api\Routing\Router');

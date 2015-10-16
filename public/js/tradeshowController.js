@@ -4,64 +4,121 @@
 	var tradeshowControllers = angular.module('tradeshowControllers', ['ngDialog']);
 
 	/**
-	 * Tradeshow List Controller
-	 * @param  {[type]} $rootScope [description]
-	 * @param  {[type]} $scope     [description]
-	 * @param  {[type]} Tradeshow  [description]
-	 * @param  {[type]} $http      [description]
-	 * @param  {[type]} leadGetter [description]
-	 * @param  {[type]} ngDialog   [description]
-	 * @param  {String} $state
-	 * @return {[type]}            [description]
+	 * TradeshowController
+	 * ------------------------------------------------------
+	 * Displays a paginated, filtered table of all tradeshows.
 	 */
-	tradeshowControllers.controller('TradeshowController', ['$rootScope', '$scope', 'Tradeshow', '$http', 'leadGetter', 'tradeshowGetter', 'ngDialog', '$state', 'authService', function TradeshowController($rootScope, $scope, Tradeshow, $http, leadGetter, tradeshowGetter, ngDialog, $state, authService) {
+	tradeshowControllers.controller('TradeshowController', ['$rootScope', '$scope', 'Tradeshow', '$http', 'leadGetter', 'tradeshowGetter', 'ngDialog', '$state', 'authService', 'jwtRefreshService', function TradeshowController($rootScope, $scope, Tradeshow, $http, leadGetter, tradeshowGetter, ngDialog, $state, authService, jwtRefreshService) {
+		// No token, no access
+		if (localStorage.getItem('satellizer_token') == null) {
+			if (localStorage.getItem('_satellizer_token') != null) {
+				// Try to refresh
+				jwtRefreshService.refresh(localStorage.getItem('_satellizer_token'));
+			}
+			else {
+				// Go to auth view
+				$state.go('auth', {});
+				$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+			}
+		}
+
+		// Refresh authorization token when it is expired transparently to the user
+		// and re-run the request that failed (happens automatically from http-auth-interceptor)
 		$rootScope.$on('event:auth-loginRequired', function(event, data) {
-			console.log('event:auth-loginRequired emitted: ', event, data);
-			$http.get('api/refresh').then(function(payload) {
-				localStorage.setItem('satellizer_token', payload.data.token);
-				authService.loginConfirmed();
-			})
+			var token = localStorage.getItem('_satellizer_token');
+			if (token !== null) {
+				jwtRefreshService.refresh(token);
+			}
 		})
+
+		// Scope variable defaults
 		$scope.orderBy = 'id';
 		$scope.orderByReverse = '0';
 		$scope.perPage = '15';
 
+		// Scope functions
+		
+		/**
+		 * [handleTradeshows callback for a successful fetch]
+		 * @return {[void]}
+		 */
 		$scope.handleTradeshows = function handleTradeshows() {
 			$scope.range = tradeshowGetter.getRange();
 			$scope.tradeshows = tradeshowGetter.getTradeshows();
 			$scope.totalPages = tradeshowGetter.getLastPage();
 			$scope.currentPage = tradeshowGetter.getCurrentPage();
 		}
+
+		/**
+		 * [getTradeshows use tradeshowService to fetch tradeshows]
+		 * @param  {[int]} pageNumber [requested page number]
+		 * @return {[void]}
+		 */
 		$scope.getTradeshows = function getTradeshows(pageNumber) {
 			tradeshowGetter.retrieve(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse, $scope.handleTradeshows);
 		};
+
+		/**
+		 * [refreshTradeshows Calls getTradeshows with the currently scoped page number]
+		 * @return {[void]}
+		 */
 		$scope.refreshTradeshows = function refreshTradeshows() {
 			$scope.getTradeshows($scope.currentPage);
 		}
 
+
+		/**
+		 * [handleLeads callback for a successful fetch]
+		 * @return {[void]}
+		 */
 		$scope.handleLeads = function handleLeads() {
 			$scope.leadRange = leadGetter.getRange();
 			$scope.leads = leadGetter.getLeads();
 			$scope.leadTotalPages = leadGetter.getLastPage();
 			$scope.leadCurrentPage = leadGetter.getCurrentPage();
 		};
-		$scope.getLeads = function getLeads(tradeshow, pageNumber) {
+
+		/**
+		 * [getLeads use leadService to fetch leads]
+		 * @param  {[int]} tradeshow_id  [tradeshow ID]
+		 * @param  {[int]} pageNumber [requested page number]
+		 * @return {[void]}
+		 */
+		$scope.getLeads = function getLeads(tradeshow_id, pageNumber) {
+			var tradeshow = $scope.pluckTradeshow(tradeshow_id);
 			$scope.selectedTradeshow = tradeshow;
 			leadGetter.setCurrentTradeshowId(tradeshow.id);
 			leadGetter.retrieveLeads(pageNumber, 50, 'id', 0, $scope.handleLeads);
 		};
+
+		/**
+		 * [refreshLeads Calls getLeads using previously set tradeshow with pageNumber as argument]
+		 * @param  {[int]} pageNumber [requested page number]
+		 * @return {[void]}
+		 */
 		$scope.refreshLeads = function refreshLeads(pageNumber) {
 			leadGetter.retrieveLeads(pageNumber, 50, 'id', 0, $scope.handleLeads);
 		};
 
 
-		// pluck tradeshow from tradeshows array
+		/**
+		 * [pluckTradeshow get a tradeshow from the local array in scope using its id]
+		 * @param  {[int]} tradeshow_id
+		 * @return {[obj]} tradeshow
+		 */
 		$scope.pluckTradeshow = function pluckTradeshow(tradeshow_id) {
 			for (var n = 0, tradeshow; tradeshow = $scope.tradeshows[n]; n++) {
 				if (tradeshow.id == tradeshow_id) { return tradeshow; }
 			}
 			return false;
 		}
+
+		/**
+		 * [deleteTradeshow delete a tradeshow using the tradeshow service]
+		 * @param  {[type]} tradeshow_id [description]
+		 * @param  {[type]} $event       [description]
+		 * @return {[type]}              [description]
+		 */
 		$scope.deleteTradeshow = function deleteTradeshow(tradeshow_id, $event) {
 			$event.preventDefault();
 			$event.stopPropagation();
@@ -113,7 +170,13 @@
 			})
 		};
 
-		$scope.generateReport = function generateReport(tradeshow_id, $event) {
+		/**
+		 * [downloadReport Routes user to download  URL of Excel report of tradeshow, if it has leads]
+		 * @param  {[int]} tradeshow_id [tradeshow id]
+		 * @param  {[obj]} $event       [angular $event]
+		 * @return {[void]}
+		 */
+		$scope.downloadReport = function generateReport(tradeshow_id, $event) {
 			$event.preventDefault();
 			$event.stopPropagation();
 			leadGetter.setCurrentTradeshowId(tradeshow_id);
@@ -126,32 +189,25 @@
 					ngDialog.open({plain:true, template: "Sorry, no leads available"});
 				}
 			});
-
-			//console.log('generate report for tradeshow ' + tradeshow_id);
 		}
 
-
-		if (localStorage.getItem('satellizer_token') == null) {
-			$state.go('auth', {});
-			$('.loading-indicator').fadeOut(100).addClass('ng-hide');
-		}
+		// Get tradeshows and set logged in flag
+		// if we are authenticated
 		if (localStorage.getItem('satellizer_token') !== null) {
 			$scope.getTradeshows();
+			$rootScope.isLoggedIn = true;
 		}
-		$rootScope.isLoggedIn = true;
-
 	}]);
 
 	/**
-	 * Tradeshow Edit Controller
-	 * @param  {[type]} $rootScope   [description]
-	 * @param  {[type]} $scope       [description]
-	 * @param  {[type]} Tradeshow    [description]
-	 * @param  {[type]} $stateParams [description]
-	 * @param  {[type]} ngDialog     [description]
-	 * @param  {[type]} leadGetter   [description]
-	 * @param  {String} $state)      
-	 * @return {[type]}              [description]
+	 * [TradeshowDetailController description]
+	 * @param {[type]} $rootScope   [description]
+	 * @param {[type]} $scope       [description]
+	 * @param {[type]} Tradeshow    [description]
+	 * @param {[type]} $stateParams [description]
+	 * @param {[type]} ngDialog     [description]
+	 * @param {[type]} leadGetter   [description]
+	 * @param {String} $state)      {		$scope.model [description]
 	 */
 	tradeshowControllers.controller('TradeshowDetailController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadGetter', '$state', function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadGetter, $state) {
 		$scope.model = 'tradeshow';
