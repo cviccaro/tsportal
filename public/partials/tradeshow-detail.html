@@ -71,6 +71,7 @@
                         <td>{{lead.timestamp}}</td>
                         <td>
                         	<a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
+                            <a class="btn btn-danger" href="" ng-click="deleteLead(lead.id, $event)">Delete</a>
                         </td>
                     </tr>
                     <tr ng-show="!leads.length">

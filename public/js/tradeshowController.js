@@ -4,23 +4,14 @@
 	var tradeshowControllers = angular.module('tradeshowControllers', ['ngDialog']);
 
 	/**
-	 * TradeshowController
+	 * Tradeshow List Controller
+	 * @class TradeshowController
 	 * ------------------------------------------------------
 	 * Displays a paginated, filtered table of all tradeshows.
 	 */
-	tradeshowControllers.controller('TradeshowController', ['$rootScope', '$scope', 'Tradeshow', '$http', 'leadGetter', 'tradeshowGetter', 'ngDialog', '$state', 'authService', 'jwtRefreshService', function TradeshowController($rootScope, $scope, Tradeshow, $http, leadGetter, tradeshowGetter, ngDialog, $state, authService, jwtRefreshService) {
+	tradeshowControllers.controller('TradeshowController', ['$rootScope', '$scope', 'Tradeshow', '$http', 'leadService', 'tradeshowService', 'ngDialog', '$state', 'authService', 'jwtRefreshService', function TradeshowController($rootScope, $scope, Tradeshow, $http, leadService, tradeshowService, ngDialog, $state, authService, jwtRefreshService) {
 		// No token, no access
-		if (localStorage.getItem('satellizer_token') == null) {
-			if (localStorage.getItem('_satellizer_token') != null) {
-				// Try to refresh
-				jwtRefreshService.refresh(localStorage.getItem('_satellizer_token'));
-			}
-			else {
-				// Go to auth view
-				$state.go('auth', {});
-				$('.loading-indicator').fadeOut(100).addClass('ng-hide');
-			}
-		}
+		jwtRefreshService.checkApiAccess();
 
 		// Refresh authorization token when it is expired transparently to the user
 		// and re-run the request that failed (happens automatically from http-auth-interceptor)
@@ -28,6 +19,9 @@
 			var token = localStorage.getItem('_satellizer_token');
 			if (token !== null) {
 				jwtRefreshService.refresh(token);
+				if ($scope.tradeshows === undefined || !$scope.tradeshows.length) {
+					$scope.refreshTradeshows();
+				}
 			}
 		})
 
@@ -43,10 +37,10 @@
 		 * @return {[void]}
 		 */
 		$scope.handleTradeshows = function handleTradeshows() {
-			$scope.range = tradeshowGetter.getRange();
-			$scope.tradeshows = tradeshowGetter.getTradeshows();
-			$scope.totalPages = tradeshowGetter.getLastPage();
-			$scope.currentPage = tradeshowGetter.getCurrentPage();
+			$scope.range = tradeshowService.getRange();
+			$scope.tradeshows = tradeshowService.getTradeshows();
+			$scope.totalPages = tradeshowService.getLastPage();
+			$scope.currentPage = tradeshowService.getCurrentPage();
 		}
 
 		/**
@@ -55,7 +49,7 @@
 		 * @return {[void]}
 		 */
 		$scope.getTradeshows = function getTradeshows(pageNumber) {
-			tradeshowGetter.retrieve(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse, $scope.handleTradeshows);
+			tradeshowService.retrieve(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse, $scope.handleTradeshows);
 		};
 
 		/**
@@ -68,18 +62,8 @@
 
 
 		/**
-		 * [handleLeads callback for a successful fetch]
-		 * @return {[void]}
-		 */
-		$scope.handleLeads = function handleLeads() {
-			$scope.leadRange = leadGetter.getRange();
-			$scope.leads = leadGetter.getLeads();
-			$scope.leadTotalPages = leadGetter.getLastPage();
-			$scope.leadCurrentPage = leadGetter.getCurrentPage();
-		};
-
-		/**
-		 * [getLeads use leadService to fetch leads]
+		 * Use leadService to fetch leads for the tradeshow
+		 * 
 		 * @param  {[int]} tradeshow_id  [tradeshow ID]
 		 * @param  {[int]} pageNumber [requested page number]
 		 * @return {[void]}
@@ -87,22 +71,36 @@
 		$scope.getLeads = function getLeads(tradeshow_id, pageNumber) {
 			var tradeshow = $scope.pluckTradeshow(tradeshow_id);
 			$scope.selectedTradeshow = tradeshow;
-			leadGetter.setCurrentTradeshowId(tradeshow.id);
-			leadGetter.retrieveLeads(pageNumber, 50, 'id', 0, $scope.handleLeads);
+			leadService.setCurrentTradeshowId(tradeshow.id);
+			leadService.retrieveLeads(pageNumber, 50, 'id', 0, $scope.handleLeads);
 		};
 
 		/**
-		 * [refreshLeads Calls getLeads using previously set tradeshow with pageNumber as argument]
+		 * Callback for a successful fetch of the leads
+		 
+		 * @return {[void]}
+		 */
+		$scope.handleLeads = function handleLeads() {
+			$scope.leadRange = leadService.getRange();
+			$scope.leads = leadService.getLeads();
+			$scope.leadTotalPages = leadService.getLastPage();
+			$scope.leadCurrentPage = leadService.getCurrentPage();
+		};
+
+		/**
+		 * Refreshes the current leads 
+		 * 
 		 * @param  {[int]} pageNumber [requested page number]
 		 * @return {[void]}
 		 */
 		$scope.refreshLeads = function refreshLeads(pageNumber) {
-			leadGetter.retrieveLeads(pageNumber, 50, 'id', 0, $scope.handleLeads);
+			leadService.retrieveLeads(pageNumber, 50, 'id', 0, $scope.handleLeads);
 		};
 
 
 		/**
-		 * [pluckTradeshow get a tradeshow from the local array in scope using its id]
+		 * Find a tradeshow in the local array in scope using its id
+		 * 
 		 * @param  {[int]} tradeshow_id
 		 * @return {[obj]} tradeshow
 		 */
@@ -114,64 +112,22 @@
 		}
 
 		/**
-		 * [deleteTradeshow delete a tradeshow using the tradeshow service]
-		 * @param  {[type]} tradeshow_id [description]
-		 * @param  {[type]} $event       [description]
-		 * @return {[type]}              [description]
+		 * Delete a tradeshow using the tradeshow service
+		 * 
+		 * @param  {[int]} tradeshow_id 
+		 * @param  {[event]} $event      [angular event]
+		 * @return {[void]}
 		 */
 		$scope.deleteTradeshow = function deleteTradeshow(tradeshow_id, $event) {
 			$event.preventDefault();
 			$event.stopPropagation();
-			var tradeshow = $scope.pluckTradeshow(tradeshow_id),
-				tradeshow_name = tradeshow.name;
-			$scope.activeDialog = ngDialog.openConfirm(
-				{	
-					plain: true, 
-					className: 'dialog-destroy ngdialog-theme-default',
-					template: '<span class="glyphicon glyphicon-trash red icon-large"></span><span>Are you sure you want to delete Tradeshow <em>' + tradeshow_name + '</em>?<br /><strong>This cannot be undone.</strong></span><div class="dialog-buttons"><button class="btn btn-danger" ng-click="confirm()">Yes, delete</button> <button class="btn btn-cancel" ng-click="closeThisDialog()">Cancel</button></div>',
-					showClose: false
-				}
-			).
-			then(function() {
-				//console.log('confirmed to delete tradeshow ' + tradeshow_id + ': ',tradeshow);
-				$rootScope.workingMessage = 'Deleting';
-				$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
-				Tradeshow.
-					delete({tradeshowId:tradeshow_id}).
-					$promise.
-					then(function(payload) {
-						$('.loading-indicator').fadeOut(100).addClass('ng-hide');
-						if (payload.hasOwnProperty('success') && payload.success == true) {
-							ngDialog.open({
-								plain: true,
-								className: 'dialog-success ngdialog-theme-default',
-								template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Tradeshow <em>' + tradeshow_name + '</em> has been successfully deleted.</span>',
-							})
-							.closePromise
-							.then(function() {
-								window.location.reload();
-							})
-						}
-						else {
-							ngDialog.open({
-								plain: true,
-								className: 'dialog-error ngdialog-theme-default',
-								template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>An error occured when trying to delete Tradeshow <em>' + tradeshow_name + '</em>.</span>  Please try again or contact support.',
-							})
-						}
-					}, function(errorResponse) {
-						$('.loading-indicator').fadeOut(100).addClass('ng-hide');
-						ngDialog.open({
-							plain: true,
-							className: 'dialog-error ngdialog-theme-default',
-							template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>An error occured when trying to delete Tradeshow <em>' + tradeshow_name + '</em>.</span>  Please try again or contact support.',
-						})
-					})
-			})
+			var tradeshow = $scope.pluckTradeshow(tradeshow_id);
+			tradeshowService.deleteTradeshow(tradeshow);
 		};
 
 		/**
-		 * [downloadReport Routes user to download  URL of Excel report of tradeshow, if it has leads]
+		 * Checks if a tradeshow has leads, and routes user to URL to download report
+		 * 
 		 * @param  {[int]} tradeshow_id [tradeshow id]
 		 * @param  {[obj]} $event       [angular $event]
 		 * @return {[void]}
@@ -179,8 +135,8 @@
 		$scope.downloadReport = function generateReport(tradeshow_id, $event) {
 			$event.preventDefault();
 			$event.stopPropagation();
-			leadGetter.setCurrentTradeshowId(tradeshow_id);
-			leadGetter.retrieveLeads(1, 15, 'id', 0, function(response) {
+			leadService.setCurrentTradeshowId(tradeshow_id);
+			leadService.retrieveLeads(1, 15, 'id', 0, function(response) {
 				var leads = response.data;
 				if (leads.length) {
 					window.location.href = '/tradeshows/' + tradeshow_id + '/report';
@@ -200,27 +156,25 @@
 	}]);
 
 	/**
-	 * [TradeshowDetailController description]
-	 * @param {[type]} $rootScope   [description]
-	 * @param {[type]} $scope       [description]
-	 * @param {[type]} Tradeshow    [description]
-	 * @param {[type]} $stateParams [description]
-	 * @param {[type]} ngDialog     [description]
-	 * @param {[type]} leadGetter   [description]
-	 * @param {String} $state)      {		$scope.model [description]
+	 * Tradeshow Edit Controller
+	 * @class TradeshowDetailController
+	 * ---------------------------------
+	 * Displays an edit form for a tradeshow
 	 */
-	tradeshowControllers.controller('TradeshowDetailController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadGetter', '$state', function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadGetter, $state) {
+	tradeshowControllers.controller('TradeshowDetailController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadService', '$state', 'jwtRefreshService', function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadService, $state, jwtRefreshService) {
+		// Check API Access, refresh token
+		jwtRefreshService.checkApiAccess();
+
+		// Scope variables
 		$scope.model = 'tradeshow';
 		$scope.orderBy = 'id';
 		$scope.orderByReverse = '0';
 		$scope.perPage = '15';
 		$scope.leadCount = 0;
 		$scope.isNew = false;
+		$scope.leads = [];
 
-		if (localStorage.getItem('satellizer_token') == null) {
-			$state.go('auth', {});
-		}
-
+		// Get the Tradeshow using the Tradeshow resource
 		Tradeshow.
 			get({tradeshowId:$stateParams.tradeshowId}).
 			$promise.
@@ -232,21 +186,50 @@
 				}
 				$scope.getLeads();
 				$scope.setTitle();
-			});
+		});
+
+		/**
+		 * Set the page title
+		 *
+		 * @return {[void]}
+		 */
 		$scope.setTitle = function setTitle() {
 			$scope.title = 'Editing Tradeshow <em>' + $scope.tradeshow.name + '</em>';
 		};
+
+		/**
+		 * Callback to 'go back' button
+		 * 
+		 * @return {[void]}
+		 */
 		$scope.goBack = function goBack() {
 			window.location.hash = '#/tradeshows';
 		};
+
+		/**
+		 * Save the currently scoped tradeshow using Tradeshow resource
+		 * 
+		 * @return {[void]}
+		 */
 		$scope.save = function save() {
+			// Alter the "busy" indicator message
 			$rootScope.workingMessage = 'Saving';
+
+			// Manually fade in "busy" indicator
 			$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
+
+			// Use Tradeshow resource to save currently scoped tradeshow
 			Tradeshow.save($scope.tradeshow).$promise.then(function(payload) {
-				//console.log('payload after-update: ', payload)
+				// Set the tradeshow in scope
 				$scope.tradeshow = payload.tradeshow;
+
+				// Set the page title
 				$scope.setTitle();
+
+				// Manually fade out "busy" indicator
 				$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+
+				// Show confirmation dialog
 				ngDialog.open(
 					{	
 						plain: true, 
@@ -257,75 +240,138 @@
 			});
 		};
 
-		$scope.leads = [];
-
+		/**
+		 * Handle successful fetch of leads from leadService
+		 *
+		 * @return {[void]}
+		 */
 		$scope.handleLeads = function() {
-			$scope.leadRange = leadGetter.getRange();
-			$scope.leads = leadGetter.getLeads();
-			$scope.leadTotalPages = leadGetter.getLastPage();
-			$scope.leadCurrentPage = leadGetter.getCurrentPage();
+			// Set the array of pages
+			$scope.leadRange = leadService.getRange();
+
+			// Set the leads
+			$scope.leads = leadService.getLeads();
+
+			// Set the total pages of leads
+			$scope.leadTotalPages = leadService.getLastPage();
+
+			// Set the current page of the leads
+			$scope.leadCurrentPage = leadService.getCurrentPage();
+
+			// Calculate leads from pagination
 			if ($scope.leadCount === 0) { 
 				$scope.leadCount = $scope.leadTotalPages * $scope.leads.length;
 			}
 		};
 
+		/**
+		 * Get the leads using the leadService
+		 * 
+		 * @param  {[int]} pageNumber [a page number]
+		 * @return {[void]}
+		 */
 		$scope.getLeads = function getLeads(pageNumber) {
 			$scope.selectedTradeshow = $scope.tradeshow;
-			leadGetter.setCurrentTradeshowId($scope.tradeshow.id);
-			leadGetter.retrieveLeads(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse, $scope.handleLeads);
+			leadService.setCurrentTradeshowId($scope.tradeshow.id);
+			leadService.retrieveLeads(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse, $scope.handleLeads);
 		};
 
+		/**
+		 * Refresh the leads 
+		 * 
+		 * @param  {[int]} pageNumber [a page number]
+		 * @return {[void]}
+		 */
 		$scope.refreshLeads = function refreshLeads(pageNumber) {
-			leadGetter.retrieveLeads(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse, $scope.handleLeads);
+			leadService.retrieveLeads(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse, $scope.handleLeads);
 		}
 
+		/**
+		 * Find a lead in the local array in scope using its id
+		 * 
+		 * @param  {[int]} lead_id
+		 * @return {[obj]} lead
+		 */
+		$scope.pluckLead = function pluckLead(lead_id) {
+			for (var n = 0, lead; lead = $scope.leads[n]; n++) {
+				if (lead.id == lead_id) { return lead; }
+			}
+			return false;
+		}
+
+		/**
+		 * Delete a lead
+		 * 
+		 * @param  {[int]} lead_id
+		 * @param  {[angular event]} $event 
+		 * @return {[void]} 
+		 */
+		$scope.deleteLead = function deleteLead(lead_id, $event) {
+			$event.preventDefault();
+			$event.stopPropagation();
+			var lead = $scope.pluckLead(lead_id);
+			leadService.deleteLead(lead);
+		};
+
+		/**
+		 * Ensure we don't go out-of-bounds
+		 *
+		 * @return {[void]}
+		 */
 		$scope.updatePagination = function updatePagination() {
 			if ($scope.leadCurrentPage != 1) {
 				$scope.refreshLeads(1);
 			}
-			// $scope.leadCount = $scope.filteredLeads.length
-			// var last_page = Math.ceil($scope.leadCount / $scope.perPage);
-			// var pages = [];
-			// for (var i=1;i<=last_page; i++) {
-			// 	pages.push(i);
-			// }
-			// $scope.leadRange = pages;
-			// $scope.leadTotalPages = pages.length;
-			// console.log($scope.filteredLeads);
-		}
+		};
 	}]);
 
 	/**
-	 * Tradeshow Create Controller
-	 * -------
-	 * @param  {[type]} $rootScope   [description]
-	 * @param  {[type]} $scope       [description]
-	 * @param  {[type]} Tradeshow    [description]
-	 * @param  {[type]} $stateParams [description]
-	 * @param  {[type]} ngDialog)    [description]
-	 * @return {[type]}              [description]
+	 * Create a Tradeshow Controller
+	 * @class TradeshowCreateController
+	 *--------------------------------------
+	 * Displays a form for the creation of a new tradeshow
 	 */
-	tradeshowControllers.controller('TradeshowCreateController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', '$state', function TradeshowCreateController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, $state) {
+	tradeshowControllers.controller('TradeshowCreateController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', '$state', 'jwtRefreshService', function TradeshowCreateController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, $state, jwtRefreshService) {
+		// Scope variables
 		$scope.isNew = true;
 		$scope.model = 'tradeshow';
+		$scope.title = 'Create new Tradeshow';
 
-		if (localStorage.getItem('satellizer_token') == null) {
-			$state.go('auth', {});
-		}
+		// Check API access, refresh token
+		jwtRefreshService.checkApiAccess();
 
+		/**
+		 * Callback to 'Back' button
+		 *
+		 * @return {[void]}
+		 */
 		$scope.goBack = function goBack() {
 			window.location.hash = '#/tradeshows';
 		};
+
+		/**
+		 * Save the new tradeshow using the Tradeshow resource
+		 * 
+		 * @return {[void]}
+		 */
 		$scope.save = function save() {
-			//console.log($scope.tradeshow);
+			// Alter the working message, manually fade in "busy" indicator
 			$rootScope.workingMessage = 'Saving new';
 			$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
+
+			// Collect 'active' value if it is not set
 			if (!$scope.tradeshow.hasOwnProperty('active')) {
 				$scope.tradeshow.active = $('input[name="active"]')[0].checked;
 			}
+
+			// Create Tradeshow using Tradeshow resource
 			Tradeshow.create($scope.tradeshow).$promise.then(function(payload) {
 				var tradeshow_id = payload.tradeshow.id;
+
+				// Fade out the "busy" indicator
 				$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+
+				// Show a confirmation dialog
 				ngDialog.open(
 					{
 						plain: true, 
@@ -335,11 +381,13 @@
 				).
 				closePromise.
 				then(function(data) {
+					// Navigate to the new tradeshow's Edit page on dialog close
 					window.location.hash = '#/tradeshows/' + tradeshow_id + '/edit';
 				});
 			})
 		}
-		$scope.title = 'Create new Tradeshow';
+		
+		// Ensure "busy" indicator is hidden
 		setTimeout(function() {
 			$('.loading-indicator').fadeOut(100).addClass('ng-hide');
 		},100);

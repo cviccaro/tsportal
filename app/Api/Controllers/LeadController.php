@@ -213,9 +213,8 @@ class LeadController extends Controller {
 	public function destroy($id)
 	{
 		$lead = Lead::findOrFail($id);
-		$lead->delete();
-
-		return redirect()->route('leads.index')->with('message', 'Item deleted successfully.');
+		$deleted = $lead->delete();
+		return ['success' => TRUE];
 	}
 
 }

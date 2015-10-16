@@ -81,7 +81,7 @@ table > tbody > tr.clickable.active > td {
 /* line 78, ../../resources/assets/sass/app.scss */
 .loading-indicator {
   width: 100%;
-  position: absolute;
+  position: fixed;
   height: 100%;
   top: 0;
   left: 0;

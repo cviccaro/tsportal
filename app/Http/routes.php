@@ -42,6 +42,7 @@ $api->version('v1', ['middleware' => 'api.auth'], function($api) {
     $api->get('tradeshows/{id}/leads', 'TSPortal\API\Controllers\LeadController@showByTradeshowId');
     $api->get('leads', 'TSPortal\API\Controllers\LeadController@index');
     $api->get('leads/{id}', 'TSPortal\API\Controllers\LeadController@show');
+    $api->delete('leads/{id}', 'TSPortal\API\Controllers\LeadController@destroy');
     $api->post('leads/create', 'TSPortal\API\Controllers\LeadController@createMany');
     $api->post('leads/{id}', 'TSPortal\API\Controllers\LeadController@update');
 });
