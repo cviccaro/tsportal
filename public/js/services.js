@@ -14,6 +14,59 @@
 			delete: {method: 'DELETE'}
 		});
 	}]);
+	tradeshowServices.factory('tradeshowGetter', ['$http', function($http) {
+		var tradeshows = [],
+			current_page = 1,
+			last_page = 0,
+			pages = [];
+			return {
+				retrieve: function retrieve(pageNumber, perPage, orderBy, orderByReverse, success) {
+					if(pageNumber===undefined){
+						pageNumber = '1';
+					}
+					if (orderBy===undefined) {
+						orderBy = 'id';
+					}
+					if (orderByReverse===undefined) {
+						orderByReverse = 0;
+					}
+					if (perPage===undefined) {
+						perPage = 15;
+					}
+					return $http.
+						get('api/tradeshows?page='+pageNumber+'&perPage=' + perPage + '&orderBy=' + orderBy + '&orderByReverse=' + parseInt(orderByReverse)).
+						then(function(payload) {
+							var response = payload.data;
+
+							tradeshows = response.data;
+							current_page = response.current_page;
+							last_page = response.last_page;
+							pages = [];
+							for(var i=1;i<=response.last_page;i++) {          
+								pages.push(i);
+							}
+							if (typeof success != "undefined") {
+								success.apply(this, arguments);
+							}
+						},
+						function(payload) {
+							console.log('error getting tradeshows: ', payload)
+						});
+				},
+				getCurrentPage:function() {
+					return current_page;
+				},
+				getLastPage:function() {
+					return last_page;
+				},
+				getRange: function() {
+					return pages;
+				},
+				getTradeshows: function() {
+					return tradeshows;
+				}
+			};
+	}]);
 	var leadServices = angular.module('leadServices', []);
 	leadServices.factory('Lead', ['$resource', function ($resource) {
 		return $resource('api/leads/:id', {id: '@id'});

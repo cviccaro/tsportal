@@ -29,4 +29,16 @@ class ApiAuthController extends Controller {
 
 		return response()->json(compact('token'));
 	}
+	public function refresh(Request $request){
+	     $oldtoken = JWTAuth::getToken();
+	     try {
+	         // attempt to refresh token for the user
+	         if (! $token = JWTAuth::parseToken('bearer','authorization',$oldtoken)->refresh()) {
+	             return response()>json(['error' => 'invalid_token'], 401);
+	         }
+	     } catch (JWTException $e) {
+	         return response()->json(['error' => 'could_not_refresh_token'], 500);
+	     }
+	     return response()->json(compact('token'));
+	 }
 }

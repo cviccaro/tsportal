@@ -29,7 +29,7 @@
 			};
 		}]).
 		controller('LogoutController', ['$auth', '$state', '$scope', function($auth, $state, $scope) {
-			localStorage.removeItem('satellizer_token');
+			$auth.logout();
 			$state.go('auth');
 		}]);
 })(jQuery);

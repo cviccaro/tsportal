@@ -14,48 +14,27 @@
 	 * @param  {String} $state
 	 * @return {[type]}            [description]
 	 */
-	tradeshowControllers.controller('TradeshowController', ['$rootScope', '$scope', 'Tradeshow', '$http', 'leadGetter', 'ngDialog', '$state', function TradeshowController($rootScope, $scope, Tradeshow, $http, leadGetter, ngDialog, $state) {
+	tradeshowControllers.controller('TradeshowController', ['$rootScope', '$scope', 'Tradeshow', '$http', 'leadGetter', 'tradeshowGetter', 'ngDialog', '$state', 'authService', function TradeshowController($rootScope, $scope, Tradeshow, $http, leadGetter, tradeshowGetter, ngDialog, $state, authService) {
+		$rootScope.$on('event:auth-loginRequired', function(event, data) {
+			console.log('event:auth-loginRequired emitted: ', event, data);
+			$http.get('api/refresh').then(function(payload) {
+				localStorage.setItem('satellizer_token', payload.data.token);
+				authService.loginConfirmed();
+			})
+		})
 		$scope.orderBy = 'id';
 		$scope.orderByReverse = '0';
 		$scope.perPage = '15';
 
-		if (localStorage.getItem('satellizer_token') == null) {
-			$state.go('auth', {});
-			$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+		$scope.handleTradeshows = function handleTradeshows() {
+			$scope.range = tradeshowGetter.getRange();
+			$scope.tradeshows = tradeshowGetter.getTradeshows();
+			$scope.totalPages = tradeshowGetter.getLastPage();
+			$scope.currentPage = tradeshowGetter.getCurrentPage();
 		}
-		$rootScope.isLoggedIn = true;
-
-		$scope.getTradeshows = function getTradeshows(pageNumber){
-
-			if(pageNumber===undefined){
-				pageNumber = '1';
-			}
-			$http.get('api/tradeshows?page='+pageNumber+'&perPage=' + $scope.perPage + '&orderBy=' + $scope.orderBy + '&orderByReverse=' + parseInt($scope.orderByReverse)).
-			then(function(payload) {
-				var response = payload.data;
-				$scope.tradeshows        = response.data;
-				$scope.totalPages   = response.last_page;
-				$scope.currentPage  = response.current_page;
-
-				// Pagination Range
-				var pages = [];
-
-				for(var i=1;i<=response.last_page;i++) {
-					pages.push(i);
-				}
-
-				$scope.range = pages; 
-
-			}, function(errorResponse) {
-				console.log('error loading tradeshows: ' + errorResponse)
-			});
-
+		$scope.getTradeshows = function getTradeshows(pageNumber) {
+			tradeshowGetter.retrieve(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse, $scope.handleTradeshows);
 		};
-
-		if (localStorage.getItem('satellizer_token') !== null) {
-			$scope.getTradeshows();
-		}
-
 		$scope.refreshTradeshows = function refreshTradeshows() {
 			$scope.getTradeshows($scope.currentPage);
 		}
@@ -66,16 +45,16 @@
 			$scope.leadTotalPages = leadGetter.getLastPage();
 			$scope.leadCurrentPage = leadGetter.getCurrentPage();
 		};
-
 		$scope.getLeads = function getLeads(tradeshow, pageNumber) {
 			$scope.selectedTradeshow = tradeshow;
 			leadGetter.setCurrentTradeshowId(tradeshow.id);
 			leadGetter.retrieveLeads(pageNumber, 50, 'id', 0, $scope.handleLeads);
 		};
-
 		$scope.refreshLeads = function refreshLeads(pageNumber) {
 			leadGetter.retrieveLeads(pageNumber, 50, 'id', 0, $scope.handleLeads);
 		};
+
+
 		// pluck tradeshow from tradeshows array
 		$scope.pluckTradeshow = function pluckTradeshow(tradeshow_id) {
 			for (var n = 0, tradeshow; tradeshow = $scope.tradeshows[n]; n++) {
@@ -150,6 +129,17 @@
 
 			//console.log('generate report for tradeshow ' + tradeshow_id);
 		}
+
+
+		if (localStorage.getItem('satellizer_token') == null) {
+			$state.go('auth', {});
+			$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+		}
+		if (localStorage.getItem('satellizer_token') !== null) {
+			$scope.getTradeshows();
+		}
+		$rootScope.isLoggedIn = true;
+
 	}]);
 
 	/**

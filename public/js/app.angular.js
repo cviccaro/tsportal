@@ -11,7 +11,8 @@ var tsportal = angular.module('tsportal', [
     'angular-jwt',
     'angular-spinkit',
     'ngAnimate',
-    'ngDialog'
+    'ngDialog',
+    'http-auth-interceptor'
 ]);
 
 tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtInterceptorProvider', '$authProvider',

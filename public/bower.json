@@ -16,7 +16,8 @@
     "angular-spinkit": "~0.3.3",
     "angular-ui-router": "~0.2.15",
     "angular-animate": "~1.4.7",
-    "ng-dialog": "*"
+    "ng-dialog": "*",
+    "angular-http-auth": "~1.2.2"
   },
   "resolutions": {
     "angular": "1.4.7",
