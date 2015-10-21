@@ -1,85 +1,57 @@
 'use strict';
 
-/* jasmine specs for controllers go here */
-describe('tsportal controllers', function() {
-
-  beforeEach(module('tsportal'));
-
-  describe('TradeshowController', function(){
-    var scope, ctrl, $httpBackend;
-    var $controller;
-
-     beforeEach(inject(function(_$httpBackend_, _$controller_){
-       // The injector unwraps the underscores (_) from around the parameter names when matching
-       $controller = _$controller_;
-       $httpBackend = _$httpBackend_;
-     }));
-    // beforeEach(inject(function(_$httpBackend_, $rootScope, $controller) {
-    //   $httpBackend = _$httpBackend_;
-    //   //$httpBackend.expectPOST('api/authenticate')
-    //   $httpBackend.expectGET('api/tradeshows?page=1&perPage=15&orderBy=id&orderByReverse=0').
-    //       respond([{id: 1, name: 'test', location: 'test', active: 1}, {id: 2, 'name': 'test2', location: 'test2', active: 0}]);
-    //   $httpBackend.expectGET('../partials/login-form.html').respond('');
-    //   scope = $rootScope.$new();
-    //   ctrl = $controller('TradeshowController', {$scope: scope});
-    // }));
-
-    describe('$scope.tradeshows', function() {
-        it('should create "tradeshows" model with 2 tradeshows fetched from xhr', function() {
-          var $scope = {};
-          var controller = $controller('TradeshowController', {$scope: $scope});
-          // $httpBackend.flush();
-          $httpBackend.expectGET('api/tradeshows?page=1&perPage=15&orderBy=id&orderByReverse=0').
-            respond([{id: 1, name: 'test', location: 'test', active: 1}, {id: 2, 'name': 'test2', location: 'test2', active: 0}]);
-           expect($scope.tradeshows).toEqual([{id: 1, name: 'test', location: 'test', active: 1}, {id: 2, 'name': 'test2', location: 'test2', active: 0}]);
-        });
-
-
-        it('should set the default value of orderBy model', function() {
-          var $scope = {};
-          var controller = $controller('TradeshowController', {$scope: $scope});
-          expect($scope.orderBy).toBe('id');
-        });
-        it('should set the default value of orderByReverse model', function() {
-          var $scope = {};
-          var controller = $controller('TradeshowController', {$scope: $scope});
-          expect($scope.orderByReverse).toBe('0');
-        });
-        it('should set the default value of perPage model', function() {
-          var $scope = {};
-          var controller = $controller('TradeshowController', {$scope: $scope});
-          expect($scope.perPage).toBe('15');
-        });    
-    });
+describe('user login form', function() {
     
-  });
+    beforeEach(angular.mock.module('tsportal'));
+    var AuthController, $scope, $controller, $compile;
+    beforeEach(inject(function (_$controller_, _$rootScope_, _$compile_) {
+      $controller = _$controller_;
+      $compile = _$compile_;
+      $scope = _$rootScope_.$new();
+    }));
+    it('should have a AuthController controller', function() {
+      AuthController = $controller('AuthController', {$scope: $scope});
+      expect(AuthController).toBeDefined();
+    });
+    // critical
+    it('ensure invalid email addresses are caught', inject(['loginService', function(loginService) {
+         // test cases - testing for failure
+         var invalidEmails = [
+           'test@testcom',
+           'test@ test.co.uk',
+           'ghgf@fe.com.co.',
+           'tes@t@test.com',
+           ''
+         ];
+
+         for (var i in invalidEmails) {
+           var valid = loginService.isValidEmail(invalidEmails[i]);
+           expect(valid).toBeFalsy();
+         }
+      }])
+    );
+    it('ensure valid email addresses pass validation', inject(['loginService', function(loginService) {
+      // test cases - testing for success
+         var validEmails = [
+           'test@test.com',
+           'test@test.co.uk',
+           'test734ltylytkliytkryety9ef@jb-fe.com'
+         ];
+
+         // you can loop through arrays of test cases like this
+         for (var i in validEmails) {
+           var valid = loginService.isValidEmail(validEmails[i]);
+           expect(valid).toBeTruthy();
+         }
+      }])
+    );
 
 
-//   describe('PhoneDetailCtrl', function(){
-//     var scope, $httpBackend, ctrl,
-//         xyzPhoneData = function() {
-//           return {
-//             name: 'phone xyz',
-//                 images: ['image/url1.png', 'image/url2.png']
-//           }
-//         };
+    it('ensure submitting form changes path', function() { 
+      // var form = $compile("#login_form");
+      // var submitCallback = jasmine.createSpy().andReturn(false);
+      // form.submit(submitCallback);
+      // expect(submitCallback).toHaveBeenCalled();
+    });
 
-
-//     beforeEach(inject(function(_$httpBackend_, $rootScope, $routeParams, $controller) {
-//       $httpBackend = _$httpBackend_;
-//       $httpBackend.expectGET('phones/xyz.json').respond(xyzPhoneData());
-
-//       $routeParams.phoneId = 'xyz';
-//       scope = $rootScope.$new();
-//       ctrl = $controller('PhoneDetailCtrl', {$scope: scope});
-//     }));
-
-
-//     it('should fetch phone detail', function() {
-//       expect(scope.phone).toBeUndefined();
-//       $httpBackend.flush();
-
-//       expect(scope.phone).toEqual(xyzPhoneData());
-//     });
-//   });
 });

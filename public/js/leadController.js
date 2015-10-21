@@ -14,6 +14,7 @@
 		// Scope variables
 		$scope.model = 'lead';
 		$scope.title = 'Editing Lead';
+		$scope.submitted = false;
 
 		// Get the lead using the Lead resource
 		Lead.
@@ -61,36 +62,47 @@
 		 * @return {[void]}
 		 */
 		$scope.save = function save() {
+			if ($scope.validate()) {
+				// Alter the "busy" indicator text to reflect operation
+				$rootScope.workingMessage = 'Saving';
 
-			// Alter the "busy" indicator text to reflect operation
-			$rootScope.workingMessage = 'Saving';
+				// Manually fade in "busy" indicator
+				$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
 
-			// Manually fade in "busy" indicator
-			$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
+				// Save the Lead using the Lead resource
+				Lead.
+					save($scope.lead).
+					$promise.
+					then(function(payload) {
+						// Set the lead in scope
+						$scope.lead = payload.lead;
 
-			// Save the Lead using the Lead resource
-			Lead.
-				save($scope.lead).
-				$promise.
-				then(function(payload) {
-					// Set the lead in scope
-					$scope.lead = payload.lead;
+						// Set the page title
+						$scope.setTitle();
 
-					// Set the page title
-					$scope.setTitle();
+						// Manually fade out the "busy" indicator
+						$('.loading-indicator').fadeOut(100).addClass('ng-hide');
 
-					// Manually fade out the "busy" indicator
-					$('.loading-indicator').fadeOut(100).addClass('ng-hide');
-
-					// Show a confirmation dialog
-					ngDialog.open(
-						{
-							plain: true,
-							className: 'dialog-save ngdialog-theme-default',
-							template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Your changes have been saved.</span>'
-						}
-					);
-				});
+						// Show a confirmation dialog
+						ngDialog.open(
+							{
+								plain: true,
+								className: 'dialog-save ngdialog-theme-default',
+								template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Your changes have been saved.</span>'
+							}
+						);
+					});
+			}
 		};
+		/**
+		 * Validate the form
+		 * @return {[bool]} is validated
+		 */
+		$scope.validate = function validate() {
+			$scope.submitted = true;
+			return ! ($scope.leadForm.first_name.$invalid || $scope.leadForm.last_name.$invalid);
+		}
+
+		$rootScope.isLoggedIn = true
 	}])
 })(jQuery);

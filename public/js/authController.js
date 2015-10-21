@@ -3,7 +3,7 @@
 
 	angular.
 		module('authControllers', ['satellizer']).
-		controller('AuthController', ['$auth', '$state', '$scope', '$rootScope', function($auth, $state, $scope, $rootScope) {
+		controller('AuthController', ['$auth', '$state', '$scope', '$rootScope', 'loginService', function($auth, $state, $scope, $rootScope, loginService) {
 			// Use http-auth-interceptor to show error
 			$rootScope.$on('event:auth-loginRequired', function(event, data) {
 				$scope.errors = ['error'];

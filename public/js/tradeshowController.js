@@ -173,6 +173,7 @@
 		$scope.leadCount = 0;
 		$scope.isNew = false;
 		$scope.leads = [];
+		$scope.submitted = false;
 
 		// Get the Tradeshow using the Tradeshow resource
 		Tradeshow.
@@ -212,33 +213,43 @@
 		 * @return {[void]}
 		 */
 		$scope.save = function save() {
-			// Alter the "busy" indicator message
-			$rootScope.workingMessage = 'Saving';
+			if ($scope.validate()) {
+				// Alter the "busy" indicator message
+				$rootScope.workingMessage = 'Saving';
 
-			// Manually fade in "busy" indicator
-			$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
+				// Manually fade in "busy" indicator
+				$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
 
-			// Use Tradeshow resource to save currently scoped tradeshow
-			Tradeshow.save($scope.tradeshow).$promise.then(function(payload) {
-				// Set the tradeshow in scope
-				$scope.tradeshow = payload.tradeshow;
+				// Use Tradeshow resource to save currently scoped tradeshow
+				Tradeshow.save($scope.tradeshow).$promise.then(function(payload) {
+					// Set the tradeshow in scope
+					$scope.tradeshow = payload.tradeshow;
 
-				// Set the page title
-				$scope.setTitle();
+					// Set the page title
+					$scope.setTitle();
 
-				// Manually fade out "busy" indicator
-				$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+					// Manually fade out "busy" indicator
+					$('.loading-indicator').fadeOut(100).addClass('ng-hide');
 
-				// Show confirmation dialog
-				ngDialog.open(
-					{	
-						plain: true, 
-						className: 'dialog-save ngdialog-theme-default',
-						template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Your changes have been saved.</span>'
-					}
-				);
-			});
+					// Show confirmation dialog
+					ngDialog.open(
+						{	
+							plain: true, 
+							className: 'dialog-save ngdialog-theme-default',
+							template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Your changes have been saved.</span>'
+						}
+					);
+				});
+			}
 		};
+
+		/**
+		 * Validate the form
+		 */
+		$scope.validate = function validate() {
+			$scope.submitted = true
+			return ! ($scope.tradeshowForm.name.$invalid || $scope.tradeshowForm.location.$invalid);
+		}
 
 		/**
 		 * Handle successful fetch of leads from leadService
@@ -323,6 +334,7 @@
 				$scope.refreshLeads(1);
 			}
 		};
+		$rootScope.isLoggedIn = true;
 	}]);
 
 	/**
@@ -336,6 +348,8 @@
 		$scope.isNew = true;
 		$scope.model = 'tradeshow';
 		$scope.title = 'Create new Tradeshow';
+		$scope.tradeshow = {};
+		$scope.submitted = false;
 
 		// Check API access, refresh token
 		jwtRefreshService.checkApiAccess();
@@ -355,42 +369,53 @@
 		 * @return {[void]}
 		 */
 		$scope.save = function save() {
-			// Alter the working message, manually fade in "busy" indicator
-			$rootScope.workingMessage = 'Saving new';
-			$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
+			if ($scope.validate()) {
+				// Alter the working message, manually fade in "busy" indicator
+				$rootScope.workingMessage = 'Saving new';
+				$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
 
-			// Collect 'active' value if it is not set
-			if (!$scope.tradeshow.hasOwnProperty('active')) {
-				$scope.tradeshow.active = $('input[name="active"]')[0].checked;
+				// Collect 'active' value if it is not set
+				if (!$scope.tradeshow.hasOwnProperty('active')) {
+					$scope.tradeshow.active = $('input[name="active"]')[0].checked;
+				}
+
+				// Create Tradeshow using Tradeshow resource
+				Tradeshow.create($scope.tradeshow).$promise.then(function(payload) {
+					var tradeshow_id = payload.tradeshow.id;
+
+					// Fade out the "busy" indicator
+					$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+
+					// Show a confirmation dialog
+					ngDialog.open(
+						{
+							plain: true, 
+							className: 'dialog-save ngdialog-theme-default',
+							template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>The new tradeshow has been created successfully.</span>'
+						}
+					).
+					closePromise.
+					then(function(data) {
+						// Navigate to the new tradeshow's Edit page on dialog close
+						window.location.hash = '#/tradeshows/' + tradeshow_id + '/edit';
+					});
+				})
 			}
-
-			// Create Tradeshow using Tradeshow resource
-			Tradeshow.create($scope.tradeshow).$promise.then(function(payload) {
-				var tradeshow_id = payload.tradeshow.id;
-
-				// Fade out the "busy" indicator
-				$('.loading-indicator').fadeOut(100).addClass('ng-hide');
-
-				// Show a confirmation dialog
-				ngDialog.open(
-					{
-						plain: true, 
-						className: 'dialog-save ngdialog-theme-default',
-						template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>The new tradeshow has been created successfully.</span>'
-					}
-				).
-				closePromise.
-				then(function(data) {
-					// Navigate to the new tradeshow's Edit page on dialog close
-					window.location.hash = '#/tradeshows/' + tradeshow_id + '/edit';
-				});
-			})
+		}
+		/**
+		 * Validate the form
+		 */
+		$scope.validate = function validate() {
+			$scope.submitted = true
+			return ! ($scope.tradeshowForm.name.$invalid || $scope.tradeshowForm.location.$invalid);
 		}
 		
 		// Ensure "busy" indicator is hidden
 		setTimeout(function() {
 			$('.loading-indicator').fadeOut(100).addClass('ng-hide');
 		},100);
+
+		$rootScope.isLoggedIn = true;
 	}]);
 
 })(jQuery);

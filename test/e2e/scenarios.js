@@ -104,95 +104,52 @@ describe('TSPortal', function() {
           expect(url).toEqual('/tradeshows/create');
         });
     });
+    it('should have blank values on create page', function() {
+      var tradeshow_name = element(by.model('tradeshow.name'));
+      expect(tradeshow_name.getText()).toEqual('');
+    })
+    it('should input values into the new tradeshow form', function() {
+      var tradeshow_name = element(by.model('tradeshow.name'));
+      tradeshow_name.sendKeys('protractor test');
+      expect(tradeshow_name.getAttribute('value')).toEqual('protractor test');
+
+      var tradeshow_location = element(by.model('tradeshow.location'));
+      tradeshow_location.sendKeys('protractor test');
+      expect(tradeshow_location.getAttribute('value')).toEqual('protractor test');
+
+      var tradeshow_active = element(by.model('tradeshow.active'));
+      element.all(by.css('.bootstrap-switch-handle-off')).click()
+      expect(tradeshow_active.isSelected()).toBeTruthy()
+    });
+    it('should submit the form and end up on the new tradeshow\'s detail page', function() {
+      element(by.id('save')).click().then(function() {
+        element(by.css('.ngdialog')).click().then(function() {
+          browser.getLocationAbsUrl().then(function(url) {
+            expect(url).toMatch('/{1}tradeshows/{1}[0-9]+/{1}edit')
+          });
+        })
+      });
+    });
+    it('should go back to tradeshow listing page and delete the new tradeshow', function() {
+        browser.get('/#/tradeshows').then(function() {
+          var tradeshows = element.all(by.repeater('tradeshow in tradeshows'));
+          element(by.model('orderBy')).element(by.css('option[value="id"]')).click();
+          element(by.model('orderByReverse')).element(by.css('option[value="1"]')).click();
+          var query = element(by.model('query'));
+          query.sendKeys('protractor test');
+          expect(tradeshows.count()).toEqual(1);
+          tradeshows.get(0).element(by.css('.btn-danger')).click()
+          element(by.css('.ngdialog .btn-danger')).click().then(function() {
+          })
+       })
+    });
+    it('should not be able to find the deleted tradeshow.', function() {
+      var tradeshows = element.all(by.repeater('tradeshow in tradeshows'));
+      element(by.model('orderBy')).element(by.css('option[value="id"]')).click();
+      element(by.model('orderByReverse')).element(by.css('option[value="1"]')).click();
+      var query = element(by.model('query'));
+      query.sendKeys('protractor test');
+      expect(tradeshows.count()).toEqual(0);
+    });
   })
 });
-
-
-
-//   describe('Phone list view', function() {
-
-//     beforeEach(function() {
-//       browser.get('app/index.html#/phones');
-//     });
-
-
-//     it('should filter the phone list as a user types into the search box', function() {
-
-//       var phoneList = element.all(by.repeater('phone in phones'));
-//       var query = element(by.model('query'));
-
-//       expect(phoneList.count()).toBe(20);
-
-//       query.sendKeys('nexus');
-//       expect(phoneList.count()).toBe(1);
-
-//       query.clear();
-//       query.sendKeys('motorola');
-//       expect(phoneList.count()).toBe(8);
-//     });
-
-
-//     it('should be possible to control phone order via the drop down select box', function() {
-
-//       var phoneNameColumn = element.all(by.repeater('phone in phones').column('phone.name'));
-//       var query = element(by.model('query'));
-
-//       function getNames() {
-//         return phoneNameColumn.map(function(elm) {
-//           return elm.getText();
-//         });
-//       }
-
-//       query.sendKeys('tablet'); //let's narrow the dataset to make the test assertions shorter
-
-//       expect(getNames()).toEqual([
-//         "Motorola XOOM\u2122 with Wi-Fi",
-//         "MOTOROLA XOOM\u2122"
-//       ]);
-
-//       element(by.model('orderProp')).element(by.css('option[value="name"]')).click();
-
-//       expect(getNames()).toEqual([
-//         "MOTOROLA XOOM\u2122",
-//         "Motorola XOOM\u2122 with Wi-Fi"
-//       ]);
-//     });
-
-
-//     it('should render phone specific links', function() {
-//       var query = element(by.model('query'));
-//       query.sendKeys('nexus');
-//       element.all(by.css('.phones li a')).first().click();
-//       browser.getLocationAbsUrl().then(function(url) {
-//         expect(url).toEqual('/phones/nexus-s');
-//       });
-//     });
-//   });
-
-
-//   describe('Phone detail view', function() {
-
-//     beforeEach(function() {
-//       browser.get('app/index.html#/phones/nexus-s');
-//     });
-
-
-//     it('should display nexus-s page', function() {
-//       expect(element(by.binding('phone.name')).getText()).toBe('Nexus S');
-//     });
-
-
-//     it('should display the first phone image as the main phone image', function() {
-//       expect(element(by.css('img.phone')).getAttribute('src')).toMatch(/img\/phones\/nexus-s.0.jpg/);
-//     });
-
-
-//     it('should swap main image if a thumbnail image is clicked on', function() {
-//       element(by.css('.phone-thumbs li:nth-child(3) img')).click();
-//       expect(element(by.css('img.phone')).getAttribute('src')).toMatch(/img\/phones\/nexus-s.2.jpg/);
-
-//       element(by.css('.phone-thumbs li:nth-child(1) img')).click();
-//       expect(element(by.css('img.phone')).getAttribute('src')).toMatch(/img\/phones\/nexus-s.0.jpg/);
-//     });
-//   });
-// });

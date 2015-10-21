@@ -13,7 +13,8 @@ var tsportal = angular.module('tsportal', [
     'ngAnimate',
     'ngDialog',
     'http-auth-interceptor',
-    'jwtRefreshService'
+    'jwtRefreshService',
+    'loginService'
 ]);
 
 tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtInterceptorProvider', '$authProvider',
@@ -49,7 +50,7 @@ tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtIn
             state('tradeshowCreate', {
                 url: '/tradeshows/create',
                 templateUrl: '../partials/tradeshow-detail.html',
-                controller: 'TradeshowCreateController as tradeshowCtrl'
+                controller: 'TradeshowCreateController'
             }).
             state('leadEdit', {
                 url:'/leads/:id/edit',

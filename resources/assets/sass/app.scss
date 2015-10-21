@@ -37,7 +37,7 @@ table>tbody>tr.clickable
 	margin-bottom: 1em;
 	label 
 	{
-		display:block;
+		display:inline-block;
 		margin-right: 0.5em;
 	}
 	input[type="text"],
@@ -47,6 +47,26 @@ table>tbody>tr.clickable
 		display:block;
 		width: 100%;
 		padding:2.5px 5px;
+	}
+	&.required {
+		label {
+			position: relative;
+		}
+		label:after {
+			content: "*";
+			color: red;
+			position:absolute;
+			right: -15px;
+			top: 0px;
+			height: 10px;
+			width: 10px;
+		}
+	}
+	.bootstrap-switch {
+		display: block;
+	}
+	&:nth-child(2n+1) {
+		clear: left;
 	}
 }
 .toolbar
@@ -255,4 +275,8 @@ table>tbody>tr.clickable
 .navbar-text {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+.omega {
+	clear: left;
 }
