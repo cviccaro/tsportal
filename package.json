@@ -17,7 +17,14 @@
     "phantomjs": "^1.9.18",
     "protractor": "^2.1.0",
     "shelljs": "^0.2.6",
-    "tmp": "0.0.23"
+    "tmp": "0.0.23",
+    "mocha": "*",
+    "karma-mocha": "*",
+    "karma-chai": "*",
+    "istanbul": "*",
+    "intestify": "*",
+    "jasmine-istanbul-reporter": "*",
+    "karma-coverage": "*"
   },
   "dependencies": {
     "laravel-elixir": "^3.0.0",

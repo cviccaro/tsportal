@@ -1,9 +1,20 @@
-module.exports = function(config){
+// Karma configuration
+// Generated on Fri Oct 23 2015 08:47:41 GMT-0400 (EDT)
+
+module.exports = function(config) {
   config.set({
 
-    basePath : '../',
+    // base path that will be used to resolve all patterns (eg. files, exclude)
+    basePath: '../',
 
-    files : [
+
+    // frameworks to use
+    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
+    frameworks: ['jasmine'],
+
+
+    // list of files / patterns to load in the browser
+    files: [
       'public/bower_components/angular/angular.js',
       'public/bower_components/angular-resource/angular-resource.js',
       'public/bower_components/angular-ui-router/release/angular-ui-router.js',
@@ -19,39 +30,51 @@ module.exports = function(config){
       'test/unit/**/*.js'
     ],
 
-    autoWatch : true,
 
-    frameworks: ['jasmine'],
+    // list of files to exclude
+    exclude: [
+    ],
+
+
+    // preprocess matching files before serving them to the browser
+    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+    preprocessors: {
+      'public/js/authController.js': 'coverage',
+      'public/js/leadController.js': 'coverage',
+      'public/js/tradeshowController.js': 'coverage',
+      'public/js/services.js': 'coverage'
+    },
+
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['spec'],
+    reporters: ['progress', 'coverage'],
+
+
+    // web server port
+    port: 9876,
+
+
+    // enable / disable colors in the output (reporters and logs)
+    colors: true,
+
 
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
 
-    // enable / disable colors in the output (reporters and logs)
-    colors: true,
 
-    browsers : [
-      'PhantomJS'
-      //'Chrome'
-    ],
+    // enable / disable watching file and executing tests whenever any file changes
+    autoWatch: true,
 
-    plugins : [
-            "karma-spec-reporter",
-            'karma-chrome-launcher',
-            "karma-phantomjs-launcher",
-         //   'karma-firefox-launcher',
-            'karma-jasmine'
-            ],
 
-    junitReporter : {
-      outputFile: 'test_out/unit.xml',
-      suite: 'unit'
-    }
+    // start these browsers
+    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+    browsers: ['PhantomJS'],
 
-  });
-};
+    // Continuous Integration mode
+    // if true, Karma captures browsers, runs the tests and exits
+    singleRun: false,
+  })
+}

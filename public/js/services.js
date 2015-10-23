@@ -51,16 +51,52 @@
 		}
 	}]);
 	
+	/**
+	 * Wrapper around $auth service
+	 */
 	var loginService = angular.module('loginService',[]);
-	loginService.factory('loginService', function loginService() {
+	loginService.factory('loginService', ['$auth', function loginService($auth) {
 		return {
 			isValidEmail: function(email) {
 				var pattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 			    return pattern.test(email);
+			},
+			authenticate: function(credentials) {
+				return $auth.login(credentials);
+			},
+			logout: function() {
+				return $auth.logout();
 			}
 		};
-	});
+	}]);
 
+	/**
+	 * Busy Indicator Service
+	 */
+	var busyService = angular.module('busyService',[]);
+	busyService.factory('busyService', ['$rootScope', function busyService($rootScope) {
+		var message, visible = false;
+		return {
+			setMessage: function(msg) {
+				$rootScope.workingMessage = msg;
+				message = msg;
+			},
+			getMessage: function() {
+				return message;
+			},
+			show: function() {
+				$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
+				visible = true;
+			},
+			hide: function() {
+				$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+				visible = false;
+			},
+			isVisible: function() {
+				return visible;
+			}
+		};
+	}]);
 	/**
 	 * Tradeshow Services module
 	 */
@@ -83,7 +119,7 @@
 	}]);
 
 	// Tradeshow service to retrieve paginated, sorted lists of Tradeshows
-	tradeshowServices.factory('tradeshowService', ['$http', 'Tradeshow', '$rootScope', 'ngDialog', function($http, Tradeshow, $rootScope, ngDialog) {
+	tradeshowServices.factory('tradeshowService', ['$http', 'Tradeshow', '$rootScope', 'ngDialog', 'busyService', function($http, Tradeshow, $rootScope, ngDialog, busyService) {
 		var tradeshows = [],
 			current_page = 1,
 			last_page = 0,
@@ -123,6 +159,22 @@
 							console.log('error getting tradeshows: ', payload)
 						});
 				},
+				retrievePromise: function(pageNumber, perPage, orderBy, orderByReverse) {
+					if(pageNumber===undefined){
+						pageNumber = '1';
+					}
+					if (orderBy===undefined) {
+						orderBy = 'id';
+					}
+					if (orderByReverse===undefined) {
+						orderByReverse = 0;
+					}
+					if (perPage===undefined) {
+						perPage = 15;
+					}
+					return $http.
+						get('api/tradeshows?page='+pageNumber+'&perPage=' + perPage + '&orderBy=' + orderBy + '&orderByReverse=' + parseInt(orderByReverse));
+				},
 				getCurrentPage:function() {
 					return current_page;
 				},
@@ -147,13 +199,16 @@
 						}
 					).
 					then(function() {
-						$rootScope.workingMessage = 'Deleting';
-						$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
+						// Alter the working message, show working indicator
+						busyService.setMessage('Deleting');
+						busyService.show();
 						Tradeshow.
 							delete({tradeshowId:tradeshow_id}).
 							$promise.
 							then(function(payload) {
-								$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+
+								busyService.hide();
+
 								if (payload.hasOwnProperty('success') && payload.success == true) {
 									ngDialog.open({
 										plain: true,
@@ -173,7 +228,9 @@
 									})
 								}
 							}, function(errorResponse) {
-								$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+
+								busyService.hide();
+
 								ngDialog.open({
 									plain: true,
 									className: 'dialog-error ngdialog-theme-default',
@@ -197,7 +254,7 @@
 	}]);
 
 	// Lead service for fetching paginated, sorted lists of Leads
-	leadServices.factory('leadService', ['$http', 'Lead', 'ngDialog', '$rootScope', function($http, Lead, ngDialog, $rootScope) {
+	leadServices.factory('leadService', ['$http', 'Lead', 'ngDialog', '$rootScope', 'busyService', function($http, Lead, ngDialog, $rootScope, busyService) {
 		var currentTradeshowId = null,
 			leads = [],
 			current_page = 1,
@@ -262,13 +319,15 @@
 					}
 				).
 				then(function() {
-					$rootScope.workingMessage = 'Deleting';
-					$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
+					busyService.setMessage('Deleting');
+					busyService.show();
 					Lead.
 						delete({id:lead.id}).
 						$promise.
 						then(function(payload) {
-							$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+
+							busyService.hide();
+
 							if (payload.hasOwnProperty('success') && payload.success == true) {
 								ngDialog.open({
 									plain: true,
@@ -288,7 +347,9 @@
 								})
 							}
 						}, function(errorResponse) {
-							$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+							
+							busyService.hide();
+
 							ngDialog.open({
 								plain: true,
 								className: 'dialog-error ngdialog-theme-default',

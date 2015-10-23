@@ -3,7 +3,7 @@
 
 	angular.
 		module('authControllers', ['satellizer']).
-		controller('AuthController', ['$auth', '$state', '$scope', '$rootScope', 'loginService', function($auth, $state, $scope, $rootScope, loginService) {
+		controller('AuthController', ['$state', '$scope', '$rootScope', 'loginService', function($state, $scope, $rootScope, loginService) {
 			// Use http-auth-interceptor to show error
 			$rootScope.$on('event:auth-loginRequired', function(event, data) {
 				$scope.errors = ['error'];
@@ -21,7 +21,7 @@
 				};
 
 				// Use satellizer's $auth service to login
-				$auth.login(credentials)
+				loginService.authenticate(credentials)
 					.then(function authLoginSuccess(payload) {
 						// set a copy of the token to use for refresh requests
 						localStorage.setItem('_satellizer_token', payload.data.token);
@@ -32,8 +32,8 @@
 					});
 			};
 		}]).
-		controller('LogoutController', ['$auth', '$state', '$scope', function($auth, $state, $scope) {
-			$auth.logout();
+		controller('LogoutController', ['loginService', '$state', '$scope', function(loginService, $state, $scope) {
+			loginService.logout();
 			$state.go('auth');
 		}]);
 })(jQuery);

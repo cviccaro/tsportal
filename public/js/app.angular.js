@@ -1,20 +1,23 @@
 'use strict';
 
 var tsportal = angular.module('tsportal', [
+    // Contrib
     'ui.router',
+    'angular-jwt',
+    'angular-spinkit',
+    'ngAnimate',
+    'ngDialog',
     'satellizer',
+    'http-auth-interceptor',
+    // Custom
     'tradeshowServices',
     'leadServices',
     'authControllers',
     'tradeshowControllers',
     'leadControllers',
-    'angular-jwt',
-    'angular-spinkit',
-    'ngAnimate',
-    'ngDialog',
-    'http-auth-interceptor',
     'jwtRefreshService',
-    'loginService'
+    'loginService',
+    'busyService'
 ]);
 
 tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtInterceptorProvider', '$authProvider',
@@ -117,8 +120,8 @@ tsportal.directive('bs', function() {
     }
 });
 
-tsportal.directive('stateLoadingIndicator', function($rootScope) {
-  $rootScope.workingMessage = 'Loading';
+tsportal.directive('stateLoadingIndicator', ['busyService', '$rootScope', function(busyService, $rootScope) {
+  busyService.setMessage('Loading');
   return {
     restrict: 'E',
     template: "<div ng-show='isStateLoading' class='loading-indicator'>" +
@@ -142,7 +145,7 @@ tsportal.directive('stateLoadingIndicator', function($rootScope) {
       });
     }
   };
-});
+}]);
 
 tsportal.filter('unsafe', function($sce) {
     return function(val) {

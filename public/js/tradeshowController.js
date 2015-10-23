@@ -9,7 +9,9 @@
 	 * ------------------------------------------------------
 	 * Displays a paginated, filtered table of all tradeshows.
 	 */
-	tradeshowControllers.controller('TradeshowController', ['$rootScope', '$scope', 'Tradeshow', '$http', 'leadService', 'tradeshowService', 'ngDialog', '$state', 'authService', 'jwtRefreshService', function TradeshowController($rootScope, $scope, Tradeshow, $http, leadService, tradeshowService, ngDialog, $state, authService, jwtRefreshService) {
+	tradeshowControllers.controller('TradeshowController', 
+		['$rootScope', '$scope', 'Tradeshow', '$http', 'leadService', 'tradeshowService', 'ngDialog', '$state', 'authService', 'jwtRefreshService', 
+		function TradeshowController($rootScope, $scope, Tradeshow, $http, leadService, tradeshowService, ngDialog, $state, authService, jwtRefreshService) {
 		// No token, no access
 		jwtRefreshService.checkApiAccess();
 
@@ -161,7 +163,9 @@
 	 * ---------------------------------
 	 * Displays an edit form for a tradeshow
 	 */
-	tradeshowControllers.controller('TradeshowDetailController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadService', '$state', 'jwtRefreshService', function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadService, $state, jwtRefreshService) {
+	tradeshowControllers.controller('TradeshowDetailController', 
+		['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadService', '$state', 'jwtRefreshService', 'busyService',
+		function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadService, $state, jwtRefreshService, busyService) {
 		// Check API Access, refresh token
 		jwtRefreshService.checkApiAccess();
 
@@ -181,7 +185,7 @@
 			$promise.
 			then(function(data) {
 				$scope.tradeshow = data.tradeshow;
-				$scope.title = 'Editing Tradeshow ' + $scope.tradeshow.name;
+				$scope.setTitle();
 				if ($scope.tradeshow.active == 1) {
 					jQuery('input[name="active"]').bootstrapSwitch('state', true)
 				}
@@ -204,7 +208,7 @@
 		 * @return {[void]}
 		 */
 		$scope.goBack = function goBack() {
-			window.location.hash = '#/tradeshows';
+			$state.go('tradeshows');
 		};
 
 		/**
@@ -215,10 +219,10 @@
 		$scope.save = function save() {
 			if ($scope.validate()) {
 				// Alter the "busy" indicator message
-				$rootScope.workingMessage = 'Saving';
+				busyService.setMessage('Saving');
 
 				// Manually fade in "busy" indicator
-				$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
+				busyService.show();
 
 				// Use Tradeshow resource to save currently scoped tradeshow
 				Tradeshow.save($scope.tradeshow).$promise.then(function(payload) {
@@ -229,7 +233,7 @@
 					$scope.setTitle();
 
 					// Manually fade out "busy" indicator
-					$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+					busyService.hide();
 
 					// Show confirmation dialog
 					ngDialog.open(
@@ -343,7 +347,9 @@
 	 *--------------------------------------
 	 * Displays a form for the creation of a new tradeshow
 	 */
-	tradeshowControllers.controller('TradeshowCreateController', ['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', '$state', 'jwtRefreshService', function TradeshowCreateController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, $state, jwtRefreshService) {
+	tradeshowControllers.controller('TradeshowCreateController', 
+		['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', '$state', 'jwtRefreshService', 'busyService',
+		function TradeshowCreateController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, $state, jwtRefreshService, busyService) {
 		// Scope variables
 		$scope.isNew = true;
 		$scope.model = 'tradeshow';
@@ -360,7 +366,7 @@
 		 * @return {[void]}
 		 */
 		$scope.goBack = function goBack() {
-			window.location.hash = '#/tradeshows';
+			$state.go('tradeshows');
 		};
 
 		/**
@@ -370,9 +376,9 @@
 		 */
 		$scope.save = function save() {
 			if ($scope.validate()) {
-				// Alter the working message, manually fade in "busy" indicator
-				$rootScope.workingMessage = 'Saving new';
-				$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
+				// Alter the working message, show working indicator
+				busyService.setMessage('Saving new');
+				busyService.show();
 
 				// Collect 'active' value if it is not set
 				if (!$scope.tradeshow.hasOwnProperty('active')) {
@@ -384,7 +390,7 @@
 					var tradeshow_id = payload.tradeshow.id;
 
 					// Fade out the "busy" indicator
-					$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+					busyService.hide();
 
 					// Show a confirmation dialog
 					ngDialog.open(
@@ -412,7 +418,7 @@
 		
 		// Ensure "busy" indicator is hidden
 		setTimeout(function() {
-			$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+			busyService.hide();
 		},100);
 
 		$rootScope.isLoggedIn = true;

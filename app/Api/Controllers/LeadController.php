@@ -36,7 +36,9 @@ class LeadController extends Controller {
 		$data = new stdClass();
 		
 		$data->tradeshow_id = $request->input('tradeshow_id');
-		$data->objectID = $request->input("objectid");
+		if ($request->has('objectid')) {
+			$data->objectID = $request->input("objectid");
+		}
         $data->first_name = $request->input("first_name");
         $data->last_name = $request->input("last_name");
         $data->title = $request->input("title");
@@ -71,7 +73,9 @@ class LeadController extends Controller {
 		$lead = new Lead();
 
 		$lead->tradeshow_id = $data['tradeshow_id'];
-		$lead->objectID = $data['objectid'];
+		if (isset($data['objectID'])) {
+			$lead->objectID = $data['objectID'];
+		}
         $lead->first_name = $data["first_name"];
         $lead->last_name = $data["last_name"];
         $lead->title = $data["title"];
@@ -149,19 +153,6 @@ class LeadController extends Controller {
 	}
 
 	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		$lead = Lead::findOrFail($id);
-		$tradeshows = Tradeshow::all();
-		return view('leads.edit', array_merge(compact('lead'), ['tradeshows' => $tradeshows]));
-	}
-
-	/**
 	 * Update the specified resource in storage.
 	 *
 	 * @param  int  $id
@@ -173,7 +164,9 @@ class LeadController extends Controller {
 		$lead = Lead::findOrFail($id);
 
 		$lead->tradeshow_id = $request->input('tradeshow_id');
-		$lead->objectID = $request->input("objectid");
+		if ($request->has('objectID')) {
+			$lead->objectID = $request->input("objectID");
+		}
         $lead->first_name = $request->input("first_name");
         $lead->last_name = $request->input("last_name");
         $lead->title = $request->input("title");

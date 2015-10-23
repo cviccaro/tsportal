@@ -6,7 +6,9 @@
 	 * Edit Lead Controller
 	 * @class LeadController
 	 */
-	leadControllers.controller('LeadController', ['$rootScope', '$scope', '$stateParams', 'Lead', 'ngDialog', 'Tradeshow', '$state', 'jwtRefreshService', function LeadController($rootScope, $scope, $stateParams, Lead, ngDialog, Tradeshow, $state, jwtRefreshService) {
+	leadControllers.controller('LeadController', 
+		['$rootScope', '$scope', '$stateParams', 'Lead', 'ngDialog', 'Tradeshow', '$state', 'jwtRefreshService', 'busyService',
+		function LeadController($rootScope, $scope, $stateParams, Lead, ngDialog, Tradeshow, $state, jwtRefreshService, busyService) {
 
 		// Check API Access,refresh token if needed
 		jwtRefreshService.checkApiAccess();
@@ -63,11 +65,9 @@
 		 */
 		$scope.save = function save() {
 			if ($scope.validate()) {
-				// Alter the "busy" indicator text to reflect operation
-				$rootScope.workingMessage = 'Saving';
-
-				// Manually fade in "busy" indicator
-				$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
+				// Alter the working message, show working indicator
+				busyService.setMessage('Saving');
+				busyService.show();
 
 				// Save the Lead using the Lead resource
 				Lead.
@@ -81,7 +81,7 @@
 						$scope.setTitle();
 
 						// Manually fade out the "busy" indicator
-						$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+						busyService.hide();
 
 						// Show a confirmation dialog
 						ngDialog.open(
