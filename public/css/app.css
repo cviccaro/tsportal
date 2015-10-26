@@ -152,7 +152,15 @@ table > tbody > tr.clickable.active > td {
   text-align: center;
 }
 
-/* line 143, ../../resources/assets/sass/app.scss */
+/* line 144, ../../resources/assets/sass/app.scss */
+.icon-medium {
+  font-size: 18px;
+  margin-right: 0.66em;
+  position: relative;
+  top: 2px;
+}
+
+/* line 150, ../../resources/assets/sass/app.scss */
 .icon-large {
   font-size: 28px;
   margin: 0;
@@ -161,40 +169,40 @@ table > tbody > tr.clickable.active > td {
   margin-right: 1em;
 }
 
-/* line 151, ../../resources/assets/sass/app.scss */
+/* line 158, ../../resources/assets/sass/app.scss */
 .icon-float {
   float: left;
 }
 
-/* line 157, ../../resources/assets/sass/app.scss */
+/* line 165, ../../resources/assets/sass/app.scss */
 .ngdialog.ngdialog-theme-default.dialog-save .ngdialog-content {
   min-height: 72px;
   width: 375px;
 }
 
-/* line 163, ../../resources/assets/sass/app.scss */
+/* line 171, ../../resources/assets/sass/app.scss */
 .dialog-buttons {
   margin: 1em 0 0 0;
 }
 
-/* line 167, ../../resources/assets/sass/app.scss */
+/* line 175, ../../resources/assets/sass/app.scss */
 .form-signin {
   max-width: 330px;
   padding: 15px;
   margin: 0 auto;
 }
 
-/* line 173, ../../resources/assets/sass/app.scss */
+/* line 181, ../../resources/assets/sass/app.scss */
 .form-signin .form-signin-heading, .form-signin .checkbox {
   margin-bottom: 10px;
 }
 
-/* line 177, ../../resources/assets/sass/app.scss */
+/* line 185, ../../resources/assets/sass/app.scss */
 .form-signin .checkbox {
   font-weight: normal;
 }
 
-/* line 181, ../../resources/assets/sass/app.scss */
+/* line 189, ../../resources/assets/sass/app.scss */
 .form-signin .form-control {
   position: relative;
   font-size: 16px;
@@ -205,32 +213,32 @@ table > tbody > tr.clickable.active > td {
   box-sizing: border-box;
 }
 
-/* line 189, ../../resources/assets/sass/app.scss */
+/* line 197, ../../resources/assets/sass/app.scss */
 .form-signin .form-control:focus {
   z-index: 2;
 }
 
-/* line 193, ../../resources/assets/sass/app.scss */
+/* line 201, ../../resources/assets/sass/app.scss */
 .form-signin input[type="text"] {
   margin-bottom: -1px;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-/* line 199, ../../resources/assets/sass/app.scss */
+/* line 207, ../../resources/assets/sass/app.scss */
 .form-signin input[type="password"] {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
 
-/* line 205, ../../resources/assets/sass/app.scss */
+/* line 213, ../../resources/assets/sass/app.scss */
 .account-wall {
   margin-top: 20px;
   padding: 40px 0px 20px 0px;
 }
 
-/* line 210, ../../resources/assets/sass/app.scss */
+/* line 218, ../../resources/assets/sass/app.scss */
 .login-title {
   color: #555;
   font-size: 18px;
@@ -238,7 +246,7 @@ table > tbody > tr.clickable.active > td {
   display: block;
 }
 
-/* line 217, ../../resources/assets/sass/app.scss */
+/* line 225, ../../resources/assets/sass/app.scss */
 .profile-img {
   width: 96px;
   height: 96px;
@@ -249,37 +257,37 @@ table > tbody > tr.clickable.active > td {
   border-radius: 50%;
 }
 
-/* line 227, ../../resources/assets/sass/app.scss */
+/* line 235, ../../resources/assets/sass/app.scss */
 .need-help {
   margin-top: 10px;
 }
 
-/* line 231, ../../resources/assets/sass/app.scss */
+/* line 239, ../../resources/assets/sass/app.scss */
 .new-account {
   display: block;
   margin-top: 10px;
 }
 
-/* line 237, ../../resources/assets/sass/app.scss */
+/* line 245, ../../resources/assets/sass/app.scss */
 .pull-left.checkbox {
   position: relative;
   left: 20px;
 }
 
-/* line 243, ../../resources/assets/sass/app.scss */
+/* line 251, ../../resources/assets/sass/app.scss */
 .navbar {
   min-height: 50px;
   border: 0;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
 }
 
-/* line 249, ../../resources/assets/sass/app.scss */
+/* line 257, ../../resources/assets/sass/app.scss */
 .navbar-header {
   float: left;
   padding-left: 15px;
 }
 
-/* line 254, ../../resources/assets/sass/app.scss */
+/* line 262, ../../resources/assets/sass/app.scss */
 .navbar-brand {
   height: 50px;
   padding: 0 15px;
@@ -287,30 +295,60 @@ table > tbody > tr.clickable.active > td {
   line-height: 50px;
 }
 
-/* line 261, ../../resources/assets/sass/app.scss */
+/* line 269, ../../resources/assets/sass/app.scss */
 .navbar-nav {
   float: left;
   margin: 0;
 }
 
-/* line 266, ../../resources/assets/sass/app.scss */
+/* line 274, ../../resources/assets/sass/app.scss */
 .navbar-nav > li {
   float: left;
 }
 
-/* line 270, ../../resources/assets/sass/app.scss */
+/* line 278, ../../resources/assets/sass/app.scss */
 .navbar-nav > li > a {
   padding: 0 15px;
   line-height: 50px;
 }
 
-/* line 275, ../../resources/assets/sass/app.scss */
+/* line 283, ../../resources/assets/sass/app.scss */
 .navbar-text {
   margin-top: 10px;
   margin-bottom: 10px;
 }
 
-/* line 280, ../../resources/assets/sass/app.scss */
+/* line 288, ../../resources/assets/sass/app.scss */
 .omega {
   clear: left;
+}
+
+/* line 292, ../../resources/assets/sass/app.scss */
+.warning {
+  color: #ff9800;
+}
+
+/* line 296, ../../resources/assets/sass/app.scss */
+.danger {
+  color: #e51c23;
+}
+
+/* line 300, ../../resources/assets/sass/app.scss */
+.messages {
+  margin-left: 0;
+  margin-right: 0;
+}
+/* line 303, ../../resources/assets/sass/app.scss */
+.messages .alert {
+  float: left;
+  clear: both;
+  -moz-transition: all 0.5s linear;
+  -o-transition: all 0.5s linear;
+  -webkit-transition: all 0.5s linear;
+  transition: all 0.5s linear;
+}
+
+/* line 310, ../../resources/assets/sass/app.scss */
+.glyphicon {
+  margin-right: 0.5em;
 }

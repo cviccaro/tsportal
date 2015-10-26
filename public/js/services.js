@@ -1,61 +1,11 @@
 (function() {
 	/**
-	 * JWT Refresh Service
-	 * -------------------
-	 * Provides 2 simple methods any controller can call to check API access
-	 * and refresh token if necessary
-	 *
-	 * @method checkApiAccess()
-	 *         Check API token in localStorage, refresh if possible and needed,
-	 *         otherwise route to auth page
-	 *
-	 * 			@return {[void]}
-	 * @method refresh(token)     
-	 *         Use the passed-in (perhaps expired) token to refresh the token using
-	 *         the API
-	 *
-	 *         @param token - An api token
-	 *         @return {[$promise]}: a $q promise
-	 */
-	var jwtRefreshService = angular.module('jwtRefreshService', []);
-	jwtRefreshService.factory('jwtRefreshService', ['$http', 'authService', '$state', '$rootScope', function($http, authService, $state, $rootScope) {
-		return {
-			refresh: function(token) {
-				$http({
-					method: 'GET',
-					url: 'api/authenticate/refresh',
-					headers: {
-						'Authorization': 'Bearer ' + token
-					}
-				}).then(function(payload) {
-					localStorage.setItem('satellizer_token', payload.data.token);
-					// Save a copy of the token to use for future refresh requests
-					localStorage.setItem('_satellizer_token', payload.data.token);
-					$rootScope.isLoggedIn = true;
-					authService.loginConfirmed();
-				})
-			},
-			checkApiAccess: function() {
-				if (localStorage.getItem('satellizer_token') == null) {
-					if (localStorage.getItem('_satellizer_token') != null) {
-						// Try to refresh
-						this.refresh(localStorage.getItem('_satellizer_token'));
-					}
-					else {
-						// Go to auth view
-						$state.go('auth', {});
-						$('.loading-indicator').fadeOut(100).addClass('ng-hide');
-					}
-				}
-			}
-		}
-	}]);
-	
-	/**
 	 * Wrapper around $auth service
 	 */
 	var loginService = angular.module('loginService',[]);
-	loginService.factory('loginService', ['$auth', function loginService($auth) {
+	loginService.factory('loginService', 
+		['$auth', 'authService', '$http', '$state', '$rootScope', 
+		function loginService($auth, authService, $http, $state, $rootScope) {
 		return {
 			isValidEmail: function(email) {
 				var pattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -65,17 +15,97 @@
 				return $auth.login(credentials);
 			},
 			logout: function() {
-				return $auth.logout();
+				// Remove token
+				localStorage.removeItem('satellizer_token');
+				// Remove token copy
+				localStorage.removeItem('_satellizer_token');
+				var logout = $auth.logout();
+				$state.go('auth');
+				return logout;
+			},
+			refresh: function(token) {
+				var ajaxCall =  
+					$http({
+						method: 'GET',
+						url: 'api/authenticate/refresh',
+						headers: {
+							'Authorization': 'Bearer ' + token
+						}
+					});
+				return ajaxCall;
+			},
+			checkApiAccess: function() {
+				if (localStorage.getItem('satellizer_token') == null) {
+					if (localStorage.getItem('_satellizer_token') != null) {
+						// Try to refresh
+						this.refresh(localStorage.getItem('_satellizer_token'))
+						.then(function(payload) {
+							localStorage.setItem('satellizer_token', payload.data.token);
+							// Save a copy of the token to use for future refresh requests
+							localStorage.setItem('_satellizer_token', payload.data.token);
+							$rootScope.isLoggedIn = true;
+							authService.loginConfirmed();
+						})
+						.catch(function(payload) {
+							if (payload.status == 500) {
+								// token is totally expired, cannot be refreshed
+								localStorage.removeItem('satellizer_token');
+								localStorage.removeItem('_satellizer_token');
+								this.checkApiAccess();
+							}
+						})
+					}
+					else {
+						// Go to auth view
+						localStorage.removeItem('satellizer_token');
+						$state.go('auth', {});
+					}
+				}
 			}
 		};
 	}]);
 
 	/**
+	 * Message service
+	 */
+	var messageService = angular.module('messageService', []);
+	messageService.factory('messageService', function() {
+		var messages = [];
+		return {
+			messages: [],
+			addMessage: function(opts) {
+				opts.id = this.messages.length + 1;
+				this.messages.push(opts);
+				setTimeout(function() {
+					$('.messages .alert').css('opacity', 1);
+				},50);
+			},
+			purge: function() {
+				if (this.messages.length) {
+					for (var i = 0, msg; msg = this.messages[i]; i++) {
+						this.removeMessage(msg.id);
+					}
+				}
+			},
+			removeMessage: function(message_id) {
+				if (this.messages[message_id - 1]) {
+					var that = this;
+					$('.messages .alert').eq(message_id - 1).css('opacity', 0).on('transitionend',function() {
+						var removed = that.messages.splice(message_id - 1, 1);
+						$('.messages .alert').eq(message_id - 1).remove();
+					});
+				}
+			}
+		};
+	});
+	
+	/**
 	 * Busy Indicator Service
 	 */
 	var busyService = angular.module('busyService',[]);
 	busyService.factory('busyService', ['$rootScope', function busyService($rootScope) {
-		var message, visible = false;
+		var message = 'Working on it...', visible = false;
+		$rootScope.workingMessage = message;
 		return {
 			setMessage: function(msg) {
 				$rootScope.workingMessage = msg;
@@ -126,40 +156,7 @@
 			pages = [],
 			activeDialog;
 			return {
-				retrieve: function retrieve(pageNumber, perPage, orderBy, orderByReverse, success) {
-					if(pageNumber===undefined){
-						pageNumber = '1';
-					}
-					if (orderBy===undefined) {
-						orderBy = 'id';
-					}
-					if (orderByReverse===undefined) {
-						orderByReverse = 0;
-					}
-					if (perPage===undefined) {
-						perPage = 15;
-					}
-					return $http.
-						get('api/tradeshows?page='+pageNumber+'&perPage=' + perPage + '&orderBy=' + orderBy + '&orderByReverse=' + parseInt(orderByReverse)).
-						then(function(payload) {
-							var response = payload.data;
-
-							tradeshows = response.data;
-							current_page = response.current_page;
-							last_page = response.last_page;
-							pages = [];
-							for(var i=1;i<=response.last_page;i++) {          
-								pages.push(i);
-							}
-							if (typeof success != "undefined") {
-								success.apply(this, arguments);
-							}
-						},
-						function(payload) {
-							console.log('error getting tradeshows: ', payload)
-						});
-				},
-				retrievePromise: function(pageNumber, perPage, orderBy, orderByReverse) {
+				retrieve: function(pageNumber, perPage, orderBy, orderByReverse) {
 					if(pageNumber===undefined){
 						pageNumber = '1';
 					}
@@ -262,7 +259,7 @@
 			pages = [],
 			activeDialog;
 		return {
-			retrieveLeads: function(pageNumber, perPage, orderBy, orderByReverse, success) {
+			retrieve: function(pageNumber, perPage, orderBy, orderByReverse) {
 				if(pageNumber===undefined){
 					pageNumber = '1';
 				}
@@ -276,19 +273,7 @@
 					perPage = 15;
 				}
 				return $http.
-					get('api/tradeshows/' + currentTradeshowId + '/leads?page='+pageNumber+'&perPage='+perPage+'&orderBy=' +orderBy + '&orderByReverse=' + parseInt(orderByReverse)).
-					success(function(payload) {
-						leads = payload.data;
-						current_page = payload.current_page;
-						last_page = payload.last_page;
-						pages = [];
-						for(var i=1;i<=payload.last_page;i++) {          
-							pages.push(i);
-						}
-						if (typeof success != "undefined") {
-							success.apply(this, arguments);
-						}
-					});
+					get('api/tradeshows/' + currentTradeshowId + '/leads?page='+pageNumber+'&perPage='+perPage+'&orderBy=' +orderBy + '&orderByReverse=' + parseInt(orderByReverse));
 			},
 			setCurrentTradeshowId:function(tradeshowId) {
 				currentTradeshowId = tradeshowId;

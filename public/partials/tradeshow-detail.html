@@ -1,7 +1,7 @@
 <div class="page-header">
     <h1 ng-bind-html="title | unsafe" id="title">{{title}}</h1>
 </div>
-
+<messages></messages>
 <div class="row toolbar">
 	<button id="goBack" class="btn btn-primary" ng-click="goBack()"><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span> Go Back</button>
 	<button id="save" class="btn btn-success" ng-click="save()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save</button>
@@ -12,7 +12,8 @@
 
 <div class="row">
 <form name="tradeshowForm">
-	<div class="col-md-6 form-item required" ng-class="{'has-error': (tradeshowForm.name.$dirty || submitted) && tradeshowForm.name.$invalid && tradeshowForm.name.$error.required}">
+	<div class="col-md-6 form-item required" 
+        ng-class="{'has-error': (tradeshowForm.name.$dirty || submitted) && tradeshowForm.name.$invalid && tradeshowForm.name.$error.required}">
         <label for="name">Name</label><input id="tradeshow_name" type="text" name="name" ng-model="tradeshow.name" required />
         <span class="help-block" ng-show="(tradeshowForm.name.$dirty || submitted) && tradeshowForm.name.$invalid && tradeshowForm.name.$error.required">Tradeshow name is required.</span>
     </div>

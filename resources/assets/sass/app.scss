@@ -140,6 +140,13 @@ table>tbody>tr.clickable
 {
 	text-align: center;
 }
+
+.icon-medium {
+	font-size: 18px;
+	margin-right: 0.66em;
+	position: relative;
+	top: 2px;
+}
 .icon-large
 {
 	font-size: 28px;
@@ -152,6 +159,7 @@ table>tbody>tr.clickable
 {
 	float: left;
 }
+
 .ngdialog.ngdialog-theme-default.dialog-save
 {
 	.ngdialog-content
@@ -279,4 +287,26 @@ table>tbody>tr.clickable
 
 .omega {
 	clear: left;
+}
+
+.warning {
+	color:#ff9800;
+}
+
+.danger {
+	color:#e51c23;
+}
+
+.messages {
+	margin-left: 0;
+	margin-right: 0;
+	.alert {
+		float: left;
+		clear: both;
+		@include transition(all linear 0.5s);
+	}
+}
+
+.glyphicon {
+	margin-right: 0.5em;
 }

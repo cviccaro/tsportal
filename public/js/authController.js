@@ -3,37 +3,97 @@
 
 	angular.
 		module('authControllers', ['satellizer']).
-		controller('AuthController', ['$state', '$scope', '$rootScope', 'loginService', function($state, $scope, $rootScope, loginService) {
-			// Use http-auth-interceptor to show error
+		controller('AuthController', 
+			['$state', '$scope', '$rootScope', 'loginService', 'busyService', 'messageService',
+			function($state, $scope, $rootScope, loginService, busyService, messageService) {
+				
+			// Watch messageService messages
+			$scope.$watch(function () { return messageService.messages }, function (newVal, oldVal) {
+			    if (typeof newVal !== 'undefined') {
+			        $scope.messages = messageService.messages;
+			    }
+			});
+
+			// Respond to 401 unauthorized
 			$rootScope.$on('event:auth-loginRequired', function(event, data) {
-				$scope.errors = ['error'];
+				$scope.loginError();
 			})
-			$scope.errors = [];
+
+			// If a token is already stored, try app
 			if (localStorage.getItem('satellizer_token') != null) {
 				$state.go('tradeshows', {});
 			}
-			$('.loading-indicator').fadeOut(100).addClass('ng-hide');
+
+			// Ensure loading indicator is hidden
+			busyService.hide();
+
+			/**
+			 * Login
+			 *
+			 * Use loginService to login
+			 * 
+			 * @return {[void]}
+			 */
 			$scope.login = function login() {
-				$scope.errors = [];
 				var credentials = {
 					email: $scope.email,
 					password: $scope.password
 				};
-
+				busyService.show();
 				// Use satellizer's $auth service to login
 				loginService.authenticate(credentials)
 					.then(function authLoginSuccess(payload) {
+						busyService.hide();
 						// set a copy of the token to use for refresh requests
 						localStorage.setItem('_satellizer_token', payload.data.token);
 						$state.go('tradeshows', {});
 					})
 					.catch(function authLoginFail(payload) {
-						$scope.errors = [payload.statusText];
+						$scope.loginError();
 					});
 			};
+
+			/**
+			 * Show a login error
+			 * @param  {[type]} loginService [description]
+			 * @return {[void]}
+			 */
+			$scope.loginError = function() {
+				messageService.purge();
+				messageService.addMessage({
+					type: 'danger',
+					icon: 'exclamation-sign',
+					message: 'The email or password entered was incorrect.',
+					dismissible: true,
+					iconClass: '',
+				})
+
+				busyService.hide();
+			}
+
+			/**
+			 * Clear errors
+			 * @return {[void]}
+			 */
+			$scope.clearErrors = function() {
+				if ($scope.messages.length) {
+					for (var i = 0, msg; msg = $scope.messages[i]; i++) {
+						messageService.removeMessage(msg.id);
+					}
+				}
+			}
+
+			/**
+			 * Remove a message from messageService.
+			 * @param  {[type]} message_id [description]
+			 * @return {[void]}
+			 */
+			$scope.removeMessage = function(message_id) {
+				messageService.removeMessage(message_id);
+			};
+
 		}]).
-		controller('LogoutController', ['loginService', '$state', '$scope', function(loginService, $state, $scope) {
+		controller('LogoutController', ['loginService', function(loginService) {
 			loginService.logout();
-			$state.go('auth');
 		}]);
 })(jQuery);

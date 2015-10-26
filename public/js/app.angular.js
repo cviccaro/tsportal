@@ -15,13 +15,14 @@ var tsportal = angular.module('tsportal', [
     'authControllers',
     'tradeshowControllers',
     'leadControllers',
-    'jwtRefreshService',
     'loginService',
-    'busyService'
+    'busyService',
+    'messageService'
 ]);
 
 tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtInterceptorProvider', '$authProvider',
     function($stateProvider, $urlRouterProvider, $httpProvider, jwtInterceptorProvider, $authProvider) {
+        $httpProvider.useLegacyPromiseExtensions = false
         // Satellizer configuration that specifies which API
         // route the JWT should be retrieved from
         $authProvider.loginUrl = '/api/authenticate';
@@ -121,7 +122,6 @@ tsportal.directive('bs', function() {
 });
 
 tsportal.directive('stateLoadingIndicator', ['busyService', '$rootScope', function(busyService, $rootScope) {
-  busyService.setMessage('Loading');
   return {
     restrict: 'E',
     template: "<div ng-show='isStateLoading' class='loading-indicator'>" +
@@ -150,5 +150,23 @@ tsportal.directive('stateLoadingIndicator', ['busyService', '$rootScope', functi
 tsportal.filter('unsafe', function($sce) {
     return function(val) {
         return $sce.trustAsHtml(val);
+    };
+});
+
+tsportal.directive('messages', function() {
+    return {
+        restrict: 'E',
+        template:'<div class="row messages" ng-show="messages.length">' +
+                '<div ng-repeat="message in messages" class="alert alert-{{message.type}} {{message.dismissible ? \'alert-dismissible\' : \'\'}}" role="alert" style="opacity: 0">' +
+                    '<button type="button" class="close" ng-click="removeMessage(message.id)" data-dismiss="alert" aria-label="Close" ng-show="message.dismissible">' +
+                        '<span aria-hidden="true">×</span>' +
+                    '</button>' + 
+                    '<span class="glyphicon glyphicon-{{message.icon}} {{message.iconClass ? message.iconClass : \'\'}}" ng-show="message.hasOwnProperty(\'icon\')"></span>' +
+                    '<span>{{message.message}}</span>' +
+                '</div>' +
+            '</div>',
+        replace: true,
+        link: function(scope, elem, attrs) {
+        },
     };
 });

@@ -7,12 +7,19 @@
 	 * @class LeadController
 	 */
 	leadControllers.controller('LeadController', 
-		['$rootScope', '$scope', '$stateParams', 'Lead', 'ngDialog', 'Tradeshow', '$state', 'jwtRefreshService', 'busyService',
-		function LeadController($rootScope, $scope, $stateParams, Lead, ngDialog, Tradeshow, $state, jwtRefreshService, busyService) {
+		['$rootScope', '$scope', '$stateParams', 'Lead', 'ngDialog', 'Tradeshow', '$state', 'loginService', 'busyService', 'messageService',
+		function LeadController($rootScope, $scope, $stateParams, Lead, ngDialog, Tradeshow, $state, loginService, busyService, messageService) {
 
 		// Check API Access,refresh token if needed
-		jwtRefreshService.checkApiAccess();
+		loginService.checkApiAccess();
 		
+		// Watch messageService messages
+		$scope.$watch(function () { return messageService.messages }, function (newVal, oldVal) {
+		    if (typeof newVal !== 'undefined') {
+		        $scope.messages = messageService.messages;
+		    }
+		});
+
 		// Scope variables
 		$scope.model = 'lead';
 		$scope.title = 'Editing Lead';
@@ -83,14 +90,21 @@
 						// Manually fade out the "busy" indicator
 						busyService.hide();
 
-						// Show a confirmation dialog
-						ngDialog.open(
-							{
-								plain: true,
-								className: 'dialog-save ngdialog-theme-default',
-								template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Your changes have been saved.</span>'
-							}
-						);
+						// Show success alert
+						messageService.addMessage({
+							icon: 'ok', 
+							type: 'success', 
+							iconClass: 'icon-medium',
+							dismissible: true, 
+							message: 'Your changes have been saved'
+						});
+
+						// // Show a confirmation dialog
+						// ngDialog.open({
+						// 	plain: true,
+						// 	className: 'dialog-save ngdialog-theme-default',
+						// 	template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Your changes have been saved.</span>'
+						// });
 					});
 			}
 		};
@@ -102,6 +116,15 @@
 			$scope.submitted = true;
 			return ! ($scope.leadForm.first_name.$invalid || $scope.leadForm.last_name.$invalid);
 		}
+
+		/**
+		 * Remove a message from messageService
+		 * @param  {[type]} message_id [description]
+		 * @return {[void]}
+		 */
+		$scope.removeMessage = function(message_id) {
+			messageService.removeMessage(message_id);
+		};
 
 		$rootScope.isLoggedIn = true
 	}])

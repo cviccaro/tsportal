@@ -3,14 +3,12 @@
         <h3>Login</h3>
         <form id="login_form">
             <div class="form-group">
-                <input type="email" class="form-control" placeholder="Email" ng-model="email">
+                <input type="email" class="form-control" placeholder="Email" ng-model="email" ng-change="clearErrors()">
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" placeholder="Password" ng-model="password">
+                <input type="password" class="form-control" placeholder="Password" ng-model="password" ng-change="clearErrors()">
             </div>
-            <div class="has-error" ng-show="errors.length">
-                <div class="help-block">The email or password entered was incorrect.</div>
-            </div>
+            <messages></messages>
             <button class="btn btn-primary" ng-click="login()">Submit</button>
         </form>
     </div>
