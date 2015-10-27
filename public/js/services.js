@@ -90,10 +90,15 @@
 			removeMessage: function(message_id) {
 				if (this.messages[message_id - 1]) {
 					var that = this;
-					$('.messages .alert').eq(message_id - 1).css('opacity', 0).on('transitionend',function() {
+					if (window.navigator.userAgent.match(/PhantomJS/g) != null) {
 						var removed = that.messages.splice(message_id - 1, 1);
-						$('.messages .alert').eq(message_id - 1).remove();
-					});
+					}
+					else {
+						$('.messages .alert').eq(message_id - 1).css('opacity', 0).on('transitionend',function() {
+							var removed = that.messages.splice(message_id - 1, 1);
+							$('.messages .alert').eq(message_id - 1).remove();
+						});
+					}
 				}
 			}
 		};
