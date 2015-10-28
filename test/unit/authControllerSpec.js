@@ -1,11 +1,10 @@
 'use strict';
 
-describe('Testing AuthController', function() {
+describe('AuthController', function() {
 	var loginServiceMock, $rootScope, $scope, ctrl, messageService, busyService, $httpBackend, $q;
 
 	beforeEach(function() {
 		loginServiceMock = jasmine.createSpyObj('loginService', ['authenticate']);
-		
 		module('tsportal');
 		inject(function(_$rootScope_, $controller, _$q_, _messageService_, _$httpBackend_, _busyService_) {
 			$rootScope = _$rootScope_;
@@ -111,76 +110,4 @@ describe('Testing AuthController', function() {
 		$rootScope.$broadcast('event:auth-loginRequired')
 		expect($scope.loginError).toHaveBeenCalled();
 	})
-});
-
-describe('Tradeshow List Controller', function() {
-    var ctrl, $scope, $rootScope, $httpBackend, tradeshowServiceMock, loginServiceMock, $q;
-    beforeEach(function() {
-    	module('tsportal')
-    	loginServiceMock = jasmine.createSpyObj('loginService', ['authenticate', 'checkApiAccess', 'refresh']);
-    	tradeshowServiceMock = jasmine.createSpyObj('tradeshowService', ['retrieve']);
-    	inject(function (_$httpBackend_, $controller, _$rootScope_, _$q_) {
-    	  $q = _$q_;
-	      $httpBackend = _$httpBackend_;
-	      $rootScope = _$rootScope_;
-	      $scope = $rootScope.$new();
-	      tradeshowServiceMock.retrieve.and.callFake(function() {
-	      	var deferred = $q.defer();
-	      	deferred.resolve({current_page: 1, last_page: 1, data: [{id: 1, name: 'tradeshow', location: 'a place'}]});
-	      	return deferred.promise;
-	      })
-	      ctrl = $controller('TradeshowController', {$scope: $scope, loginService: loginServiceMock, tradeshowService: tradeshowServiceMock})
-	      $httpBackend.expectGET('api/tradeshows?page=1&perPage=' + $scope.perPage + '&orderBy=' + $scope.orderBy + '&orderByReverse=' + $scope.orderByReverse)
-      		.respond(200);
-	      $scope.$digest()
-	      spyOn($scope, "getTradeshows").and.callThrough();
-	      spyOn($scope, "$broadcast")
-	    });
-    });
-    it('should have a TradeshowController with defaults and call checkApiAccess on loginService', function() {
-      expect(ctrl).toBeDefined();
-      expect($scope.orderBy).toBe('id');
-      expect($scope.orderByReverse).toEqual('0');
-      expect($scope.perPage).toEqual('15');
-      expect(loginServiceMock.checkApiAccess).toHaveBeenCalled();
-      $scope.$digest()
-    });
-    it ('should call loginService refresh when rootScope emits event:auth-loginRequired event', function() {
-    	loginServiceMock.refresh.and.callFake(function() {
-    		var deferred = $q.defer()
-    		deferred.resolve({data:{token:''}})
-    		return deferred.promise;
-    	})
-    	$rootScope.$broadcast('event:auth-loginRequired');
-    	expect(loginServiceMock.refresh).toHaveBeenCalled()
-    })
-    it ('should fetch tradeshows', function() {
-    	expect(tradeshowServiceMock.retrieve).toHaveBeenCalled()
-    })
-    xit('should use scope params to retrieve from tradeshowService', function() {
-
-      $httpBackend.expectGET('api/tradeshows?page=1&perPage=' + $scope.perPage + '&orderBy=' + $scope.orderBy + '&orderByReverse=' + $scope.orderByReverse)
-      .respond(200);
-      var succeeded;
-      var promise = tradeshowService.retrieve(1, $scope.perPage, $scope.orderBy, $scope.orderByReverse);
-      expect(promise).toBeDefined();
-      promise.then(function(payload) {
-        succeeded = true;
-        var response = payload.data;
-
-        $scope.tradeshows = [];
-        $scope.currentPage = 1;
-        $scope.lastPage = 2;
-        $scope.range = [1,2];
-        $scope.totalPages = 2;
-      })
-      $httpBackend.flush();
-      expect(succeeded).toBeTruthy();
-
-      expect(tradeshowService.getTradeshows().length).toEqual(0);
-      expect($scope.range).toEqual([1,2]);
-      expect($scope.tradeshows).toEqual([]);
-      expect($scope.totalPages).toEqual(2);
-      expect($scope.currentPage).toEqual(1);
-    });
 });

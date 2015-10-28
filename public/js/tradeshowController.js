@@ -10,8 +10,8 @@
 	 * Displays a paginated, filtered table of all tradeshows.
 	 */
 	tradeshowControllers.controller('TradeshowController', 
-		['$rootScope', '$scope', 'Tradeshow', 'tradeshowService', 'leadService', 'authService', 'loginService', 'ngDialog', 'busyService',
-		function TradeshowController($rootScope, $scope, Tradeshow, tradeshowService, leadService, authService, loginService, ngDialog, busyService) {
+		['$rootScope', '$scope', 'Tradeshow', 'tradeshowService', 'leadService', 'loginService', 'ngDialog', 'busyService',
+		function TradeshowController($rootScope, $scope, Tradeshow, tradeshowService, leadService, loginService, ngDialog, busyService) {
 		// No token, no access
 		loginService.checkApiAccess();
 		
@@ -51,7 +51,7 @@
 		 */
 		$scope.handleTradeshows = function(payload) {
 			var response = payload.data;
-
+			
 			$scope.tradeshows = response.data;
 			$scope.currentPage = response.current_page;
 			$scope.totalPages = response.last_page;
@@ -219,6 +219,28 @@
 		// Check API Access, refresh token
 		loginService.checkApiAccess();
 
+		// Refresh authorization token when it is expired transparently to the user
+		// and re-run the request that failed (happens automatically from http-auth-interceptor)
+		$rootScope.$on('event:auth-loginRequired', function(event, data) {
+			var token = localStorage.getItem('_satellizer_token');
+			if (token !== null) {
+				loginService.refresh(token)
+					.then(function(payload) {
+						authService.loginConfirmed();
+					})
+					.catch(function(payload) {
+						if (payload.status == 500) {
+							// token is totally expired, cannot be refreshed, return to login
+							loginService.logout();
+						}
+					});
+			}
+			else {
+				// token is totally expired, cannot be refreshed, return to login
+				loginService.logout();
+			}
+		})
+
 		// Watch messageService messages
 		$scope.$watch(function () { return messageService.messages }, function (newVal, oldVal) {
 		    if (typeof newVal !== 'undefined') {
@@ -237,18 +259,19 @@
 		$scope.submitted = false;
 
 		// Get the Tradeshow using the Tradeshow resource
-		Tradeshow.
-			get({tradeshowId:$stateParams.tradeshowId}).
-			$promise.
-			then(function(data) {
-				$scope.tradeshow = data.tradeshow;
-				$scope.setTitle();
-				if ($scope.tradeshow.active == 1) {
-					jQuery('input[name="active"]').bootstrapSwitch('state', true)
-				}
-				$scope.getLeads();
-				$scope.setTitle();
-		});
+		$scope.getTradeshow = function() {
+			Tradeshow.
+				get({tradeshowId:$stateParams.tradeshowId}).
+				$promise.
+				then(function(data) {
+					$scope.tradeshow = data.tradeshow;
+					if ($scope.tradeshow.active == 1) {
+						jQuery('input[name="active"]').bootstrapSwitch('state', true)
+					}
+					$scope.getLeads();
+					$scope.setTitle();
+			});
+		};
 
 		/**
 		 * Set the page title
@@ -410,6 +433,8 @@
 		};
 
 		$rootScope.isLoggedIn = true;
+
+		$scope.getTradeshow()
 	}]);
 
 	/**

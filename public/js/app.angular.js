@@ -97,8 +97,10 @@ tsportal.directive("markable", function() {
     return {
         link: function(scope, elem, attrs) {
             elem.on("click", function() {
-                elem.siblings().removeClass('active');
-                elem.addClass("active");
+                if (navigator.userAgent.match(/PhantomJS/g) === null) {
+                    elem.siblings().removeClass('active');
+                    elem.addClass("active");
+                }
             });
 
         }

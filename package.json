@@ -22,7 +22,8 @@
     "istanbul": "*",
     "intestify": "*",
     "jasmine-istanbul-reporter": "*",
-    "karma-coverage": "*"
+    "karma-coverage": "*",
+    "karma-mocha-reporter": "^1.1.0"
   },
   "dependencies": {
     "laravel-elixir": "^3.0.0",

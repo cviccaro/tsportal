@@ -26,24 +26,26 @@
 		$scope.submitted = false;
 
 		// Get the lead using the Lead resource
-		Lead.
-			get({id:$stateParams.id}).
-			$promise.
-			then(function(payload) {
-				$scope.lead = payload.lead;
-				$scope.setTitle();
-				angular.forEach(['existing_customer', 'contact_by_phone', 'contact_by_email'], function(key) {
-					if ($scope.lead[key] == 1) {
-						$('input[name="' + key + '"]').bootstrapSwitch('state', true);
-					}
-				});
-				Tradeshow.
-					get({tradeshowId: $scope.lead.tradeshow_id}).
-					$promise.
-					then(function(payload) {
-						$scope.tradeshow = payload.tradeshow;
+		$scope.getLead = function() {
+			Lead.
+				get({id:$stateParams.id}).
+				$promise.
+				then(function(payload) {
+					$scope.lead = payload.lead;
+					$scope.setTitle();
+					angular.forEach(['existing_customer', 'contact_by_phone', 'contact_by_email'], function(key) {
+						if ($scope.lead[key] == 1) {
+							$('input[name="' + key + '"]').bootstrapSwitch('state', true);
+						}
 					});
-		});
+					Tradeshow.
+						get({tradeshowId: $scope.lead.tradeshow_id}).
+						$promise.
+						then(function(payload) {
+							$scope.tradeshow = payload.tradeshow;
+						});
+			});
+		}
 
 		// Scope methods
 		
@@ -125,6 +127,8 @@
 		$scope.removeMessage = function(message_id) {
 			messageService.removeMessage(message_id);
 		};
+
+		$scope.getLead()
 
 		$rootScope.isLoggedIn = true
 	}])
