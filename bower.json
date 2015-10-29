@@ -8,7 +8,7 @@
     "angular": "1.4.x",
     "angular-mocks": "1.4.x",
     "jquery": "~2.1.1",
-    "bootstrap": "~3.1.1",
+    "bootstrap": "~3.3.5",
     "angular-route": "1.4.x",
     "angular-resource": "1.4.x",
     "angular-busy": "~4.1.3",
@@ -17,7 +17,8 @@
     "angular-ui-router": "~0.2.15",
     "angular-animate": "~1.4.7",
     "ng-dialog": "*",
-    "angular-http-auth": "~1.2.2"
+    "angular-http-auth": "~1.2.2",
+    "satellizer": "~0.12.5"
   },
   "resolutions": {
     "angular": "1.4.7",

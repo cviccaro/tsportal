@@ -35,8 +35,8 @@
 				return ajaxCall;
 			},
 			checkApiAccess: function() {
-				if (localStorage.getItem('satellizer_token') == null) {
-					if (localStorage.getItem('_satellizer_token') != null) {
+				if (localStorage.getItem('satellizer_token') === null) {
+					if (localStorage.getItem('_satellizer_token') !== null) {
 						// Try to refresh
 						this.refresh(localStorage.getItem('_satellizer_token'))
 						.then(function(payload) {
@@ -53,7 +53,7 @@
 								localStorage.removeItem('_satellizer_token');
 								this.checkApiAccess();
 							}
-						})
+						});
 					}
 					else {
 						// Go to auth view
@@ -82,7 +82,7 @@
 			},
 			purge: function() {
 				if (this.messages.length) {
-					for (var i = 0, msg; msg = this.messages[i]; i++) {
+					for (var i = 0, msg; (msg = this.messages[i]); i++) {
 						this.removeMessage(msg.id);
 					}
 				}

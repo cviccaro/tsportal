@@ -36,7 +36,7 @@
 				// token is totally expired, cannot be refreshed, return to login
 				loginService.logout();
 			}
-		})
+		});
 
 		// Scope variable defaults
 		$scope.orderBy = 'id';
@@ -62,7 +62,7 @@
 			}
 			$scope.range = pages;
 
-		}
+		};
 
 		/**
 		 * [getTradeshows use tradeshowService to fetch tradeshows]
@@ -81,7 +81,7 @@
 		 */
 		$scope.refreshTradeshows = function() {
 			$scope.getTradeshows($scope.currentPage);
-		}
+		};
 
 
 		/**
@@ -139,11 +139,11 @@
 		 * @return {[obj]} tradeshow
 		 */
 		$scope.pluckTradeshow = function(tradeshow_id) {
-			for (var n = 0, tradeshow; tradeshow = $scope.tradeshows[n]; n++) {
+			for (var n = 0, tradeshow; (tradeshow = $scope.tradeshows[n]); n++) {
 				if (tradeshow.id == tradeshow_id) { return tradeshow; }
 			}
 			return false;
-		}
+		};
 
 		/**
 		 * Delete a tradeshow using the tradeshow service
@@ -196,7 +196,7 @@
 						template: '<span class="glyphicon glyphicon-exclamation-sign danger icon-large"></span><span>Sorry, an error occured.  Please try again later.</span>'
 					});
 				});
-		}
+		};
 
 		// Get tradeshows and set logged in flag
 		// if we are authenticated
@@ -239,10 +239,10 @@
 				// token is totally expired, cannot be refreshed, return to login
 				loginService.logout();
 			}
-		})
+		});
 
 		// Watch messageService messages
-		$scope.$watch(function () { return messageService.messages }, function (newVal, oldVal) {
+		$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
 		    if (typeof newVal !== 'undefined') {
 		        $scope.messages = messageService.messages;
 		    }
@@ -266,7 +266,7 @@
 				then(function(data) {
 					$scope.tradeshow = data.tradeshow;
 					if ($scope.tradeshow.active == 1) {
-						jQuery('input[name="active"]').bootstrapSwitch('state', true)
+						jQuery('input[name="active"]').bootstrapSwitch('state', true);
 					}
 					$scope.getLeads();
 					$scope.setTitle();
@@ -337,9 +337,9 @@
 		 * Validate the form
 		 */
 		$scope.validate = function() {
-			$scope.submitted = true
+			$scope.submitted = true;
 			return ! ($scope.tradeshowForm.name.$invalid || $scope.tradeshowForm.location.$invalid);
-		}
+		};
 
 		/**
 		 * Handle successful fetch of leads from leadService
@@ -384,7 +384,7 @@
 			leadService
 				.retrieve(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse)
 				.then($scope.handleLeads);
-		}
+		};
 
 		/**
 		 * Find a lead in the local array in scope using its id
@@ -393,11 +393,11 @@
 		 * @return {[obj]} lead
 		 */
 		$scope.pluckLead = function(lead_id) {
-			for (var n = 0, lead; lead = $scope.leads[n]; n++) {
+			for (var n = 0, lead; (lead = $scope.leads[n]); n++) {
 				if (lead.id == lead_id) { return lead; }
 			}
 			return false;
-		}
+		};
 
 		/**
 		 * Delete a lead
@@ -434,7 +434,7 @@
 
 		$rootScope.isLoggedIn = true;
 
-		$scope.getTradeshow()
+		$scope.getTradeshow();
 	}]);
 
 	/**
@@ -503,16 +503,16 @@
 						// Navigate to the new tradeshow's Edit page on dialog close
 						window.location.hash = '#/tradeshows/' + tradeshow_id + '/edit';
 					});
-				})
+				});
 			}
-		}
+		};
 		/**
 		 * Validate the form
 		 */
 		$scope.validate = function() {
-			$scope.submitted = true
+			$scope.submitted = true;
 			return !( $scope.tradeshowForm.name.$invalid || $scope.tradeshowForm.location.$invalid );
-		}
+		};
 		
 		// Ensure "busy" indicator is hidden
 		setTimeout(function() {

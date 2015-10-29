@@ -25,6 +25,7 @@ describe('AuthController', function() {
 			spyOn($scope, "loginError").and.callThrough()
 			$scope.$digest();;
 		});
+		localStorage.setItem('satellizer_token', 'token');
 	})
 	it('should have busyService variables defined and should be able to set message on busyService', function() {
 		expect(busyService.getMessage()).toEqual('Working on it...');

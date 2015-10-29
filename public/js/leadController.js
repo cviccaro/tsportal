@@ -14,7 +14,7 @@
 		loginService.checkApiAccess();
 		
 		// Watch messageService messages
-		$scope.$watch(function () { return messageService.messages }, function (newVal, oldVal) {
+		$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
 		    if (typeof newVal !== 'undefined') {
 		        $scope.messages = messageService.messages;
 		    }
@@ -45,7 +45,7 @@
 							$scope.tradeshow = payload.tradeshow;
 						});
 			});
-		}
+		};
 
 		// Scope methods
 		
@@ -117,7 +117,7 @@
 		$scope.validate = function validate() {
 			$scope.submitted = true;
 			return ! ($scope.leadForm.first_name.$invalid || $scope.leadForm.last_name.$invalid);
-		}
+		};
 
 		/**
 		 * Remove a message from messageService
@@ -128,8 +128,8 @@
 			messageService.removeMessage(message_id);
 		};
 
-		$scope.getLead()
+		$scope.getLead();
 
-		$rootScope.isLoggedIn = true
-	}])
+		$rootScope.isLoggedIn = true;
+	}]);
 })(jQuery);

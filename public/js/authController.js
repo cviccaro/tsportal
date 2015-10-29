@@ -8,7 +8,7 @@
 			function($state, $scope, $rootScope, loginService, busyService, messageService) {
 				
 			// Watch messageService messages
-			$scope.$watch(function () { return messageService.messages }, function (newVal, oldVal) {
+			$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
 			    if (typeof newVal !== 'undefined') {
 			        $scope.messages = messageService.messages;
 			    }
@@ -17,7 +17,7 @@
 			// Respond to 401 unauthorized
 			$rootScope.$on('event:auth-loginRequired', function(event, data) {
 				$scope.loginError();
-			})
+			});
 
 			// If a token is already stored, try app
 			if (localStorage.getItem('satellizer_token') != null) {

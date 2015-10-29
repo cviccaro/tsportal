@@ -16,9 +16,7 @@ function click(el){
 // mock of authService (external service from http-auth-interceptor)
 window.authService = {
 	loginConfirmed: function() { }
-}
-
-
+};
 
 describe('Tradeshow List Controller', function() {
     var $scope, $rootScope, tradeshowServiceMock, loginServiceMock, leadServiceMock, eventMock;
@@ -53,7 +51,7 @@ describe('Tradeshow List Controller', function() {
             '</table>';
     beforeEach(function() {
 
-    	module('tsportal')
+    	module('tsportal');
 
     	loginServiceMock = jasmine.createSpyObj('loginService', ['authenticate', 'checkApiAccess', 'refresh', 'logout']);
     	tradeshowServiceMock = jasmine.createSpyObj('tradeshowService', ['retrieve', 'deleteTradeshow']);
@@ -62,15 +60,15 @@ describe('Tradeshow List Controller', function() {
 			stopped: false,
 			defaultPrevented: false,
 			preventDefault: function() {
-				this.defaultPrevented = true
+				this.defaultPrevented = true;
 			},
 			stopPropagation: function() {
-				this.stopped = true
+				this.stopped = true;
 			}
 		};
 		module(function($provide) {
-			$provide.value('$event', eventMock)
-		})
+			$provide.value('$event', eventMock);
+		});
     	inject(function (_$httpBackend_, $controller, _$rootScope_, _$q_, _$compile_) {
     		$q = _$q_;
 	      	$httpBackend = _$httpBackend_;
@@ -78,10 +76,10 @@ describe('Tradeshow List Controller', function() {
 	      	$scope = $rootScope.$new();
 
 			$compile = _$compile_;
-	      	element = angular.element(html)
+	      	element = angular.element(html);
 	      	compiled = $compile(element)($scope);
 
-			loginServiceMock.checkApiAccess.and.returnValue(true)
+			loginServiceMock.checkApiAccess.and.returnValue(true);
 
 			tradeshowServiceMock.retrieve.and.callFake(function() {
 				var deferred = $q.defer();
@@ -104,9 +102,9 @@ describe('Tradeshow List Controller', function() {
 			});
 			tradeshowServiceMock.deleteTradeshow.and.callFake(function() {
 				var deferred = $q.defer();
-				deferred.resolve({success: true})
+				deferred.resolve({success: true});
 				return deferred.promise;
-			})
+			});
 
 			leadServiceMock.retrieve.and.callFake(function() {
 			  	var deferred = $q.defer();
@@ -130,16 +128,16 @@ describe('Tradeshow List Controller', function() {
 
 			leadServiceMock.setCurrentTradeshowId.and.callFake(function() {
 				this.currentTradeshowId = 1;
-			})
+			});
 
 			ctrl = $controller('TradeshowController', {
 				$scope: $scope,
 				loginService: loginServiceMock,
 				tradeshowService: tradeshowServiceMock,
 				leadService: leadServiceMock
-			})
+			});
 
-		    $scope.$digest()
+		    $scope.$digest();
 
 		    spyOn(eventMock, "preventDefault").and.callThrough();
 		    spyOn(eventMock, "stopPropagation").and.callThrough();
@@ -147,9 +145,10 @@ describe('Tradeshow List Controller', function() {
 		    spyOn($scope, "handleTradeshows").and.callThrough();
 		    spyOn($scope, "getLeads").and.callThrough();
 		    spyOn($scope, "handleLeads").and.callThrough();
-		    spyOn($scope, "$broadcast")
-		    spyOn(authService, "loginConfirmed").and.callThrough()
+		    spyOn($scope, "$broadcast");
+		    spyOn(authService, "loginConfirmed").and.callThrough();
 	    });
+		localStorage.setItem('satellizer_token', 'token');
     });
     it('should have a TradeshowController with defaults and call checkApiAccess on loginService', function() {
       expect(ctrl).toBeDefined();
@@ -160,61 +159,61 @@ describe('Tradeshow List Controller', function() {
     });
 	it ('should call loginService refresh when rootScope emits event:auth-loginRequired event', function() {
 		loginServiceMock.refresh.and.callFake(function() {
-			var deferred = $q.defer()
-			deferred.resolve({data:{token:'adasds'}})
+			var deferred = $q.defer();
+			deferred.resolve({data:{token:'adasds'}});
 			return deferred.promise;
-		})
+		});
 		$rootScope.$broadcast('event:auth-loginRequired');
-		expect(loginServiceMock.refresh).toHaveBeenCalled()
-		$scope.$digest()
-		expect(authService.loginConfirmed).toHaveBeenCalled()
-	})
+		expect(loginServiceMock.refresh).toHaveBeenCalled();
+		$scope.$digest();
+		expect(authService.loginConfirmed).toHaveBeenCalled();
+	});
 	it ('should call loginService.logout if refresh fails', function() {
 		loginServiceMock.refresh.and.callFake(function() {
-			var deferred = $q.defer()
-			deferred.reject({status: 500, data:{token:'adasds'}})
+			var deferred = $q.defer();
+			deferred.reject({status: 500, data:{token:'adasds'}});
 			return deferred.promise;
-		})
+		});
 		$rootScope.$broadcast('event:auth-loginRequired');
-		expect(loginServiceMock.refresh).toHaveBeenCalled()
-		$scope.$digest()
-		expect(loginServiceMock.logout).toHaveBeenCalled()
-	}) 
+		expect(loginServiceMock.refresh).toHaveBeenCalled();
+		$scope.$digest();
+		expect(loginServiceMock.logout).toHaveBeenCalled();
+	});
     it ('should fetch 2 tradeshows on load', function() {
-    	expect(tradeshowServiceMock.retrieve).toHaveBeenCalled()
-    	expect($scope.tradeshows.length).toEqual(2)
+    	expect(tradeshowServiceMock.retrieve).toHaveBeenCalled();
+    	expect($scope.tradeshows.length).toEqual(2);
     	expect($scope.tradeshows[0].name).toEqual('tradeshow');
 
-    	$scope.refreshTradeshows()
+    	$scope.refreshTradeshows();
 	    $httpBackend.expectGET('api/tradeshows?page=1&perPage=' + $scope.perPage + '&orderBy=' + $scope.orderBy + '&orderByReverse=' + $scope.orderByReverse)
       		.respond(200);
-	    $scope.$digest()
-    	expect($scope.getTradeshows).toHaveBeenCalled()
-    	expect($scope.tradeshows.length).toEqual(2)
-    })
+	    $scope.$digest();
+    	expect($scope.getTradeshows).toHaveBeenCalled();
+    	expect($scope.tradeshows.length).toEqual(2);
+    });
     it('should return tradeshow from pluckTradeshow if index is range, otherwise return false', function() {
-    	expect($scope.pluckTradeshow(999999)).toBeFalsy()
-    	expect($scope.pluckTradeshow(1)).toBeDefined()
-    	expect($scope.pluckTradeshow(1).name).toEqual('tradeshow')
-    })
+    	expect($scope.pluckTradeshow(999999)).toBeFalsy();
+    	expect($scope.pluckTradeshow(1)).toBeDefined();
+    	expect($scope.pluckTradeshow(1).name).toEqual('tradeshow');
+    });
     it('should call getLeads when a tradeshow is clicked', function() {
-    	var result = element[0].querySelectorAll('.clickable')
+    	var result = element[0].querySelectorAll('.clickable');
     	$httpBackend.expectGET('api/tradeshows/1/leads?page=' + $scope.currentPage + '&perPage=50&orderBy=' + $scope.orderBy + '&orderByReverse=' + $scope.orderByReverse)
 			.respond(200);
-    	click(result[0])
-    	$scope.$digest()
-    	expect($scope.getLeads).toHaveBeenCalled()
-    	expect($scope.handleLeads).toHaveBeenCalled()
-    })
+    	click(result[0]);
+    	$scope.$digest();
+    	expect($scope.getLeads).toHaveBeenCalled();
+    	expect($scope.handleLeads).toHaveBeenCalled();
+    });
     it('should call deleteTradeshow on tradeshow service when $scope.deleteTradeshow is called', function() {
     	$scope.deleteTradeshow(1, eventMock);
-    	$scope.$digest()
-    	expect(eventMock.preventDefault).toHaveBeenCalled()
-    	expect(eventMock.stopPropagation).toHaveBeenCalled()
-    	expect(eventMock.stopped).toBeTruthy()
-    	expect(eventMock.defaultPrevented).toBeTruthy()
-    	expect(tradeshowServiceMock.deleteTradeshow).toHaveBeenCalledWith($scope.pluckTradeshow(1))
-    })
+    	$scope.$digest();
+    	expect(eventMock.preventDefault).toHaveBeenCalled();
+    	expect(eventMock.stopPropagation).toHaveBeenCalled();
+    	expect(eventMock.stopped).toBeTruthy();
+    	expect(eventMock.defaultPrevented).toBeTruthy();
+    	expect(tradeshowServiceMock.deleteTradeshow).toHaveBeenCalledWith($scope.pluckTradeshow(1));
+    });
 });
 
 
@@ -228,10 +227,10 @@ describe('TradeshowDetailController', function() {
 			stopped: false,
 			defaultPrevented: false,
 			preventDefault: function() {
-				this.defaultPrevented = true
+				this.defaultPrevented = true;
 			},
 			stopPropagation: function() {
-				this.stopped = true
+				this.stopped = true;
 			}
 		};
 
@@ -250,20 +249,20 @@ describe('TradeshowDetailController', function() {
 
 			messageService = _messageService_;
 
-			loginServiceMock.checkApiAccess.and.returnValue(true)
+			loginServiceMock.checkApiAccess.and.returnValue(true);
 
 			tradeshowResourceMock.get.and.callFake(function() {
-				var deferred = $q.defer()
+				var deferred = $q.defer();
 				deferred.resolve({tradeshow:{id: 1, name: 'tradeshow', location: 'a place', active: 1}});
 				deferred.$promise = deferred.promise;
 				return deferred;
-			})
+			});
 			tradeshowResourceMock.save.and.callFake(function() {
-				var deferred = $q.defer()
+				var deferred = $q.defer();
 				deferred.resolve({tradeshow:{id: 1, name: 'tradeshow', location: 'a place', active: 1}});
 				deferred.$promise = deferred.promise;
 				return deferred;
-			})
+			});
 			leadServiceMock.retrieve.and.callFake(function() {
 			  	var deferred = $q.defer();
 				deferred.resolve({
@@ -287,7 +286,7 @@ describe('TradeshowDetailController', function() {
 			  	var deferred = $q.defer();
 				deferred.resolve({success: true});
 				return deferred.promise;			
-			}).and.callThrough()
+			}).and.callThrough();
 
 			ctrl = $controller('TradeshowDetailController', {
 				$scope: $scope,
@@ -300,110 +299,110 @@ describe('TradeshowDetailController', function() {
 					tradeshowId: 1
 				},
 				$state: stateMock
-			})
+			});
 
-		    $scope.$digest()
+		    $scope.$digest();
 
 		    spyOn(messageService, "removeMessage").and.callThrough();
-		    spyOn($scope, "setTitle").and.callThrough()
-		    spyOn($scope, "getTradeshow").and.callThrough()
-		    spyOn($scope, "refreshLeads").and.callThrough()
-		    spyOn($scope, "$broadcast")
+		    spyOn($scope, "setTitle").and.callThrough();
+		    spyOn($scope, "getTradeshow").and.callThrough();
+		    spyOn($scope, "refreshLeads").and.callThrough();
+		    spyOn($scope, "$broadcast");
 		    spyOn(authService, "loginConfirmed").and.callThrough();
 		    spyOn(eventMock, "stopPropagation").and.callThrough();
 		    spyOn(eventMock, "preventDefault").and.callThrough();
-		})
-	})
+		});
+	});
 	it('should have an instance of TradeshowDetailController with default values in scope, and loginService.checkApiAccess was called', function() {
 		expect(ctrl).toBeDefined();
-		expect($scope.isLoggedIn).toBeTruthy()
+		expect($scope.isLoggedIn).toBeTruthy();
 		expect(loginServiceMock.checkApiAccess).toHaveBeenCalled();
-		$scope.$digest()
-		$httpBackend.expectGET('../partials/login-form.html').respond(200)
-		$httpBackend.expectGET('api/tradeshows/1').respond(200)
+		$scope.$digest();
+		$httpBackend.expectGET('../partials/login-form.html').respond(200);
+		$httpBackend.expectGET('api/tradeshows/1').respond(200);
 		//$httpBackend.flush()
-		expect($scope.tradeshow.name).toEqual('tradeshow')
-		expect($scope.tradeshow.location).toEqual('a place')
-	})
+		expect($scope.tradeshow.name).toEqual('tradeshow');
+		expect($scope.tradeshow.location).toEqual('a place');
+	});
 	it('should set title of page based on tradeshow', function() {
-		$scope.getTradeshow()
-		expect($scope.title).toEqual('Editing Tradeshow <em>' + $scope.tradeshow.name + '</em>')
-		$scope.$digest()
-		expect($scope.setTitle).toHaveBeenCalled()	
-	})
+		$scope.getTradeshow();
+		expect($scope.title).toEqual('Editing Tradeshow <em>' + $scope.tradeshow.name + '</em>');
+		$scope.$digest();
+		expect($scope.setTitle).toHaveBeenCalled();
+	});
 	it('should have a working messageService implementation', function() {
 		messageService.addMessage({type: 'success', message: 'test'});
-		$scope.$digest()
+		$scope.$digest();
 		// $scope.messages should be identical to messageService.messages
-		expect(messageService.messages.length).toEqual(1)
-		expect($scope.messages.length).toEqual(1)
-		expect($scope.messages).toBe(messageService.messages)
+		expect(messageService.messages.length).toEqual(1);
+		expect($scope.messages.length).toEqual(1);
+		expect($scope.messages).toBe(messageService.messages);
 
-		$scope.removeMessage(1)
-		$scope.$digest()
-		expect(messageService.removeMessage).toHaveBeenCalledWith(1)
-		expect(messageService.messages.length).toEqual(0)
-		expect($scope.messages.length).toEqual(0)
-		expect($scope.messages).toBe(messageService.messages)
-	})
+		$scope.removeMessage(1);
+		$scope.$digest();
+		expect(messageService.removeMessage).toHaveBeenCalledWith(1);
+		expect(messageService.messages.length).toEqual(0);
+		expect($scope.messages.length).toEqual(0);
+		expect($scope.messages).toBe(messageService.messages);
+	});
 	it ('should use $state.go to go back when $scope.goBack() is called', function() {
-		$scope.goBack()
-		$scope.$digest()
-		expect(stateMock.go).toHaveBeenCalledWith('tradeshows')
-	})	
+		$scope.goBack();
+		$scope.$digest();
+		expect(stateMock.go).toHaveBeenCalledWith('tradeshows');
+	});
 	it ('should call loginService refresh when rootScope emits event:auth-loginRequired event', function() {
 		loginServiceMock.refresh.and.callFake(function() {
-			var deferred = $q.defer()
-			deferred.resolve({data:{token:'adasds'}})
+			var deferred = $q.defer();
+			deferred.resolve({data:{token:'adasds'}});
 			return deferred.promise;
-		})
+		});
 		$rootScope.$broadcast('event:auth-loginRequired');
-		expect(loginServiceMock.refresh).toHaveBeenCalled()
-		$scope.$digest()
-		expect(authService.loginConfirmed).toHaveBeenCalled()
-	})
+		expect(loginServiceMock.refresh).toHaveBeenCalled();
+		$scope.$digest();
+		expect(authService.loginConfirmed).toHaveBeenCalled();
+	});
 	it ('should call loginService.logout if refresh fails', function() {
 		loginServiceMock.refresh.and.callFake(function() {
-			var deferred = $q.defer()
-			deferred.reject({status: 500, data:{token:'adasds'}})
+			var deferred = $q.defer();
+			deferred.reject({status: 500, data:{token:'adasds'}});
 			return deferred.promise;
-		})
+		});
 		$rootScope.$broadcast('event:auth-loginRequired');
-		expect(loginServiceMock.refresh).toHaveBeenCalled()
-		$scope.$digest()
-		expect(loginServiceMock.logout).toHaveBeenCalled()
-	})
+		expect(loginServiceMock.refresh).toHaveBeenCalled();
+		$scope.$digest();
+		expect(loginServiceMock.logout).toHaveBeenCalled();
+	});
 	it('should get a lead when using pluckLead with a valid ID, false if not', function() {
-		var lead = $scope.pluckLead(1)
-		expect(lead).toBeDefined()
-		expect(lead.first_name).toEqual('john')
-		expect(lead.last_name).toEqual('doe')
+		var lead = $scope.pluckLead(1);
+		expect(lead).toBeDefined();
+		expect(lead.first_name).toEqual('john');
+		expect(lead.last_name).toEqual('doe');
 
 		var nolead = $scope.pluckLead(999999);
-		expect(nolead).toBeFalsy()
+		expect(nolead).toBeFalsy();
 	});
 	it('should call refreshLeads when calling updatePagination when currentPage is not 1', function() {
 		$scope.leadCurrentPage = 2;
 		$scope.updatePagination();
-		expect($scope.refreshLeads).toHaveBeenCalledWith(1)
-	})	
+		expect($scope.refreshLeads).toHaveBeenCalledWith(1);
+	});
 	it('should call delete lead on leadService with lead object when $scope.deleteLead(lead_id) is called, and event should call preventDefault and stopPropagation', function() {
 		$scope.deleteLead(1, eventMock);
-		$scope.$digest()
-		expect(eventMock.preventDefault).toHaveBeenCalled()
-		expect(eventMock.stopPropagation).toHaveBeenCalled()
-		expect(eventMock.stopped).toBeTruthy()
-		expect(eventMock.defaultPrevented).toBeTruthy()
-		expect(leadServiceMock.deleteLead).toHaveBeenCalledWith($scope.pluckLead(1))
-	})
+		$scope.$digest();
+		expect(eventMock.preventDefault).toHaveBeenCalled();
+		expect(eventMock.stopPropagation).toHaveBeenCalled();
+		expect(eventMock.stopped).toBeTruthy();
+		expect(eventMock.defaultPrevented).toBeTruthy();
+		expect(leadServiceMock.deleteLead).toHaveBeenCalledWith($scope.pluckLead(1));
+	});
 	it('should call save on Tradeshow Resource when calling $scope.save() and replace $scope.tradeshow with saved values', function() {
 		var newValues = {name: 'test save', location: 'test save', active: 1, id: 1};
 		$scope.tradeshowForm = $scope.tradeshow = newValues;
-		$scope.save()
-		expect(tradeshowResourceMock.save).toHaveBeenCalledWith(newValues)
-		expect($scope.tradeshow.name).toEqual('test save')
-	})
-})
+		$scope.save();
+		expect(tradeshowResourceMock.save).toHaveBeenCalledWith(newValues);
+		expect($scope.tradeshow.name).toEqual('test save');
+	});
+});
 
 
 describe('TradeshowCreateController', function() {
@@ -411,7 +410,7 @@ describe('TradeshowCreateController', function() {
 	var $httpBackend, $q, ctrl;
 	beforeEach(function() {
 		
-		module('tsportal')
+		module('tsportal');
 		
 		loginServiceMock = jasmine.createSpyObj('loginService', ['authenticate', 'checkApiAccess', 'refresh', 'logout']);
 		stateMock = jasmine.createSpyObj('$state', ['go']);
@@ -429,24 +428,24 @@ describe('TradeshowCreateController', function() {
 				$state: stateMock
 			});
 
-			loginServiceMock.checkApiAccess.and.returnValue(true)
+			loginServiceMock.checkApiAccess.and.returnValue(true);
 		});
 	});
 
 	it('should have an instance of TradeshowCreateController with default values in scope, and loginService.checkApiAccess was called', function() {
 		expect(ctrl).toBeDefined();
-		expect($scope.isLoggedIn).toBeTruthy()
+		expect($scope.isLoggedIn).toBeTruthy();
 		expect(loginServiceMock.checkApiAccess).toHaveBeenCalled();
-		$scope.$digest()
-		expect($scope.isNew).toBeTruthy()
+		$scope.$digest();
+		expect($scope.isNew).toBeTruthy();
 		expect($scope.model).toEqual('tradeshow');
 		expect($scope.title).toEqual('Create new Tradeshow');
-		expect($scope.tradeshow).toEqual({})
-		expect($scope.submitted).toBeFalsy()
-	})
+		expect($scope.tradeshow).toEqual({});
+		expect($scope.submitted).toBeFalsy();
+	});
 	it ('should use $state.go to go back when $scope.goBack() is called', function() {
-		$scope.goBack()
-		$scope.$digest()
-		expect(stateMock.go).toHaveBeenCalledWith('tradeshows')
-	})
-})
+		$scope.goBack();
+		$scope.$digest();
+		expect(stateMock.go).toHaveBeenCalledWith('tradeshows');
+	});
+});

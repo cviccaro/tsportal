@@ -1,0 +1,15 @@
+/vendor
+/node_modules
+/coverage
+/bower_components
+/public/node_modules
+/public/bower_components
+Homestead.yaml
+Homestead.json
+.DS_Store
+.sass-cache
+.env
+ftpsync.settings
+*.sublime-*
+.jshintrc
+.gitattributes
