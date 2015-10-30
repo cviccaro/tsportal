@@ -53,9 +53,13 @@ describe('Tradeshow List Controller', function() {
 
     	module('tsportal');
 
+    	localStorage.setItem('satellizer_token', 'token');
+    	localStorage.setItem('_satellizer_token', 'token');
+
     	loginServiceMock = jasmine.createSpyObj('loginService', ['authenticate', 'checkApiAccess', 'refresh', 'logout']);
     	tradeshowServiceMock = jasmine.createSpyObj('tradeshowService', ['retrieve', 'deleteTradeshow']);
-    	leadServiceMock = jasmine.createSpyObj('leadService', ['retrieve', 'setCurrentTradeshowId']);
+    	leadServiceMock = jasmine.createSpyObj('leadService', ['retrieve', 'setCurrentTradeshowId', 'getCurrentTradeshowId', 'currentTradeshowId']);
+
 		eventMock = {
 			stopped: false,
 			defaultPrevented: false,
@@ -81,6 +85,8 @@ describe('Tradeshow List Controller', function() {
 
 			loginServiceMock.checkApiAccess.and.callThrough();
 
+			leadServiceMock.setCurrentTradeshowId.and.callThrough();
+
 			tradeshowServiceMock.retrieve.and.callFake(function() {
 				var deferred = $q.defer();
 				deferred.resolve({
@@ -100,6 +106,7 @@ describe('Tradeshow List Controller', function() {
 				});
 				return deferred.promise;
 			});
+			
 			tradeshowServiceMock.deleteTradeshow.and.callFake(function() {
 				var deferred = $q.defer();
 				deferred.resolve({success: true});
@@ -126,10 +133,6 @@ describe('Tradeshow List Controller', function() {
 				return deferred.promise;
 			});
 
-			leadServiceMock.setCurrentTradeshowId.and.callFake(function() {
-				this.currentTradeshowId = 1;
-			});
-
 			ctrl = $controller('TradeshowController', {
                 $rootScope: $rootScope,
 				$scope: $scope,
@@ -149,7 +152,7 @@ describe('Tradeshow List Controller', function() {
 		    spyOn($scope, "$broadcast");
 		    spyOn(authService, "loginConfirmed").and.callThrough();
 	    });
-		localStorage.setItem('satellizer_token', 'token');
+		
     });
     it('should have a TradeshowController with defaults and call checkApiAccess on loginService', function() {
       expect(ctrl).toBeDefined();
@@ -186,6 +189,10 @@ describe('Tradeshow List Controller', function() {
     	expect(tradeshowServiceMock.retrieve).toHaveBeenCalled();
     	expect($scope.tradeshows.length).toEqual(2);
     	expect($scope.tradeshows[0].name).toEqual('tradeshow');
+    	expect($scope.perPage).toEqual(tradeshowServiceMock.retrieve.calls.mostRecent().args[1]);
+		expect($scope.currentPage).toEqual(tradeshowServiceMock.retrieve.calls.mostRecent().args[0]);
+		expect($scope.orderBy).toEqual(tradeshowServiceMock.retrieve.calls.mostRecent().args[2]);
+		expect($scope.orderByReverse).toEqual(tradeshowServiceMock.retrieve.calls.mostRecent().args[3]);
 
     	$scope.refreshTradeshows();
 	    $httpBackend.expectGET('api/tradeshows?page=1&perPage=' + $scope.perPage + '&orderBy=' + $scope.orderBy + '&orderByReverse=' + $scope.orderByReverse)
@@ -209,8 +216,12 @@ describe('Tradeshow List Controller', function() {
 			.respond(200);
     	click(result[0]);
     	$scope.$digest();
-    	expect($scope.getLeads).toHaveBeenCalled();
+    	expect($scope.getLeads).toHaveBeenCalledWith(1);
     	expect($scope.handleLeads).toHaveBeenCalled();
+    	leadServiceMock.currentTradeshowId = 1;
+    	expect(leadServiceMock.setCurrentTradeshowId).toHaveBeenCalledWith(1);
+    	$scope.$digest();
+    	//expect(leadServiceMock.getCurrentTradeshowId()).toEqual(1)
     });
     it('should call deleteTradeshow on tradeshow service when $scope.deleteTradeshow is called', function() {
         $rootScope.$broadcast('event:auth-logged-in');

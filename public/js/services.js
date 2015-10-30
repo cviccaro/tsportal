@@ -11,6 +11,28 @@
 				var pattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 			    return pattern.test(email);
 			},
+			token: {
+				get: function() {
+					return localStorage.getItem('satellizer_token');
+				},
+				set: function(tokenString) {
+					localStorage.setItem('satellizer_token', tokenString);
+				},
+				remove: function() {
+					localStorage.removeItem('satellizer_token');
+				}
+			},
+			tokenCopy: {
+				get: function() {
+					return localStorage.getItem('_satellizer_token');
+				},
+				set: function(tokenString) {
+					localStorage.setItem('_satellizer_token', tokenString);
+				},
+				remove: function() {
+					localStorage.removeItem('_satellizer_token');
+				}
+			},			
 			authenticate: function(credentials) {
 				return $auth.login(credentials);
 			},
@@ -29,12 +51,14 @@
 				return deferred.promise;
 			},
 			logout: function() {
-				// Remove token
-				localStorage.removeItem('satellizer_token');
-				// Remove token copy
-				localStorage.removeItem('_satellizer_token');
+				// Remove tokens
+				this.token.remove();
+				this.tokenCopy.remove();
+
 				var logout = $auth.logout();
+
 				$state.go('auth');
+
 				return logout;
 			},
 			refresh: function(token) {
@@ -49,29 +73,34 @@
 				return ajaxCall;
 			},
 			checkApiAccess: function() {
-				if (localStorage.getItem('satellizer_token') === null) {
-					if (localStorage.getItem('_satellizer_token') !== null) {
+				if (this.token.get() === null) {
+					if (this.tokenCopy.get() !== null) {
+						var that = this;
 						// Try to refresh
-						this.refresh(localStorage.getItem('_satellizer_token'))
+						this.refresh(this.tokenCopy.get())
 						.then(function(payload) {
-							localStorage.setItem('satellizer_token', payload.data.token);
+
+							that.token.set(payload.data.token);
+
 							// Save a copy of the token to use for future refresh requests
-							localStorage.setItem('_satellizer_token', payload.data.token);
+							that.tokenCopy.set(payload.data.token);
+
+							// Broadcast events
 							$rootScope.$emit('event:auth-logged-in');
 							authService.loginConfirmed();
 						})
 						.catch(function(payload) {
 							if (payload.status == 500) {
 								// token is totally expired, cannot be refreshed
-								localStorage.removeItem('satellizer_token');
-								localStorage.removeItem('_satellizer_token');
-								this.checkApiAccess();
+								that.token.remove();
+								that.tokenCopy.remove();
+								that.checkApiAccess();
 							}
 						});
 					}
 					else {
 						// Go to auth view
-						localStorage.removeItem('satellizer_token');
+						this.token.remove();
 						$state.go('auth', {});
 					}
 				}
@@ -107,7 +136,7 @@
 			removeMessage: function(message_id) {
 				if (this.messages[message_id - 1]) {
 					var that = this;
-					if (window.navigator.userAgent.match(/PhantomJS/g) != null) {
+					if (window.navigator.userAgent.match(/PhantomJS/g) !== null) {
 						var removed = that.messages.splice(message_id - 1, 1);
 					}
 					else {
@@ -173,9 +202,6 @@
 	// Tradeshow service to retrieve paginated, sorted lists of Tradeshows
 	tradeshowServices.factory('tradeshowService', ['$http', 'Tradeshow', '$rootScope', 'ngDialog', 'busyService', function($http, Tradeshow, $rootScope, ngDialog, busyService) {
 		var tradeshows = [],
-			current_page = 1,
-			last_page = 0,
-			pages = [],
 			activeDialog;
 			return {
 				retrieve: function(pageNumber, perPage, orderBy, orderByReverse) {
@@ -194,19 +220,10 @@
 					return $http.
 						get('api/tradeshows?page='+pageNumber+'&perPage=' + perPage + '&orderBy=' + orderBy + '&orderByReverse=' + parseInt(orderByReverse));
 				},
-				getCurrentPage:function() {
-					return current_page;
-				},
-				getLastPage:function() {
-					return last_page;
-				},
-				getRange: function() {
-					return pages;
-				},
 				getTradeshows: function() {
 					return tradeshows;
 				},
-				deleteTradeshow: function deleteTradeshow(tradeshow) {
+				deleteTradeshow: function(tradeshow) {
 					var tradeshow_name = tradeshow.name,
 						tradeshow_id   = tradeshow.id;
 					activeDialog = ngDialog.openConfirm(
@@ -275,10 +292,6 @@
 	// Lead service for fetching paginated, sorted lists of Leads
 	leadServices.factory('leadService', ['$http', 'Lead', 'ngDialog', '$rootScope', 'busyService', function($http, Lead, ngDialog, $rootScope, busyService) {
 		var currentTradeshowId = null,
-			leads = [],
-			current_page = 1,
-			last_page = 0,
-			pages = [],
 			activeDialog;
 		return {
 			retrieve: function(pageNumber, perPage, orderBy, orderByReverse) {
@@ -297,20 +310,12 @@
 				return $http.
 					get('api/tradeshows/' + currentTradeshowId + '/leads?page='+pageNumber+'&perPage='+perPage+'&orderBy=' +orderBy + '&orderByReverse=' + parseInt(orderByReverse));
 			},
-			setCurrentTradeshowId:function(tradeshowId) {
-				currentTradeshowId = tradeshowId;
+			currentTradeshowId: null,
+			setCurrentTradeshowId:function(id) {
+				this.currentTradeshowId = id;
 			},
 			getCurrentTradeshowId:function() {
-				return currentTradeshowId;
-			},
-			getCurrentPage:function() {
-				return current_page;
-			},
-			getLastPage:function() {
-				return last_page;
-			},
-			getRange: function() {
-				return pages;
+				return this.currentTradeshowId;
 			},
 			getLeads: function() {
 				return leads;
@@ -321,16 +326,13 @@
 								  '</em>?<br /><strong>This cannot be undone.</strong></span><div class="dialog-buttons">' +
 								  '<button class="btn btn-danger" ng-click="confirm()">Yes, delete</button> ' +
 								  '<button class="btn btn-cancel" ng-click="closeThisDialog()">Cancel</button></div>';
-								  console.log(ngDialog)
-				activeDialog = ngDialog.openConfirm(
-					{
-						plain: true,
-						className: 'dialog-destroy ngdialog-theme-default',
-						template: dialog_html,
-						showClose: false
-					}
-				).
-				then(function() {
+				activeDialog = ngDialog.openConfirm({
+					plain: true,
+					className: 'dialog-destroy ngdialog-theme-default',
+					template: dialog_html,
+					showClose: false
+				})
+				.then(function() {
 					busyService.setMessage('Deleting');
 					busyService.show();
 					Lead.
@@ -340,7 +342,7 @@
 
 							busyService.hide();
 
-							if (payload.hasOwnProperty('success') && payload.success == true) {
+							if (payload.hasOwnProperty('success') && payload.success === true) {
 								ngDialog.open({
 									plain: true,
 									className: 'dialog-success ngdialog-theme-default',
@@ -349,14 +351,14 @@
 								.closePromise
 								.then(function() {
 									window.location.reload();
-								})
+								});
 							}
 							else {
 								ngDialog.open({
 									plain: true,
 									className: 'dialog-error ngdialog-theme-default',
 									template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>An error occured when trying to delete Lead <em>' + lead_name + '</em>.</span>  Please try again or contact support.',
-								})
+								});
 							}
 						}, function(errorResponse) {
 
@@ -366,10 +368,10 @@
 								plain: true,
 								className: 'dialog-error ngdialog-theme-default',
 								template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>An error occured when trying to delete Lead <em>' + lead_name + '</em>.</span>  Please try again or contact support.',
-							})
-						})
-				})
+							});
+						});
+				});
 			}
-		}
+		};
 	}]);
 })();

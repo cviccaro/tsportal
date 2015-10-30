@@ -43,6 +43,7 @@
 		});
 
 		// Scope variable defaults
+		$scope.currentPage = 1;
 		$scope.orderBy = 'id';
 		$scope.orderByReverse = '0';
 		$scope.perPage = '15';
@@ -73,9 +74,9 @@
 		 * @param  {[int]} pageNumber [requested page number]
 		 * @return {[void]}
 		 */
-		$scope.getTradeshows = function(pageNumber) {
+		$scope.getTradeshows = function() {
 			tradeshowService
-				.retrieve(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse)
+				.retrieve($scope.currentPage, $scope.perPage, $scope.orderBy, $scope.orderByReverse)
 				.then($scope.handleTradeshows);
 		};
 
