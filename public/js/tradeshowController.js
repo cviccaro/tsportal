@@ -9,12 +9,16 @@
 	 * ------------------------------------------------------
 	 * Displays a paginated, filtered table of all tradeshows.
 	 */
-	tradeshowControllers.controller('TradeshowController', 
+	tradeshowControllers.controller('TradeshowController',
 		['$rootScope', '$scope', 'Tradeshow', 'tradeshowService', 'leadService', 'loginService', 'ngDialog', 'busyService',
 		function TradeshowController($rootScope, $scope, Tradeshow, tradeshowService, leadService, loginService, ngDialog, busyService) {
-		// No token, no access
-		loginService.checkApiAccess();
-		
+
+		// Get the scoped tradeshow when we are confirmed to have a valid token
+		$rootScope.$on('event:auth-logged-in', function() {
+			$scope.getTradeshows();
+		});
+
+
 		// Refresh authorization token when it is expired transparently to the user
 		// and re-run the request that failed (happens automatically from http-auth-interceptor)
 		$rootScope.$on('event:auth-loginRequired', function(event, data) {
@@ -44,20 +48,20 @@
 		$scope.perPage = '15';
 
 		// Scope functions
-		
+
 		/**
 		 * [handleTradeshows callback for a successful fetch]
 		 * @return {[void]}
 		 */
 		$scope.handleTradeshows = function(payload) {
 			var response = payload.data;
-			
+
 			$scope.tradeshows = response.data;
 			$scope.currentPage = response.current_page;
 			$scope.totalPages = response.last_page;
 
 			var pages = [];
-			for(var i=1;i<=response.last_page;i++) {          
+			for(var i=1;i<=response.last_page;i++) {
 				pages.push(i);
 			}
 			$scope.range = pages;
@@ -86,7 +90,7 @@
 
 		/**
 		 * Use leadService to fetch leads for the tradeshow
-		 * 
+		 *
 		 * @param  {[int]} tradeshow_id  [tradeshow ID]
 		 * @param  {[int]} pageNumber [requested page number]
 		 * @return {[void]}
@@ -102,7 +106,7 @@
 
 		/**
 		 * Callback for a successful fetch of the leads
-		 
+
 		 * @return {[void]}
 		 */
 		$scope.handleLeads = function(payload) {
@@ -113,15 +117,15 @@
 			$scope.leadTotalPages = response.last_page;
 
 			var pages = [];
-			for(var i=1;i<=response.last_page;i++) {          
+			for(var i=1;i<=response.last_page;i++) {
 				pages.push(i);
 			}
 			$scope.leadRange = pages;
 		};
 
 		/**
-		 * Refreshes the current leads 
-		 * 
+		 * Refreshes the current leads
+		 *
 		 * @param  {[int]} pageNumber [requested page number]
 		 * @return {[void]}
 		 */
@@ -134,7 +138,7 @@
 
 		/**
 		 * Find a tradeshow in the local array in scope using its id
-		 * 
+		 *
 		 * @param  {[int]} tradeshow_id
 		 * @return {[obj]} tradeshow
 		 */
@@ -147,8 +151,8 @@
 
 		/**
 		 * Delete a tradeshow using the tradeshow service
-		 * 
-		 * @param  {[int]} tradeshow_id 
+		 *
+		 * @param  {[int]} tradeshow_id
 		 * @param  {[event]} $event      [angular event]
 		 * @return {[void]}
 		 */
@@ -161,7 +165,7 @@
 
 		/**
 		 * Checks if a tradeshow has leads, and routes user to URL to download report
-		 * 
+		 *
 		 * @param  {[int]} tradeshow_id [tradeshow id]
 		 * @param  {[obj]} $event       [angular $event]
 		 * @return {[void]}
@@ -182,8 +186,8 @@
 					}
 					else {
 						ngDialog.open({
-							plain:true, 
-							className: 'dialog-warning ngdialog-theme-default', 
+							plain:true,
+							className: 'dialog-warning ngdialog-theme-default',
 							template: '<span class="glyphicon glyphicon-exclamation-sign warning icon-large"></span><span>Sorry, no leads available</span>'
 						});
 					}
@@ -191,19 +195,15 @@
 				.catch(function(payload) {
 					busyService.hide();
 					ngDialog.open({
-						plain:true, 
-						className: 'dialog-error ngdialog-theme-default', 
+						plain:true,
+						className: 'dialog-error ngdialog-theme-default',
 						template: '<span class="glyphicon glyphicon-exclamation-sign danger icon-large"></span><span>Sorry, an error occured.  Please try again later.</span>'
 					});
 				});
 		};
 
-		// Get tradeshows and set logged in flag
-		// if we are authenticated
-		if (localStorage.getItem('satellizer_token') !== null) {
-			$scope.getTradeshows();
-			$rootScope.isLoggedIn = true;
-		}
+		// No token, no access
+		loginService.checkApiAccess();
 	}]);
 
 	/**
@@ -212,12 +212,14 @@
 	 * ---------------------------------
 	 * Displays an edit form for a tradeshow
 	 */
-	tradeshowControllers.controller('TradeshowDetailController', 
+	tradeshowControllers.controller('TradeshowDetailController',
 		['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadService', '$state', 'loginService', 'busyService', 'messageService',
 		function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadService, $state, loginService, busyService, messageService) {
-		
-		// Check API Access, refresh token
-		loginService.checkApiAccess();
+
+		// Get the scoped tradeshow when we are confirmed to have a valid token
+		$rootScope.$on('event:auth-logged-in', function() {
+			$scope.getTradeshow();
+		});
 
 		// Refresh authorization token when it is expired transparently to the user
 		// and re-run the request that failed (happens automatically from http-auth-interceptor)
@@ -284,7 +286,7 @@
 
 		/**
 		 * Callback to 'go back' button
-		 * 
+		 *
 		 * @return {[void]}
 		 */
 		$scope.goBack = function() {
@@ -293,7 +295,7 @@
 
 		/**
 		 * Save the currently scoped tradeshow using Tradeshow resource
-		 * 
+		 *
 		 * @return {[void]}
 		 */
 		$scope.save = function() {
@@ -317,15 +319,15 @@
 
 					// Show success alert
 					messageService.addMessage({
-						icon: 'ok', 
-						type: 'success', 
+						icon: 'ok',
+						type: 'success',
 						iconClass: 'icon-medium',
-						dismissible: true, 
+						dismissible: true,
 						message: 'Your changes have been saved'
 					});
 					// Show confirmation dialog
-					// ngDialog.open({	
-					// 	plain: true, 
+					// ngDialog.open({
+					// 	plain: true,
 					// 	className: 'dialog-save ngdialog-theme-default',
 					// 	template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Your changes have been saved.</span>'
 					// });
@@ -352,19 +354,19 @@
 			$scope.leadCurrentPage = response.current_page;
 			$scope.leadTotalPages = response.last_page;
 			var pages = [];
-			for(var i=1;i<=response.last_page;i++) {          
+			for(var i=1;i<=response.last_page;i++) {
 				pages.push(i);
 			}
 			$scope.leadRange = pages;
 			// Calculate leads from pagination
-			if ($scope.leadCount === 0) { 
+			if ($scope.leadCount === 0) {
 				$scope.leadCount = $scope.leadTotalPages * $scope.leads.length;
 			}
 		};
 
 		/**
 		 * Get the leads using the leadService
-		 * 
+		 *
 		 * @param  {[int]} pageNumber [a page number]
 		 * @return {[void]}
 		 */
@@ -375,8 +377,8 @@
 		};
 
 		/**
-		 * Refresh the leads 
-		 * 
+		 * Refresh the leads
+		 *
 		 * @param  {[int]} pageNumber [a page number]
 		 * @return {[void]}
 		 */
@@ -388,7 +390,7 @@
 
 		/**
 		 * Find a lead in the local array in scope using its id
-		 * 
+		 *
 		 * @param  {[int]} lead_id
 		 * @return {[obj]} lead
 		 */
@@ -401,10 +403,10 @@
 
 		/**
 		 * Delete a lead
-		 * 
+		 *
 		 * @param  {[int]} lead_id
-		 * @param  {[angular event]} $event 
-		 * @return {[void]} 
+		 * @param  {[angular event]} $event
+		 * @return {[void]}
 		 */
 		$scope.deleteLead = function(lead_id, $event) {
 			$event.preventDefault();
@@ -432,9 +434,9 @@
 			messageService.removeMessage(message_id);
 		};
 
-		$rootScope.isLoggedIn = true;
 
-		$scope.getTradeshow();
+		// Check API Access, refresh token
+		loginService.checkApiAccess();
 	}]);
 
 	/**
@@ -443,7 +445,7 @@
 	 *--------------------------------------
 	 * Displays a form for the creation of a new tradeshow
 	 */
-	tradeshowControllers.controller('TradeshowCreateController', 
+	tradeshowControllers.controller('TradeshowCreateController',
 		['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', '$state', 'loginService', 'busyService',
 		function TradeshowCreateController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, $state, loginService, busyService) {
 		// Scope variables
@@ -452,9 +454,6 @@
 		$scope.title = 'Create new Tradeshow';
 		$scope.tradeshow = {};
 		$scope.submitted = false;
-
-		// Check API access, refresh token
-		loginService.checkApiAccess();
 
 		/**
 		 * Callback to 'Back' button
@@ -467,7 +466,7 @@
 
 		/**
 		 * Save the new tradeshow using the Tradeshow resource
-		 * 
+		 *
 		 * @return {[void]}
 		 */
 		$scope.save = function() {
@@ -493,7 +492,7 @@
 
 					// Show a confirmation dialog
 					ngDialog.open({
-						plain: true, 
+						plain: true,
 						className: 'dialog-save ngdialog-theme-default',
 						template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Your new tradeshow has been created successfully.' +
 						'  Close this message box to proceed to the tradeshow\'s edit page.</span>'
@@ -513,13 +512,14 @@
 			$scope.submitted = true;
 			return !( $scope.tradeshowForm.name.$invalid || $scope.tradeshowForm.location.$invalid );
 		};
-		
+
 		// Ensure "busy" indicator is hidden
 		setTimeout(function() {
 			busyService.hide();
 		},100);
 
-		$rootScope.isLoggedIn = true;
+		// No token, no access
+		loginService.checkApiAccess();
 	}]);
 
 })(jQuery);

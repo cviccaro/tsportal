@@ -6,13 +6,16 @@
 	 * Edit Lead Controller
 	 * @class LeadController
 	 */
-	leadControllers.controller('LeadController', 
+	leadControllers.controller('LeadController',
 		['$rootScope', '$scope', '$stateParams', 'Lead', 'ngDialog', 'Tradeshow', '$state', 'loginService', 'busyService', 'messageService',
 		function LeadController($rootScope, $scope, $stateParams, Lead, ngDialog, Tradeshow, $state, loginService, busyService, messageService) {
 
-		// Check API Access,refresh token if needed
-		loginService.checkApiAccess();
-		
+		// Get the lead when it is confirmed we have a valid token
+		$rootScope.$on('event:auth-logged-in', function() {
+			$scope.getLead();
+		});
+
+
 		// Watch messageService messages
 		$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
 		    if (typeof newVal !== 'undefined') {
@@ -48,10 +51,10 @@
 		};
 
 		// Scope methods
-		
+
 		/**
 		 * Sets the title scope var based on the current lead in scope
-		 * 
+		 *
 		 * @return {[void]}
 		 */
 		$scope.setTitle = function setTitle() {
@@ -60,7 +63,7 @@
 
 		/**
 		 * [Callback to 'Back' button]
-		 * 
+		 *
 		 * @return {[void]}
 		 */
 		$scope.goBack = function goBack() {
@@ -69,7 +72,7 @@
 
 		/**
 		 * Save the Lead
-		 * 
+		 *
 		 * @return {[void]}
 		 */
 		$scope.save = function save() {
@@ -94,10 +97,10 @@
 
 						// Show success alert
 						messageService.addMessage({
-							icon: 'ok', 
-							type: 'success', 
+							icon: 'ok',
+							type: 'success',
 							iconClass: 'icon-medium',
-							dismissible: true, 
+							dismissible: true,
 							message: 'Your changes have been saved'
 						});
 
@@ -128,8 +131,7 @@
 			messageService.removeMessage(message_id);
 		};
 
-		$scope.getLead();
-
-		$rootScope.isLoggedIn = true;
+		// Check API Access
+		loginService.checkApiAccess();
 	}]);
 })(jQuery);

@@ -3,10 +3,10 @@
 
 	angular.
 		module('authControllers', ['satellizer']).
-		controller('AuthController', 
+		controller('AuthController',
 			['$state', '$scope', '$rootScope', 'loginService', 'busyService', 'messageService',
 			function($state, $scope, $rootScope, loginService, busyService, messageService) {
-				
+
 			// Watch messageService messages
 			$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
 			    if (typeof newVal !== 'undefined') {
@@ -31,7 +31,7 @@
 			 * Login
 			 *
 			 * Use loginService to login
-			 * 
+			 *
 			 * @return {[void]}
 			 */
 			$scope.login = function login() {
@@ -41,7 +41,7 @@
 				};
 				busyService.show();
 				// Use satellizer's $auth service to login
-				loginService.authenticate(credentials)
+				loginService.login(credentials)
 					.then(function authLoginSuccess(payload) {
 						busyService.hide();
 						// set a copy of the token to use for refresh requests

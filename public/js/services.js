@@ -3,9 +3,9 @@
 	 * Wrapper around $auth service
 	 */
 	var loginService = angular.module('loginService',[]);
-	loginService.factory('loginService', 
-		['$auth', 'authService', '$http', '$state', '$rootScope', 
-		function loginService($auth, authService, $http, $state, $rootScope) {
+	loginService.factory('loginService',
+		['$auth', 'authService', '$http', '$state', '$rootScope', '$q',
+		function loginService($auth, authService, $http, $state, $rootScope, $q) {
 		return {
 			isValidEmail: function(email) {
 				var pattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -13,6 +13,20 @@
 			},
 			authenticate: function(credentials) {
 				return $auth.login(credentials);
+			},
+			login: function(credentials) {
+				var that = this;
+				var deferred = $q.defer();
+
+				this.authenticate(credentials)
+					.then(function(payload) {
+						deferred.resolve(payload);
+						$rootScope.$emit('event:auth-logged-in');
+					})
+					.catch(function(payload) {
+						deferred.reject(payload);
+					});
+				return deferred.promise;
 			},
 			logout: function() {
 				// Remove token
@@ -24,7 +38,7 @@
 				return logout;
 			},
 			refresh: function(token) {
-				var ajaxCall =  
+				var ajaxCall =
 					$http({
 						method: 'GET',
 						url: 'api/authenticate/refresh',
@@ -43,7 +57,7 @@
 							localStorage.setItem('satellizer_token', payload.data.token);
 							// Save a copy of the token to use for future refresh requests
 							localStorage.setItem('_satellizer_token', payload.data.token);
-							$rootScope.isLoggedIn = true;
+							$rootScope.$emit('event:auth-logged-in');
 							authService.loginConfirmed();
 						})
 						.catch(function(payload) {
@@ -60,6 +74,9 @@
 						localStorage.removeItem('satellizer_token');
 						$state.go('auth', {});
 					}
+				}
+				else {
+					$rootScope.$emit('event:auth-logged-in');
 				}
 			}
 		};
@@ -103,7 +120,7 @@
 			}
 		};
 	});
-	
+
 	/**
 	 * Busy Indicator Service
 	 */
@@ -193,8 +210,8 @@
 					var tradeshow_name = tradeshow.name,
 						tradeshow_id   = tradeshow.id;
 					activeDialog = ngDialog.openConfirm(
-						{	
-							plain: true, 
+						{
+							plain: true,
 							className: 'dialog-destroy ngdialog-theme-default',
 							template: '<span class="glyphicon glyphicon-trash red icon-large"></span><span>Are you sure you want to delete Tradeshow <em>' + tradeshow_name + '</em>?<br /><strong>This cannot be undone.</strong></span><div class="dialog-buttons"><button class="btn btn-danger" ng-click="confirm()">Yes, delete</button> <button class="btn btn-cancel" ng-click="closeThisDialog()">Cancel</button></div>',
 							showClose: false
@@ -306,8 +323,8 @@
 								  '<button class="btn btn-cancel" ng-click="closeThisDialog()">Cancel</button></div>';
 								  console.log(ngDialog)
 				activeDialog = ngDialog.openConfirm(
-					{	
-						plain: true, 
+					{
+						plain: true,
 						className: 'dialog-destroy ngdialog-theme-default',
 						template: dialog_html,
 						showClose: false
@@ -342,7 +359,7 @@
 								})
 							}
 						}, function(errorResponse) {
-							
+
 							busyService.hide();
 
 							ngDialog.open({
