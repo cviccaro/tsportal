@@ -85,6 +85,23 @@ describe('Tradeshow List Controller', function() {
 
 			loginServiceMock.checkApiAccess.and.callThrough();
 
+            loginServiceMock.token = {
+                get: function() {
+                    return localStorage.getItem('satellizer_token');
+                },
+                set: function(tokenString) {
+                    localStorage.setItem('satellizer_token', tokenString);
+                }
+            };
+            loginServiceMock.tokenCopy = {
+                get: function() {
+                    return localStorage.getItem('_satellizer_token');
+                },
+                set: function(tokenString) {
+                    localStorage.setItem('_satellizer_token', tokenString);
+                }
+            };
+
 			leadServiceMock.setCurrentTradeshowId.and.callThrough();
 
 			tradeshowServiceMock.retrieve.and.callFake(function() {
@@ -106,7 +123,7 @@ describe('Tradeshow List Controller', function() {
 				});
 				return deferred.promise;
 			});
-			
+
 			tradeshowServiceMock.deleteTradeshow.and.callFake(function() {
 				var deferred = $q.defer();
 				deferred.resolve({success: true});
@@ -152,7 +169,7 @@ describe('Tradeshow List Controller', function() {
 		    spyOn($scope, "$broadcast");
 		    spyOn(authService, "loginConfirmed").and.callThrough();
 	    });
-		
+
     });
     it('should have a TradeshowController with defaults and call checkApiAccess on loginService', function() {
       expect(ctrl).toBeDefined();
@@ -270,6 +287,22 @@ describe('TradeshowDetailController', function() {
 			messageService = _messageService_;
 
 	        loginServiceMock.checkApiAccess.and.callThrough();
+            loginServiceMock.token = {
+                get: function() {
+                    return localStorage.getItem('satellizer_token');
+                },
+                set: function(tokenString) {
+                    localStorage.setItem('satellizer_token', tokenString);
+                }
+            };
+            loginServiceMock.tokenCopy = {
+                get: function() {
+                    return localStorage.getItem('_satellizer_token');
+                },
+                set: function(tokenString) {
+                    localStorage.setItem('_satellizer_token', tokenString);
+                }
+            };
 
 			tradeshowResourceMock.get.and.callFake(function() {
 				var deferred = $q.defer();
@@ -451,7 +484,22 @@ describe('TradeshowCreateController', function() {
 				loginService: loginServiceMock,
 				$state: stateMock
 			});
-
+            loginServiceMock.token = {
+                get: function() {
+                    return localStorage.getItem('satellizer_token');
+                },
+                set: function(tokenString) {
+                    localStorage.setItem('satellizer_token', tokenString);
+                }
+            };
+            loginServiceMock.tokenCopy = {
+                get: function() {
+                    return localStorage.getItem('_satellizer_token');
+                },
+                set: function(tokenString) {
+                    localStorage.setItem('_satellizer_token', tokenString);
+                }
+            };
 			loginServiceMock.checkApiAccess.and.callThrough();
 		});
 	});

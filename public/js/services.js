@@ -32,7 +32,7 @@
 				remove: function() {
 					localStorage.removeItem('_satellizer_token');
 				}
-			},			
+			},
 			authenticate: function(credentials) {
 				return $auth.login(credentials);
 			},
@@ -44,6 +44,7 @@
 					.then(function(payload) {
 						deferred.resolve(payload);
 						$rootScope.$emit('event:auth-logged-in');
+						$rootScope.isLoggedIn = true;
 					})
 					.catch(function(payload) {
 						deferred.reject(payload);

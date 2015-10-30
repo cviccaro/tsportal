@@ -4,7 +4,7 @@ describe('AuthController', function() {
 	var loginServiceMock, $rootScope, $scope, ctrl, messageService, busyService, $httpBackend, $q;
 
 	beforeEach(function() {
-		loginServiceMock = jasmine.createSpyObj('loginService', ['authenticate', 'login']);
+		loginServiceMock = jasmine.createSpyObj('loginService', ['authenticate', 'login', 'token', 'tokenCopy']);
 		module('tsportal');
 		inject(function(_$rootScope_, $controller, _$q_, _messageService_, _$httpBackend_, _busyService_) {
 			$rootScope = _$rootScope_;
@@ -19,6 +19,22 @@ describe('AuthController', function() {
 			messageService = _messageService_;
 			spyOn(busyService, "show").and.callThrough();
 			spyOn(busyService, "hide").and.callThrough();
+			loginServiceMock.token = {
+				get: function() {
+					return localStorage.getItem('satellizer_token');
+				},
+				set: function(tokenString) {
+					localStorage.setItem('satellizer_token', tokenString);
+				}
+			};
+			loginServiceMock.tokenCopy = {
+				get: function() {
+					return localStorage.getItem('_satellizer_token');
+				},
+				set: function(tokenString) {
+					localStorage.setItem('_satellizer_token', tokenString);
+				}
+			};
 			spyOn(messageService, "removeMessage").and.callThrough();
 			ctrl = $controller('AuthController', {$scope: $scope, loginService: loginServiceMock, busyService: busyService, messageService: messageService});
 			spyOn($scope, "$broadcast").and.callThrough()

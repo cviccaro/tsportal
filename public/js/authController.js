@@ -20,7 +20,7 @@
 			});
 
 			// If a token is already stored, try app
-			if (localStorage.getItem('satellizer_token') != null) {
+			if (loginService.token.get() !== null) {
 				$state.go('tradeshows', {});
 			}
 
@@ -45,7 +45,7 @@
 					.then(function authLoginSuccess(payload) {
 						busyService.hide();
 						// set a copy of the token to use for refresh requests
-						localStorage.setItem('_satellizer_token', payload.data.token);
+						loginService.tokenCopy.set(payload.data.token);
 						$state.go('tradeshows', {});
 					})
 					.catch(function authLoginFail(payload) {
