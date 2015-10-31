@@ -47,6 +47,7 @@
 						$rootScope.isLoggedIn = true;
 					})
 					.catch(function(payload) {
+						console.log('rejected payload', payload);
 						deferred.reject(payload);
 					});
 				return deferred.promise;
@@ -86,6 +87,8 @@
 							// Save a copy of the token to use for future refresh requests
 							that.tokenCopy.set(payload.data.token);
 
+							$rootScope.isLoggedIn = true;
+
 							// Broadcast events
 							$rootScope.$emit('event:auth-logged-in');
 							authService.loginConfirmed();
@@ -106,6 +109,7 @@
 					}
 				}
 				else {
+					$rootScope.isLoggedIn = true;
 					$rootScope.$emit('event:auth-logged-in');
 				}
 			}
@@ -156,26 +160,34 @@
 	 */
 	var busyService = angular.module('busyService',[]);
 	busyService.factory('busyService', ['$rootScope', function busyService($rootScope) {
-		var message = 'Working on it...', visible = false;
+		var message = 'Working on it...';
 		$rootScope.workingMessage = message;
+		$rootScope.busyServiceIsBusy = true;
 		return {
+			message: message,
+			isBusy: function() {
+				return $rootScope.busyServiceIsBusy;
+			},
 			setMessage: function(msg) {
 				$rootScope.workingMessage = msg;
-				message = msg;
+				this.message = msg;
 			},
 			getMessage: function() {
-				return message;
-			},
-			show: function() {
-				$('.loading-indicator').removeClass('ng-hide').fadeIn(100);
-				visible = true;
-			},
-			hide: function() {
-				$('.loading-indicator').fadeOut(100).addClass('ng-hide');
-				visible = false;
+				return this.message;
 			},
 			isVisible: function() {
-				return visible;
+				return $('.loading-indicator').is(':visible');
+			},
+			show: function() {
+				$rootScope.busyServiceIsBusy = true;
+			},
+			hide: function() {
+				$rootScope.busyServiceIsBusy = false;
+				setTimeout(function() {
+					if ($('.loading-indicator').is(':visible')) {
+						$('.loading-indicator').fadeOut(500);
+					}
+				}, 600);
 			}
 		};
 	}]);
@@ -309,7 +321,7 @@
 					perPage = 15;
 				}
 				return $http.
-					get('api/tradeshows/' + currentTradeshowId + '/leads?page='+pageNumber+'&perPage='+perPage+'&orderBy=' +orderBy + '&orderByReverse=' + parseInt(orderByReverse));
+					get('api/tradeshows/' + this.currentTradeshowId + '/leads?page='+pageNumber+'&perPage='+perPage+'&orderBy=' +orderBy + '&orderByReverse=' + parseInt(orderByReverse));
 			},
 			currentTradeshowId: null,
 			setCurrentTradeshowId:function(id) {

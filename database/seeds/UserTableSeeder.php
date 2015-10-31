@@ -2,8 +2,6 @@
 
 use Illuminate\Database\Seeder;
 use TSPortal\User;
-// composer require laracasts/testdummy
-use Laracasts\TestDummy\Factory as TestDummy;
 
 class UserTableSeeder extends Seeder
 {

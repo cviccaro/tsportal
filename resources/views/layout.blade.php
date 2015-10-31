@@ -8,7 +8,7 @@
 
     <!-- jQuery -->
     <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>    
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 
     <!-- Bootstrap Switch -->
     <link rel="stylesheet" type="text/css" href="/css/bootstrap-switch.min.css" />
@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="/bower_components/ng-dialog/css/ngDialog.min.css" />
     <link rel="stylesheet" type="text/css" href="/bower_components/ng-dialog/css/ngDialog-theme-default.min.css" />
     <link rel="stylesheet" type="text/css" href="/css/app.css" />
-    
+
     <!-- IE9 Satellizer Support -->
     <!--[if lte IE 9]>
         <script src="//cdnjs.cloudflare.com/ajax/libs/Base64/0.3.0/base64.min.js"></script>
@@ -39,7 +39,7 @@
                             <span class="icon-bar"></span>
                         </button>
                         <img src="/images/jplogolg.png" class="logo" />
-                        <a class="navbar-brand" href="#">Tradeshow Portal</a>
+                        <a class="navbar-brand" href="/#/">Tradeshow Portal</a>
                     </div>
                     <div id="navbar" class="collapse navbar-collapse">
                         <ul class="nav navbar-nav">
@@ -55,10 +55,10 @@
                 </div>
             </nav>
             @yield('content')
-        </div>        
+        </div>
     <!-- Application Dependencies -->
     <script src="/bower_components/angular/angular.js"></script>
-    
+
     <script src="/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
     <script src="/bower_components/angular-resource/angular-resource.min.js"></script>
     <script src="/bower_components/angular-animate/angular-animate.min.js"></script>

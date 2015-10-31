@@ -163,9 +163,9 @@ describe('Tradeshow List Controller', function() {
 		    spyOn(eventMock, "preventDefault").and.callThrough();
 		    spyOn(eventMock, "stopPropagation").and.callThrough();
 		    spyOn($scope, "getTradeshows").and.callThrough();
-		    spyOn($scope, "handleTradeshows").and.callThrough();
+		  //  spyOn($scope, "handleTradeshows").and.callThrough();
 		    spyOn($scope, "getLeads").and.callThrough();
-		    spyOn($scope, "handleLeads").and.callThrough();
+		  //  spyOn($scope, "handleLeads").and.callThrough();
 		    spyOn($scope, "$broadcast");
 		    spyOn(authService, "loginConfirmed").and.callThrough();
 	    });
@@ -234,7 +234,7 @@ describe('Tradeshow List Controller', function() {
     	click(result[0]);
     	$scope.$digest();
     	expect($scope.getLeads).toHaveBeenCalledWith(1);
-    	expect($scope.handleLeads).toHaveBeenCalled();
+    	//expect($scope.handleLeads).toHaveBeenCalled();
     	leadServiceMock.currentTradeshowId = 1;
     	expect(leadServiceMock.setCurrentTradeshowId).toHaveBeenCalledWith(1);
     	$scope.$digest();
@@ -361,7 +361,7 @@ describe('TradeshowDetailController', function() {
 		    spyOn(messageService, "removeMessage").and.callThrough();
 		    spyOn($scope, "setTitle").and.callThrough();
 		    spyOn($scope, "getTradeshow").and.callThrough();
-		    spyOn($scope, "refreshLeads").and.callThrough();
+		    spyOn($scope, "getLeads").and.callThrough();
 		    spyOn($scope, "$broadcast");
 		    spyOn(authService, "loginConfirmed").and.callThrough();
 		    spyOn(eventMock, "stopPropagation").and.callThrough();
@@ -437,10 +437,10 @@ describe('TradeshowDetailController', function() {
 		var nolead = $scope.pluckLead(999999);
 		expect(nolead).toBeFalsy();
 	});
-	it('should call refreshLeads when calling updatePagination when currentPage is not 1', function() {
+	it('should call getLeads when calling updatePagination when currentPage is not 1', function() {
 		$scope.leadCurrentPage = 2;
 		$scope.updatePagination();
-		expect($scope.refreshLeads).toHaveBeenCalledWith(1);
+		expect($scope.getLeads).toHaveBeenCalledWith(1);
 	});
 	it('should call delete lead on leadService with lead object when $scope.deleteLead(lead_id) is called, and event should call preventDefault and stopPropagation', function() {
 		$scope.deleteLead(1, eventMock);

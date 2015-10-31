@@ -10,12 +10,21 @@
 	 * Displays a paginated, filtered table of all tradeshows.
 	 */
 	tradeshowControllers.controller('TradeshowController',
-		['$rootScope', '$scope', 'Tradeshow', 'tradeshowService', 'leadService', 'loginService', 'ngDialog', 'busyService',
-		function TradeshowController($rootScope, $scope, Tradeshow, tradeshowService, leadService, loginService, ngDialog, busyService) {
+		['$rootScope', '$scope', 'Tradeshow', 'tradeshowService', 'leadService', 'loginService', 'ngDialog', 'busyService', '$q', '$auth', 'messageService',
+		function TradeshowController($rootScope, $scope, Tradeshow, tradeshowService, leadService, loginService, ngDialog, busyService, $q, $auth, messageService) {
+
+		// Watch messageService messages
+		$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
+		    if (typeof newVal !== 'undefined') {
+		        $scope.messages = messageService.messages;
+		    }
+		});
 
 		// Get the scoped tradeshow when we are confirmed to have a valid token
 		$rootScope.$on('event:auth-logged-in', function() {
-			$scope.getTradeshows();
+			$scope.getTradeshows().then(function() {
+				busyService.hide();
+			});
 		});
 
 
@@ -51,33 +60,29 @@
 		// Scope functions
 
 		/**
-		 * [handleTradeshows callback for a successful fetch]
-		 * @return {[void]}
-		 */
-		$scope.handleTradeshows = function(payload) {
-			var response = payload.data;
-
-			$scope.tradeshows = response.data;
-			$scope.currentPage = response.current_page;
-			$scope.totalPages = response.last_page;
-
-			var pages = [];
-			for(var i=1;i<=response.last_page;i++) {
-				pages.push(i);
-			}
-			$scope.range = pages;
-
-		};
-
-		/**
 		 * [getTradeshows use tradeshowService to fetch tradeshows]
 		 * @param  {[int]} pageNumber [requested page number]
 		 * @return {[void]}
 		 */
 		$scope.getTradeshows = function() {
+			var deferred = $q.defer();
 			tradeshowService
 				.retrieve($scope.currentPage, $scope.perPage, $scope.orderBy, $scope.orderByReverse)
-				.then($scope.handleTradeshows);
+				.then(function(payload) {
+					var response = payload.data;
+
+					$scope.tradeshows = response.data;
+					$scope.currentPage = response.current_page;
+					$scope.totalPages = response.last_page;
+
+					var pages = [];
+					for(var i=1;i<=response.last_page;i++) {
+						pages.push(i);
+					}
+					$scope.range = pages;
+					deferred.resolve();
+				});
+			return deferred.promise;
 		};
 
 		/**
@@ -97,32 +102,41 @@
 		 * @return {[void]}
 		 */
 		$scope.getLeads = function(tradeshow_id, pageNumber) {
-			var tradeshow = $scope.pluckTradeshow(tradeshow_id);
-			$scope.selectedTradeshow = tradeshow;
-			leadService.setCurrentTradeshowId(tradeshow.id);
+			busyService.show();
+			var tradeshow;
+			if (tradeshow_id !== null) {
+				tradeshow = $scope.pluckTradeshow(tradeshow_id);
+				$scope.selectedTradeshow = tradeshow;
+				leadService.setCurrentTradeshowId(tradeshow.id);
+			}
+
 			leadService
 				.retrieve(pageNumber, 50, 'id', 0)
-				.then($scope.handleLeads);
+				.then(function(payload) {
+					var response = payload.data;
+
+					$scope.leads = response.data;
+					$scope.leadCurrentPage = response.current_page;
+					$scope.leadTotalPages = response.last_page;
+
+					var pages = [];
+					for(var i=1;i<=response.last_page;i++) {
+						pages.push(i);
+					}
+					$scope.leadRange = pages;
+					busyService.hide();
+				})
+				.catch(function(payload) {
+					busyService.hide();
+					messageService.addMessage({
+						type: 'danger',
+						dismissible: true,
+						icon: 'exclamation-sign',
+						message: "Sorry, something went wrong.",
+					});
+				});
 		};
 
-		/**
-		 * Callback for a successful fetch of the leads
-
-		 * @return {[void]}
-		 */
-		$scope.handleLeads = function(payload) {
-			var response = payload.data;
-
-			$scope.leads = response.data;
-			$scope.leadCurrentPage = response.current_page;
-			$scope.leadTotalPages = response.last_page;
-
-			var pages = [];
-			for(var i=1;i<=response.last_page;i++) {
-				pages.push(i);
-			}
-			$scope.leadRange = pages;
-		};
 
 		/**
 		 * Refreshes the current leads
@@ -131,9 +145,7 @@
 		 * @return {[void]}
 		 */
 		$scope.refreshLeads = function(pageNumber) {
-			leadService
-				.retrieve(pageNumber, 50, 'id', 0)
-				.then($scope.handleLeads);
+			$scope.getLeads(null, pageNumber);
 		};
 
 
@@ -203,6 +215,15 @@
 				});
 		};
 
+		/**
+		 * Remove a message from messageService
+		 * @param  {[type]} message_id [description]
+		 * @return {[void]}
+		 */
+		$scope.removeMessage = function(message_id) {
+			messageService.removeMessage(message_id);
+		};
+
 		// No token, no access
 		loginService.checkApiAccess();
 	}]);
@@ -214,12 +235,15 @@
 	 * Displays an edit form for a tradeshow
 	 */
 	tradeshowControllers.controller('TradeshowDetailController',
-		['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadService', '$state', 'loginService', 'busyService', 'messageService',
-		function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadService, $state, loginService, busyService, messageService) {
+		['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadService', '$state', 'loginService', 'busyService', 'messageService', '$q',
+		function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadService, $state, loginService, busyService, messageService, $q) {
 
 		// Get the scoped tradeshow when we are confirmed to have a valid token
 		$rootScope.$on('event:auth-logged-in', function() {
-			$scope.getTradeshow();
+			$scope.getTradeshow()
+				.then(function() {
+					busyService.hide();
+				});
 		});
 
 		// Refresh authorization token when it is expired transparently to the user
@@ -263,6 +287,7 @@
 
 		// Get the Tradeshow using the Tradeshow resource
 		$scope.getTradeshow = function() {
+			var deferred = $q.defer();
 			Tradeshow.
 				get({tradeshowId:$stateParams.tradeshowId}).
 				$promise.
@@ -271,9 +296,20 @@
 					if ($scope.tradeshow.active == 1) {
 						jQuery('input[name="active"]').bootstrapSwitch('state', true);
 					}
-					$scope.getLeads();
-					$scope.setTitle();
-			});
+					$scope.getLeads()
+						.then(function(payload) {
+							deferred.resolve(payload);
+							$scope.setTitle();
+						})
+						.catch(function() {
+							deferred.reject(payload);
+						});
+
+				})
+				.catch(function(payload) {
+					deferred.reject(payload);
+				});
+			return deferred.promise;
 		};
 
 		/**
@@ -344,26 +380,6 @@
 			return ! ($scope.tradeshowForm.name.$invalid || $scope.tradeshowForm.location.$invalid);
 		};
 
-		/**
-		 * Handle successful fetch of leads from leadService
-		 *
-		 * @return {[void]}
-		 */
-		$scope.handleLeads = function(payload) {
-			var response = payload.data;
-			$scope.leads = response.data;
-			$scope.leadCurrentPage = response.current_page;
-			$scope.leadTotalPages = response.last_page;
-			var pages = [];
-			for(var i=1;i<=response.last_page;i++) {
-				pages.push(i);
-			}
-			$scope.leadRange = pages;
-			// Calculate leads from pagination
-			if ($scope.leadCount === 0) {
-				$scope.leadCount = $scope.leadTotalPages * $scope.leads.length;
-			}
-		};
 
 		/**
 		 * Get the leads using the leadService
@@ -372,21 +388,35 @@
 		 * @return {[void]}
 		 */
 		$scope.getLeads = function(pageNumber) {
+			var deferred = $q.defer();
 			$scope.selectedTradeshow = $scope.tradeshow;
 			leadService.setCurrentTradeshowId($scope.tradeshow.id);
-			$scope.refreshLeads(pageNumber);
-		};
-
-		/**
-		 * Refresh the leads
-		 *
-		 * @param  {[int]} pageNumber [a page number]
-		 * @return {[void]}
-		 */
-		$scope.refreshLeads = function(pageNumber) {
 			leadService
 				.retrieve(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse)
-				.then($scope.handleLeads);
+				.then(function(payload) {
+					var response = payload.data;
+					$scope.leads = response.data;
+					$scope.leadCurrentPage = response.current_page;
+					$scope.leadTotalPages = response.last_page;
+					var pages = [];
+					for(var i=1;i<=response.last_page;i++) {
+						pages.push(i);
+					}
+					$scope.leadRange = pages;
+
+					// Calculate leads from pagination
+					if ($scope.leadCount === 0) {
+						$scope.leadCount = $scope.leadTotalPages * $scope.leads.length;
+					}
+
+					// Resolve promise
+					deferred.resolve(payload);
+				})
+				.catch(function(payload) {
+					// Reject promise
+					deferred.reject(payload);
+				});
+			return deferred.promise;
 		};
 
 		/**
@@ -422,7 +452,7 @@
 		 */
 		$scope.updatePagination = function() {
 			if ($scope.leadCurrentPage != 1) {
-				$scope.refreshLeads(1);
+				$scope.getLeads(1);
 			}
 		};
 

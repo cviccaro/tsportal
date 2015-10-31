@@ -22,7 +22,7 @@ var tsportal = angular.module('tsportal', [
 
 tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtInterceptorProvider', '$authProvider',
     function($stateProvider, $urlRouterProvider, $httpProvider, jwtInterceptorProvider, $authProvider) {
-        $httpProvider.useLegacyPromiseExtensions = false
+        $httpProvider.useLegacyPromiseExtensions = false;
         // Satellizer configuration that specifies which API
         // route the JWT should be retrieved from
         $authProvider.loginUrl = '/api/authenticate';
@@ -60,11 +60,11 @@ tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtIn
                 url:'/leads/:id/edit',
                 templateUrl: '../partials/lead-detail.html',
                 controller: 'LeadController as leadCtrl'
-            })
+            });
 }]);
 
  // @credit http://blog.kettle.io/dynamic-pagination-angularjs-laravel/
-tsportal.directive('tradeshowPagination', function(){  
+tsportal.directive('tradeshowPagination', function(){
    return{
       restrict: 'E',
       template: '<ul class="pagination">'+
@@ -78,17 +78,17 @@ tsportal.directive('tradeshowPagination', function(){
       '</ul>'
    };
 });
-tsportal.directive('leadPagination', function(){  
+tsportal.directive('leadPagination', function(){
    return{
       restrict: 'E',
       template: '<ul class="pagination" ng-show="leadCurrentPage != undefined && leadTotalPages != undefined">'+
-        '<li ng-show="leadCurrentPage != 1"><a href="javascript:void(0)" ng-click="refreshLeads(1)">&laquo;</a></li>'+
-        '<li ng-show="leadCurrentPage != 1"><a href="javascript:void(0)" ng-click="refreshLeads(leadCurrentPage-1)">&lsaquo; Prev</a></li>'+
+        '<li ng-show="leadCurrentPage != 1"><a href="javascript:void(0)" ng-click="getLeads(1)">&laquo;</a></li>'+
+        '<li ng-show="leadCurrentPage != 1"><a href="javascript:void(0)" ng-click="getLeads(leadCurrentPage-1)">&lsaquo; Prev</a></li>'+
         '<li ng-repeat="i in leadRange" ng-class="{active : leadCurrentPage == i}">'+
-            '<a href="javascript:void(0)" ng-click="refreshLeads(i)">{{i}}</a>'+
+            '<a href="javascript:void(0)" ng-click="getLeads(i)">{{i}}</a>'+
         '</li>'+
-        '<li ng-show="leadCurrentPage != leadTotalPages"><a href="javascript:void(0)" ng-click="refreshLeads(leadCurrentPage+1)">Next &rsaquo;</a></li>'+
-        '<li ng-show="leadCurrentPage != leadTotalPages"><a href="javascript:void(0)" ng-click="refreshLeads(leadTotalPages)">&raquo;</a></li>'+
+        '<li ng-show="leadCurrentPage != leadTotalPages"><a href="javascript:void(0)" ng-click="getLeads(leadCurrentPage+1)">Next &rsaquo;</a></li>'+
+        '<li ng-show="leadCurrentPage != leadTotalPages"><a href="javascript:void(0)" ng-click="getLeads(leadTotalPages)">&raquo;</a></li>'+
       '</ul>'
    };
 });
@@ -126,7 +126,7 @@ tsportal.directive('bs', function() {
 tsportal.directive('stateLoadingIndicator', ['busyService', '$rootScope', function(busyService, $rootScope) {
   return {
     restrict: 'E',
-    template: "<div ng-show='isStateLoading' class='loading-indicator'>" +
+    template: "<div ng-show='isStateLoading || busyServiceIsBusy' class='ng-hide loading-indicator'>" +
     "<div class='loading-indicator-body'>" +
     "<h3 class='loading-title'>{{workingMessage}}...</h3>" +
     "<div class='spinner'><wave-spinner></wave-spinner></div>" +
@@ -135,7 +135,7 @@ tsportal.directive('stateLoadingIndicator', ['busyService', '$rootScope', functi
     replace: true,
     link: function(scope, elem, attrs) {
       scope.isStateLoading = false;
- 
+
       $rootScope.$on('$stateChangeStart', function() {
         scope.isStateLoading = true;
       });
@@ -162,7 +162,7 @@ tsportal.directive('messages', function() {
                 '<div ng-repeat="message in messages" class="alert alert-{{message.type}} {{message.dismissible ? \'alert-dismissible\' : \'\'}}" role="alert" style="opacity: 0">' +
                     '<button type="button" class="close" ng-click="removeMessage(message.id)" data-dismiss="alert" aria-label="Close" ng-show="message.dismissible">' +
                         '<span aria-hidden="true">×</span>' +
-                    '</button>' + 
+                    '</button>' +
                     '<span class="glyphicon glyphicon-{{message.icon}} {{message.iconClass ? message.iconClass : \'\'}}" ng-show="message.hasOwnProperty(\'icon\')"></span>' +
                     '<span>{{message.message}}</span>' +
                 '</div>' +

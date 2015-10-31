@@ -7,12 +7,14 @@
 	 * @class LeadController
 	 */
 	leadControllers.controller('LeadController',
-		['$rootScope', '$scope', '$stateParams', 'Lead', 'ngDialog', 'Tradeshow', '$state', 'loginService', 'busyService', 'messageService',
-		function LeadController($rootScope, $scope, $stateParams, Lead, ngDialog, Tradeshow, $state, loginService, busyService, messageService) {
+		['$rootScope', '$scope', '$stateParams', 'Lead', 'ngDialog', 'Tradeshow', '$state', 'loginService', 'busyService', 'messageService', '$q',
+		function LeadController($rootScope, $scope, $stateParams, Lead, ngDialog, Tradeshow, $state, loginService, busyService, messageService, $q) {
 
 		// Get the lead when it is confirmed we have a valid token
 		$rootScope.$on('event:auth-logged-in', function() {
-			$scope.getLead();
+			$scope.getLead().then(function() {
+				busyService.hide();
+			});
 		});
 
 
@@ -30,6 +32,7 @@
 
 		// Get the lead using the Lead resource
 		$scope.getLead = function() {
+			var deferred = $q.defer();
 			Lead.
 				get({id:$stateParams.id}).
 				$promise.
@@ -46,8 +49,16 @@
 						$promise.
 						then(function(payload) {
 							$scope.tradeshow = payload.tradeshow;
+							deferred.resolve(payload);
+						})
+						.catch(function(payload) {
+							deferred.reject(payload);
 						});
-			});
+				})
+				.catch(function(payload) {
+					deferred.reject(payload);
+				});
+			return deferred.promise;
 		};
 
 		// Scope methods

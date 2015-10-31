@@ -1,6 +1,7 @@
     <div class="page-header">
         <h1>Tradeshows</h1>
     </div>
+    <messages></messages>
     <div class="toolbar buttons">
         <p class="help">Clicking a row in the tradeshow table will display a preview of its Leads below the table.<br />Click the edit button to see a more detailed view of the tradeshow and its leads.</p>
         <a class="btn btn-success" href="#/tradeshows/create" >Create</a>
@@ -95,7 +96,7 @@
                             <td>{{lead.timestamp}}</td>
                             <td>
                                 <a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
-                            </td>                            
+                            </td>
                         </tr>
                         <tr ng-show="!leads.length">
                             <td colspan="6">No leads available.</td>
