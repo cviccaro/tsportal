@@ -101,17 +101,13 @@
 		 * @param  {[int]} pageNumber [requested page number]
 		 * @return {[void]}
 		 */
-		$scope.getLeads = function(tradeshow_id, pageNumber) {
+		$scope.getLeads = function(tradeshow, pageNumber) {
 			busyService.show();
-			var tradeshow;
-			if (tradeshow_id !== null) {
-				tradeshow = $scope.pluckTradeshow(tradeshow_id);
-				$scope.selectedTradeshow = tradeshow;
-				leadService.setCurrentTradeshowId(tradeshow.id);
-			}
+
+			$scope.selectedTradeshow = tradeshow;
 
 			leadService
-				.retrieve(pageNumber, 50, 'id', 0)
+				.retrieve(tradeshow.id, pageNumber, 50, 'id', 0)
 				.then(function(payload) {
 					var response = payload.data;
 
@@ -145,7 +141,7 @@
 		 * @return {[void]}
 		 */
 		$scope.refreshLeads = function(pageNumber) {
-			$scope.getLeads(null, pageNumber);
+			$scope.getLeads($scope.selectedTradeshow, pageNumber);
 		};
 
 
@@ -287,6 +283,7 @@
 
 		// Get the Tradeshow using the Tradeshow resource
 		$scope.getTradeshow = function() {
+			busyService.show();
 			var deferred = $q.defer();
 			Tradeshow.
 				get({tradeshowId:$stateParams.tradeshowId}).
@@ -389,10 +386,8 @@
 		 */
 		$scope.getLeads = function(pageNumber) {
 			var deferred = $q.defer();
-			$scope.selectedTradeshow = $scope.tradeshow;
-			leadService.setCurrentTradeshowId($scope.tradeshow.id);
 			leadService
-				.retrieve(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse)
+				.retrieve($scope.tradeshow.id, pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse)
 				.then(function(payload) {
 					var response = payload.data;
 					$scope.leads = response.data;

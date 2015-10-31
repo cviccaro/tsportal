@@ -58,7 +58,7 @@ describe('Tradeshow List Controller', function() {
 
     	loginServiceMock = jasmine.createSpyObj('loginService', ['authenticate', 'checkApiAccess', 'refresh', 'logout']);
     	tradeshowServiceMock = jasmine.createSpyObj('tradeshowService', ['retrieve', 'deleteTradeshow']);
-    	leadServiceMock = jasmine.createSpyObj('leadService', ['retrieve', 'setCurrentTradeshowId', 'getCurrentTradeshowId', 'currentTradeshowId']);
+    	leadServiceMock = jasmine.createSpyObj('leadService', ['retrieve']);
 
 		eventMock = {
 			stopped: false,
@@ -101,8 +101,6 @@ describe('Tradeshow List Controller', function() {
                     localStorage.setItem('_satellizer_token', tokenString);
                 }
             };
-
-			leadServiceMock.setCurrentTradeshowId.and.callThrough();
 
 			tradeshowServiceMock.retrieve.and.callFake(function() {
 				var deferred = $q.defer();
@@ -235,8 +233,6 @@ describe('Tradeshow List Controller', function() {
     	$scope.$digest();
     	expect($scope.getLeads).toHaveBeenCalledWith(1);
     	//expect($scope.handleLeads).toHaveBeenCalled();
-    	leadServiceMock.currentTradeshowId = 1;
-    	expect(leadServiceMock.setCurrentTradeshowId).toHaveBeenCalledWith(1);
     	$scope.$digest();
     	//expect(leadServiceMock.getCurrentTradeshowId()).toEqual(1)
     });

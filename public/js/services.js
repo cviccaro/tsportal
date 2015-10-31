@@ -302,12 +302,11 @@
 		return $resource('api/leads/:id', {id: '@id'});
 	}]);
 
-	// Lead service for fetching paginated, sorted lists of Leads
-	leadServices.factory('leadService', ['$http', 'Lead', 'ngDialog', '$rootScope', 'busyService', function($http, Lead, ngDialog, $rootScope, busyService) {
-		var currentTradeshowId = null,
-			activeDialog;
+	// Lead service for fetching paginated, sorted lists of Leads based on a single tradeshow
+	leadServices.factory('leadService', ['$http', 'ngDialog', 'Lead', '$rootScope', 'busyService', function($http, ngDialog, Lead, $rootScope, busyService) {
+		var activeDialog;
 		return {
-			retrieve: function(pageNumber, perPage, orderBy, orderByReverse) {
+			retrieve: function(tradehow_id, pageNumber, perPage, orderBy, orderByReverse) {
 				if(pageNumber===undefined){
 					pageNumber = '1';
 				}
@@ -321,19 +320,9 @@
 					perPage = 15;
 				}
 				return $http.
-					get('api/tradeshows/' + this.currentTradeshowId + '/leads?page='+pageNumber+'&perPage='+perPage+'&orderBy=' +orderBy + '&orderByReverse=' + parseInt(orderByReverse));
+					get('api/tradeshows/' + tradehow_id + '/leads?page='+pageNumber+'&perPage='+perPage+'&orderBy=' +orderBy + '&orderByReverse=' + parseInt(orderByReverse));
 			},
-			currentTradeshowId: null,
-			setCurrentTradeshowId:function(id) {
-				this.currentTradeshowId = id;
-			},
-			getCurrentTradeshowId:function() {
-				return this.currentTradeshowId;
-			},
-			getLeads: function() {
-				return leads;
-			},
-			deleteLead: function deleteLead(lead) {
+			deleteLead: function (lead) {
 				var lead_name = lead.first_name + ' ' + lead.last_name;
 				var dialog_html = '<span class="glyphicon glyphicon-trash red icon-large"></span><span>Are you sure you want to delete Lead <em>' + lead_name +
 								  '</em>?<br /><strong>This cannot be undone.</strong></span><div class="dialog-buttons">' +
