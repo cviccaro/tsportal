@@ -55,8 +55,6 @@
 
 			/**
 			 * Show a login error
-			 * @param  {[type]} loginService [description]
-			 * @return {[void]}
 			 */
 			$scope.loginError = function() {
 				messageService.purge();
@@ -66,10 +64,10 @@
 					message: 'The email or password entered was incorrect.',
 					dismissible: true,
 					iconClass: '',
-				})
+				});
 
 				busyService.hide();
-			}
+			};
 
 			/**
 			 * Clear errors
@@ -77,11 +75,11 @@
 			 */
 			$scope.clearErrors = function() {
 				if ($scope.messages.length) {
-					for (var i = 0, msg; msg = $scope.messages[i]; i++) {
+					for (var i = 0, msg; (msg = $scope.messages[i]); i++) {
 						messageService.removeMessage(msg.id);
 					}
 				}
-			}
+			};
 
 			/**
 			 * Remove a message from messageService.

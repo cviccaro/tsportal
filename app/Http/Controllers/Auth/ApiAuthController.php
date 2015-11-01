@@ -1,21 +1,19 @@
 <?php
+namespace App\Http\Controllers\Auth;
 
-namespace TSPortal\Http\Controllers;
-
-use Illuminate\Http\Request;
-
-use TSPortal\Http\Requests;
-use TSPortal\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Exception\HttpResponseException;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use TSPortal\Lead;
-use TSPortal\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * @link https://github.com/tymondesigns/jwt-auth/wiki/Creating-Tokens
  */
 
 class ApiAuthController extends Controller {
+
 	public function authenticate(Request $request) {
 		$credentials = $request->only('email', 'password');
 		try {

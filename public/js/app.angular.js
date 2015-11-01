@@ -126,7 +126,7 @@ tsportal.directive('bs', function() {
 tsportal.directive('stateLoadingIndicator', ['busyService', '$rootScope', function(busyService, $rootScope) {
   return {
     restrict: 'E',
-    template: "<div ng-show='isStateLoading || busyServiceIsBusy' class='ng-hide loading-indicator'>" +
+    template: "<div ng-show='isStateLoading || busyServiceIsBusy' class='loading-indicator'>" +
     "<div class='loading-indicator-body'>" +
     "<h3 class='loading-title'>{{workingMessage}}...</h3>" +
     "<div class='spinner'><wave-spinner></wave-spinner></div>" +
@@ -140,9 +140,11 @@ tsportal.directive('stateLoadingIndicator', ['busyService', '$rootScope', functi
         scope.isStateLoading = true;
       });
       $rootScope.$on('$stateChangeSuccess', function() {
-        var s = scope;
+        scope.isStateLoading = false;
         setTimeout(function() {
-            s.isStateLoading = false;
+            if (!busyService.isBusy() && busyService.isVisible()) {
+                busyService.hide();
+            }
         },0);
       });
     }

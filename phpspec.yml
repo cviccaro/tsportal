@@ -1,5 +1,0 @@
-suites:
-    main:
-        namespace: TSPortal
-        psr4_prefix: TSPortal
-        src_path: app

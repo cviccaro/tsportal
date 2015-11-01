@@ -61,7 +61,7 @@
                         <a class="btn btn-warning" href="#/tradeshows/{{tradeshow.id}}/edit">Edit</a>
                         <a class="btn btn-danger" href="" ng-click="deleteTradeshow(tradeshow.id, $event)">Delete</a>
                         &nbsp;&nbsp;&nbsp;
-                        <a class="btn btn-primary" ng-click="downloadReport(tradeshow.id, $event)">Excel Report</a>
+                        <a class="btn btn-primary" ng-click="downloadReport(tradeshow.id)" ng-show="tradeshow.lead_count > 0">Excel Report</a>
                     </td>
                 </tr>
                 </tbody>

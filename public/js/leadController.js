@@ -37,7 +37,7 @@
 				get({id:$stateParams.id}).
 				$promise.
 				then(function(payload) {
-					$scope.lead = payload.lead;
+					$scope.lead = payload;
 					$scope.setTitle();
 					angular.forEach(['existing_customer', 'contact_by_phone', 'contact_by_email'], function(key) {
 						if ($scope.lead[key] == 1) {
@@ -48,7 +48,7 @@
 						get({tradeshowId: $scope.lead.tradeshow_id}).
 						$promise.
 						then(function(payload) {
-							$scope.tradeshow = payload.tradeshow;
+							$scope.tradeshow = payload;
 							deferred.resolve(payload);
 						})
 						.catch(function(payload) {
@@ -98,7 +98,7 @@
 					$promise.
 					then(function(payload) {
 						// Set the lead in scope
-						$scope.lead = payload.lead;
+						$scope.lead = payload;
 
 						// Set the page title
 						$scope.setTitle();

@@ -47,7 +47,6 @@
 						$rootScope.isLoggedIn = true;
 					})
 					.catch(function(payload) {
-						console.log('rejected payload', payload);
 						deferred.reject(payload);
 					});
 				return deferred.promise;
@@ -183,11 +182,11 @@
 			},
 			hide: function() {
 				$rootScope.busyServiceIsBusy = false;
-				setTimeout(function() {
-					if ($('.loading-indicator').is(':visible')) {
-						$('.loading-indicator').fadeOut(500);
-					}
-				}, 600);
+				// setTimeout(function() {
+				// 	if ($('.loading-indicator').is(':visible')) {
+				// 		$('.loading-indicator').fadeOut(500);
+				// 	}
+				// }, 600);
 			}
 		};
 	}]);

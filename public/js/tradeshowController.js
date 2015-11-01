@@ -180,12 +180,11 @@
 		 * @return {[void]}
 		 */
 		$scope.downloadReport = function(tradeshow_id, $event) {
-			$event.preventDefault();
-			$event.stopPropagation();
+			// $event.preventDefault();
+			// $event.stopPropagation();
 			busyService.show();
-			leadService.setCurrentTradeshowId(tradeshow_id);
 			leadService
-				.retrieve(1, 15, 'id', 0)
+				.retrieve(tradeshow_id, 1, 15, 'id', 0)
 				.then(function(payload) {
 					busyService.hide();
 					var response = payload.data;
@@ -288,8 +287,8 @@
 			Tradeshow.
 				get({tradeshowId:$stateParams.tradeshowId}).
 				$promise.
-				then(function(data) {
-					$scope.tradeshow = data.tradeshow;
+				then(function(payload) {
+					$scope.tradeshow = payload;
 					if ($scope.tradeshow.active == 1) {
 						jQuery('input[name="active"]').bootstrapSwitch('state', true);
 					}
@@ -343,7 +342,7 @@
 				// Use Tradeshow resource to save currently scoped tradeshow
 				Tradeshow.save($scope.tradeshow).$promise.then(function(payload) {
 					// Set the tradeshow in scope
-					$scope.tradeshow = payload.tradeshow;
+					$scope.tradeshow = payload;
 
 					// Set the page title
 					$scope.setTitle();
@@ -511,7 +510,7 @@
 					.create($scope.tradeshow)
 					.$promise
 					.then(function(payload) {
-					var tradeshow_id = payload.tradeshow.id;
+					var tradeshow_id = payload.id;
 
 					// Fade out the "busy" indicator
 					busyService.hide();

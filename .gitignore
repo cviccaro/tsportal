@@ -13,3 +13,4 @@ ftpsync.settings
 *.sublime-*
 .jshintrc
 .gitattributes
+.gitignore

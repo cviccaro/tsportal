@@ -1,11 +1,11 @@
 <?php
 
-namespace TSPortal\Api\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use TSPortal\Http\Controllers\Controller;
-use TSPortal\Lead;
-use TSPortal\Tradeshow;
+use App\Http\Controllers\Controller;
+use App\Lead;
+use App\Tradeshow;
 
 class OldAPIEmulation extends Controller {
 	public function handle(Request $request) {
@@ -22,9 +22,9 @@ class OldAPIEmulation extends Controller {
 				break;
 				case 'pushLeads':
 					$queue = $request->input('queue');
-					$num_saved = 0;
-					$num_processed = 0;
-					$error = 0;
+					$saved, $touched = 0;
+					$error = 1;
+					$response = 'error';
 					if ($queue) {
 						foreach($queue as $data) {
 							$lead = new Lead();
@@ -67,24 +67,20 @@ class OldAPIEmulation extends Controller {
 								}
 							}
 							// Save
-							$saved = $lead->save();
-							if ($saved) {
-								$num_saved++;
+							if ($lead->save()) {
+								$saved++;
 							}
-							$num_processed++;
+							$touched++;
 						}
 						$response = 'success';
-					}
-					else {
-						$error = 1;
-						$response = 'error';
+						$error = 0;
 					}
 					return [
 						'method' => $do,
 						'response' => $response,
 						'error' => $error,
-						'num_saved' => $num_saved,
-						'num_processed' => $num_processed
+						'saved' => $saved,
+						'touched' => $touched
 					];
 				break;
 				case 'getLeadsForTradeshow':

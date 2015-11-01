@@ -6,55 +6,37 @@
 |--------------------------------------------------------------------------
 |
 | Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
+| It is a breeze. Simply tell Lumen the URIs it should respond to
+| and give it the Closure to call when that URI is requested.
 |
 */
 
-// Root route
-Route::get('/', function () {
+$app->get('/', function() use ($app) {
     return view('angular');
 });
 
-/**
- * Web Authentication Routes
- */
-Route::get('auth/login', 'Auth\AuthController@getLogin');
-Route::post('auth/login', 'Auth\AuthController@postLogin');
-Route::get('auth/logout', 'Auth\AuthController@getLogout');
-
-/**
- * API Routes
- */
-Route::group(['prefix' => 'api'], function() {
-    Route::post('authenticate', 'ApiAuthController@authenticate');
-    Route::get('authenticate/refresh','ApiAuthController@refresh');
+$app->group(['prefix' => 'api'], function($app) {
+    $app->post('authenticate', 'App\Http\Controllers\Auth\ApiAuthController@authenticate');
+    $app->get('authenticate/refresh','App\Http\Controllers\Auth\ApiAuthController@refresh');
 });
 
-$api = app('Dingo\Api\Routing\Router');
+$app->group(['middleware' => 'jwt.auth', 'prefix' => 'api/tradeshows'], function($app) {
+    $app->get('/', 'App\Http\Controllers\TradeshowController@index');
+    $app->get('/{id}', 'App\Http\Controllers\TradeshowController@show');
+    $app->get('/{id}/leads', 'App\Http\Controllers\LeadController@showByTradeshowId');
 
-$api->version('v1', ['middleware' => 'api.auth'], function($api) {
-    $api->get('tradeshows', 'TSPortal\API\Controllers\TradeshowController@index');
-    $api->get('tradeshows/{id}', 'TSPortal\API\Controllers\TradeshowController@show');
-    $api->post('tradeshows/create', 'TSPortal\API\Controllers\TradeshowController@store');
-    $api->post('tradeshows/{id}', 'TSPortal\API\Controllers\TradeshowController@update');
-    $api->delete('tradeshows/{id}', 'TSPortal\API\Controllers\TradeshowController@destroy');
-    $api->get('tradeshows/{id}/leads', 'TSPortal\API\Controllers\LeadController@showByTradeshowId');
-    $api->get('leads', 'TSPortal\API\Controllers\LeadController@index');
-    $api->get('leads/{id}', 'TSPortal\API\Controllers\LeadController@show');
-    $api->delete('leads/{id}', 'TSPortal\API\Controllers\LeadController@destroy');
-    $api->post('leads/create', 'TSPortal\API\Controllers\LeadController@createMany');
-    $api->post('leads/{id}', 'TSPortal\API\Controllers\LeadController@update');
+    $app->post('/create', 'App\Http\Controllers\TradeshowController@create');
+    $app->post('/{id}', 'App\Http\Controllers\TradeshowController@update');
+    $app->delete('/{id}', 'App\Http\Controllers\TradeshowController@destroy');
 });
 
-Route::get('tradeshows/{tradeshow_id}/report', 'ReportingController@report');
+$app->group(['middleware' => 'jwt.auth', 'prefix' => 'api/leads'], function($app) {
+    $app->get('/', 'App\Http\Controllers\LeadController@index');
+    $app->get('/{id}', 'App\Http\Controllers\LeadController@show');
 
-// Emulate old API
-// Old API had no authentication so unfortunately API calls using ws.php will not be authenticated
-// WS.php support will be phased out in upcoming updates to iOS app
+    $app->post('/create', 'App\Http\Controllers\LeadController@createMany');
+    $app->post('/{id}', 'App\Http\Controllers\LeadController@update');
 
-// Route::group(['middleware' => 'jwt.auth'], function() {
-	Route::get('ws.php', '\TSPortal\API\Controllers\OldAPIEmulation@handle');
-    Route::post('ws.php', '\TSPortal\API\Controllers\OldAPIEmulation@handle');
-// });
-// 
+    $app->delete('/{id}', 'App\Http\Controllers\LeadController@destroy');
+});
+

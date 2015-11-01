@@ -1,11 +1,10 @@
 <?php
 
-namespace TSPortal\Http\Middleware;
+namespace App\Http\Middleware;
 
 use Closure;
-use Log;
 
-class LogAfterRequest
+class ExampleMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,9 +16,5 @@ class LogAfterRequest
     public function handle($request, Closure $next)
     {
         return $next($request);
-    }
-    public function terminate($request, $response)
-    {
-        Log::info('app.requests', ['request' => $request->all(), 'response' => $response]);
     }
 }

@@ -1,9 +1,9 @@
 <?php
 
-namespace TSPortal;
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use TSPortal\Tradeshow;
+use App\Tradeshow;
 
 class Lead extends Model
 {

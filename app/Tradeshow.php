@@ -1,6 +1,6 @@
 <?php
 
-namespace TSPortal;
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
