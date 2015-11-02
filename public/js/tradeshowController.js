@@ -24,6 +24,16 @@
 		$rootScope.$on('event:auth-logged-in', function() {
 			$scope.getTradeshows().then(function() {
 				busyService.hide();
+			})
+			.catch(function(payload) {
+				busyService.hide();
+				messageService.addMessage({
+					type: 'danger',
+					dismissible: true,
+					icon: 'exclamation-sign',
+					iconClass: 'icon-medium',
+					message: "Sorry, something went wrong.",
+				});
 			});
 		});
 
@@ -81,6 +91,9 @@
 					}
 					$scope.range = pages;
 					deferred.resolve();
+				})
+				.catch(function(payload) {
+					deferred.reject(payload);
 				});
 			return deferred.promise;
 		};
@@ -128,6 +141,7 @@
 						type: 'danger',
 						dismissible: true,
 						icon: 'exclamation-sign',
+						iconClass: 'icon-medium',
 						message: "Sorry, something went wrong.",
 					});
 				});
@@ -238,6 +252,16 @@
 			$scope.getTradeshow()
 				.then(function() {
 					busyService.hide();
+				})
+				.catch(function(payload) {
+					busyService.hide();
+					messageService.addMessage({
+						type: 'danger',
+						dismissible: true,
+						icon: 'exclamation-sign',
+						iconClass: 'icon-medium',
+						message: "Sorry, something went wrong.",
+					});
 				});
 		});
 
@@ -340,31 +364,39 @@
 				busyService.show();
 
 				// Use Tradeshow resource to save currently scoped tradeshow
-				Tradeshow.save($scope.tradeshow).$promise.then(function(payload) {
-					// Set the tradeshow in scope
-					$scope.tradeshow = payload;
+				Tradeshow.save($scope.tradeshow).$promise
+					.then(function(payload) {
+						// Set the tradeshow in scope
+						$scope.tradeshow = payload;
 
-					// Set the page title
-					$scope.setTitle();
+						// Set the page title
+						$scope.setTitle();
 
-					// Manually fade out "busy" indicator
-					busyService.hide();
+						// Manually fade out "busy" indicator
+						busyService.hide();
 
-					// Show success alert
-					messageService.addMessage({
-						icon: 'ok',
-						type: 'success',
-						iconClass: 'icon-medium',
-						dismissible: true,
-						message: 'Your changes have been saved'
+						// Show success alert
+						messageService.addMessage({
+							icon: 'ok',
+							type: 'success',
+							iconClass: 'icon-medium',
+							dismissible: true,
+							message: 'Your changes have been saved'
+						});
+					})
+					.catch(function(payload) {
+						// Manually fade out "busy" indicator
+						busyService.hide();
+
+						// Show error alert
+						messageService.addMessage({
+							icon: 'exclamation-sign',
+							type: 'danger',
+							iconClass: 'icon-medium',
+							dismissible: true,
+							message: 'Sorry, something went wrong.'
+						});
 					});
-					// Show confirmation dialog
-					// ngDialog.open({
-					// 	plain: true,
-					// 	className: 'dialog-save ngdialog-theme-default',
-					// 	template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Your changes have been saved.</span>'
-					// });
-				});
 			}
 		};
 
@@ -471,14 +503,21 @@
 	 * Displays a form for the creation of a new tradeshow
 	 */
 	tradeshowControllers.controller('TradeshowCreateController',
-		['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', '$state', 'loginService', 'busyService',
-		function TradeshowCreateController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, $state, loginService, busyService) {
+		['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', '$state', 'loginService', 'busyService', 'messageService',
+		function TradeshowCreateController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, $state, loginService, busyService, messageService) {
 		// Scope variables
 		$scope.isNew = true;
 		$scope.model = 'tradeshow';
 		$scope.title = 'Create new Tradeshow';
 		$scope.tradeshow = {};
 		$scope.submitted = false;
+
+		// Watch messageService messages
+		$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
+		    if (typeof newVal !== 'undefined') {
+		        $scope.messages = messageService.messages;
+		    }
+		});
 
 		/**
 		 * Callback to 'Back' button
@@ -510,24 +549,34 @@
 					.create($scope.tradeshow)
 					.$promise
 					.then(function(payload) {
-					var tradeshow_id = payload.id;
+						var tradeshow_id = payload.id;
 
-					// Fade out the "busy" indicator
-					busyService.hide();
+						// Fade out the "busy" indicator
+						busyService.hide();
 
-					// Show a confirmation dialog
-					ngDialog.open({
-						plain: true,
-						className: 'dialog-save ngdialog-theme-default',
-						template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Your new tradeshow has been created successfully.' +
-						'  Close this message box to proceed to the tradeshow\'s edit page.</span>'
+						// Show a confirmation dialog
+						ngDialog.open({
+							plain: true,
+							className: 'dialog-save ngdialog-theme-default',
+							template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Your new tradeshow has been created successfully.' +
+							'  Close this message box to proceed to the tradeshow\'s edit page.</span>'
+						})
+						.closePromise
+						.then(function(data) {
+							// Navigate to the new tradeshow's Edit page on dialog close
+							window.location.hash = '#/tradeshows/' + tradeshow_id + '/edit';
+						});
 					})
-					.closePromise
-					.then(function(data) {
-						// Navigate to the new tradeshow's Edit page on dialog close
-						window.location.hash = '#/tradeshows/' + tradeshow_id + '/edit';
+					.catch(function(payload) {
+						busyService.hide();
+						messageService.addMessage({
+							type: 'danger',
+							dismissible: true,
+							icon: 'exclamation-sign',
+							iconClass: 'icon-medium',
+							message: "Sorry, something went wrong.",
+						});
 					});
-				});
 			}
 		};
 		/**
@@ -536,6 +585,15 @@
 		$scope.validate = function() {
 			$scope.submitted = true;
 			return !( $scope.tradeshowForm.name.$invalid || $scope.tradeshowForm.location.$invalid );
+		};
+
+		/**
+		 * Remove a message from messageService
+		 * @param  {[type]} message_id [description]
+		 * @return {[void]}
+		 */
+		$scope.removeMessage = function(message_id) {
+			messageService.removeMessage(message_id);
 		};
 
 		// Ensure "busy" indicator is hidden

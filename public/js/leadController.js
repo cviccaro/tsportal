@@ -14,6 +14,16 @@
 		$rootScope.$on('event:auth-logged-in', function() {
 			$scope.getLead().then(function() {
 				busyService.hide();
+			})
+			.catch(function(payload) {
+				busyService.hide();
+				messageService.addMessage({
+					type: 'danger',
+					dismissible: true,
+					icon: 'exclamation-sign',
+					iconClass: 'icon-medium',
+					message: "Sorry, something went wrong.",
+				});
 			});
 		});
 
@@ -114,13 +124,16 @@
 							dismissible: true,
 							message: 'Your changes have been saved'
 						});
-
-						// // Show a confirmation dialog
-						// ngDialog.open({
-						// 	plain: true,
-						// 	className: 'dialog-save ngdialog-theme-default',
-						// 	template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Your changes have been saved.</span>'
-						// });
+					})
+					.catch(function(payload) {
+						busyService.hide();
+						messageService.addMessage({
+							type: 'danger',
+							dismissible: true,
+							icon: 'exclamation-sign',
+							iconClass: 'icon-medium',
+							message: "Sorry, something went wrong.",
+						});
 					});
 			}
 		};

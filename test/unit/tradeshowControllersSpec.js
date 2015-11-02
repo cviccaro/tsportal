@@ -302,13 +302,13 @@ describe('TradeshowDetailController', function() {
 
 			tradeshowResourceMock.get.and.callFake(function() {
 				var deferred = $q.defer();
-				deferred.resolve({tradeshow:{id: 1, name: 'tradeshow', location: 'a place', active: 1}});
+				deferred.resolve({id: 1, name: 'tradeshow', location: 'a place', active: 1});
 				deferred.$promise = deferred.promise;
 				return deferred;
 			});
 			tradeshowResourceMock.save.and.callFake(function() {
 				var deferred = $q.defer();
-				deferred.resolve({tradeshow:{id: 1, name: 'tradeshow', location: 'a place', active: 1}});
+				deferred.resolve({id: 1, name: 'tradeshow', location: 'a place', active: 1});
 				deferred.$promise = deferred.promise;
 				return deferred;
 			});
@@ -355,6 +355,7 @@ describe('TradeshowDetailController', function() {
             $scope.$digest();
 
 		    spyOn(messageService, "removeMessage").and.callThrough();
+		    spyOn(messageService, "addMessage").and.callThrough();
 		    spyOn($scope, "setTitle").and.callThrough();
 		    spyOn($scope, "getTradeshow").and.callThrough();
 		    spyOn($scope, "getLeads").and.callThrough();
@@ -453,6 +454,36 @@ describe('TradeshowDetailController', function() {
 		$scope.save();
 		expect(tradeshowResourceMock.save).toHaveBeenCalledWith(newValues);
 		expect($scope.tradeshow.name).toEqual('test save');
+		$scope.$digest();
+		expect(messageService.addMessage).toHaveBeenCalledWith({
+							icon: 'ok',
+							type: 'success',
+							iconClass: 'icon-medium',
+							dismissible: true,
+							message: 'Your changes have been saved',
+							id: 1
+						});
+	});
+	it('should call save on Tradeshow Resource when calling $scope.save() and if received rejection of promise, display error message', function() {
+		tradeshowResourceMock.save.and.callFake(function() {
+			var deferred = $q.defer();
+			deferred.reject({status: 500, data:[]});
+			deferred.$promise = deferred.promise;
+			return deferred;
+		});
+		var newValues = {name: 'test save', location: 'test save', active: 1, id: 1};
+		$scope.tradeshowForm = $scope.tradeshow = newValues;
+		$scope.save();
+		expect(tradeshowResourceMock.save).toHaveBeenCalledWith(newValues);
+		$scope.$digest();
+		expect(messageService.addMessage).toHaveBeenCalledWith({
+							icon: 'exclamation-sign',
+							type: 'danger',
+							iconClass: 'icon-medium',
+							dismissible: true,
+							message: 'Sorry, something went wrong.',
+							id: 1
+						});
 	});
 });
 
