@@ -111,7 +111,7 @@
 		$scope.refreshTradeshows = function() {
 			$scope.getTradeshows().then(function(payload) {
 				// Page number was out of range, fetching last page available
-				if ($scope.lastFetchedPage != payload.data.current_page) {
+				if ($scope.lastFetchedPage > payload.data.current_page) {
 					$scope.getTradeshows(payload.data.last_page);
 				}
 			});
@@ -125,10 +125,14 @@
 		 * @param  {[int]} pageNumber [requested page number]
 		 * @return {[void]}
 		 */
-		$scope.getLeads = function(tradeshow, pageNumber) {
+		$scope.getLeads = function(pageNumber, tradeshow) {
 			busyService.show();
-
-			$scope.selectedTradeshow = tradeshow;
+			if (tradeshow === undefined) {
+				tradeshow = $scope.selectedTradeshow;
+			}
+			else {
+				$scope.selectedTradeshow = tradeshow;
+			}
 
 			leadService
 				.retrieve(tradeshow.id, pageNumber, 50, 'id', 0)
@@ -315,6 +319,7 @@
 		$scope.isNew = false;
 		$scope.leads = [];
 		$scope.submitted = false;
+		$scope.lastFetchedPage = 1;
 
 		// Get the Tradeshow using the Tradeshow resource
 		$scope.getTradeshow = function() {
@@ -428,9 +433,13 @@
 		 * @return {[void]}
 		 */
 		$scope.getLeads = function(pageNumber) {
+			if (pageNumber === undefined) {
+				pageNumber = $scope.currentPage;
+			}
+			$scope.lastFetchedPage = pageNumber;
 			var deferred = $q.defer();
 			leadService
-				.retrieve($scope.tradeshow.id, pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse)
+				.retrieve($scope.tradeshow.id, pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse, $scope.query)
 				.then(function(payload) {
 					var response = payload.data;
 					$scope.leads = response.data;
@@ -455,6 +464,16 @@
 					deferred.reject(payload);
 				});
 			return deferred.promise;
+		};
+
+		$scope.refreshLeads = function() {
+			$scope.getLeads().then(function(payload) {
+				// Page number was out of range, fetching last page available
+				if ($scope.lastFetchedPage > payload.data.current_page) {
+					$scope.getLeads(payload.data.last_page);
+				}
+				$scope.leadCount = payload.data.data.length;
+			});
 		};
 
 		/**

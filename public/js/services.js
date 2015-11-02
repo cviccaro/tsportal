@@ -198,14 +198,6 @@
 	// Tradeshow Resource using angular-resource
 	tradeshowServices.factory('Tradeshow', ['$resource', function($resource) {
 		return $resource('api/tradeshows/:tradeshowId', {tradeshowId: '@id'}, {
-			list: {method: 'GET', params:{}, isArray: true, transformResponse: function(response) {
-				var data = angular.fromJson(response);
-				return data.tradeshows;
-			}},
-			query: {method: 'GET', isArray: false, transformResponse: function(response) {
-				var data = angular.fromJson(response);
-				return data.tradeshow;
-			}},
 			create: {method: 'POST', url:'api/tradeshows/create'},
 			delete: {method: 'DELETE'}
 		});
@@ -215,8 +207,7 @@
 	tradeshowServices.factory('tradeshowService', 
 		['$http', 'Tradeshow', '$rootScope', 'ngDialog', 'busyService', 
 		function($http, Tradeshow, $rootScope, ngDialog, busyService) {
-		var tradeshows = [],
-			activeDialog;
+		var activeDialog;
 			return {
 				retrieve: function(pageNumber, perPage, orderBy, orderByReverse, filter) {
 					if(pageNumber===undefined){
@@ -235,10 +226,8 @@
 						filter = '';
 					}
 					return $http.
-						get('api/tradeshows?page='+pageNumber+'&perPage=' + perPage + '&orderBy=' + orderBy + '&orderByReverse=' + parseInt(orderByReverse) + '&filter=' + filter);
-				},
-				getTradeshows: function() {
-					return tradeshows;
+						get('api/tradeshows?page='+pageNumber+'&perPage=' + perPage + '&orderBy=' + orderBy + 
+							'&orderByReverse=' + parseInt(orderByReverse) + '&filter=' + filter);
 				},
 				deleteTradeshow: function(tradeshow) {
 					var tradeshow_name = tradeshow.name,
@@ -262,7 +251,7 @@
 
 								busyService.hide();
 
-								if (payload.hasOwnProperty('success') && payload.success == true) {
+								if (payload.hasOwnProperty('success') && payload.success === true) {
 									ngDialog.open({
 										plain: true,
 										className: 'dialog-success ngdialog-theme-default',
@@ -271,14 +260,14 @@
 									.closePromise
 									.then(function() {
 										window.location.reload();
-									})
+									});
 								}
 								else {
 									ngDialog.open({
 										plain: true,
 										className: 'dialog-error ngdialog-theme-default',
 										template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>An error occured when trying to delete Tradeshow <em>' + tradeshow_name + '</em>.</span>  Please try again or contact support.',
-									})
+									});
 								}
 							}, function(errorResponse) {
 
@@ -288,9 +277,9 @@
 									plain: true,
 									className: 'dialog-error ngdialog-theme-default',
 									template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>An error occured when trying to delete Tradeshow <em>' + tradeshow_name + '</em>.</span>  Please try again or contact support.',
-								})
-							})
-					})
+								});
+							});
+					});
 				}
 			};
 	}]);
@@ -310,7 +299,7 @@
 	leadServices.factory('leadService', ['$http', 'ngDialog', 'Lead', '$rootScope', 'busyService', function($http, ngDialog, Lead, $rootScope, busyService) {
 		var activeDialog;
 		return {
-			retrieve: function(tradehow_id, pageNumber, perPage, orderBy, orderByReverse) {
+			retrieve: function(tradehow_id, pageNumber, perPage, orderBy, orderByReverse, filter) {
 				if(pageNumber===undefined){
 					pageNumber = '1';
 				}
@@ -323,8 +312,12 @@
 				if (perPage===undefined) {
 					perPage = 15;
 				}
+				if (filter === undefined) {
+					filter = '';
+				}
 				return $http.
-					get('api/tradeshows/' + tradehow_id + '/leads?page='+pageNumber+'&perPage='+perPage+'&orderBy=' +orderBy + '&orderByReverse=' + parseInt(orderByReverse));
+					get('api/tradeshows/' + tradehow_id + '/leads?page='+pageNumber+'&perPage='+perPage+
+						'&orderBy=' +orderBy + '&orderByReverse=' + parseInt(orderByReverse) + '&filter=' + filter);
 			},
 			deleteLead: function (lead) {
 				var lead_name = lead.first_name + ' ' + lead.last_name;

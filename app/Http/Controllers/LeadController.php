@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Lead;
 use App\Tradeshow;
+use Illuminate\Support\Facades\Schema;
 
 class LeadController extends Controller {
 	/**
@@ -17,8 +18,21 @@ class LeadController extends Controller {
 		$orderBy = $request->input('orderBy', 'id');
 		$direction = $request->input('orderByReverse', 0) == 0 ? 'asc' : 'desc';
 		$paginate = $request->input('perPage', 15);
-		$leads = Lead::orderBy($orderBy, $direction)->paginate($paginate);
-		return $leads;
+
+		if ($request->has('filter') && !empty($request->input('filter'))) {
+			$columns = Schema::getColumnListing('leads');
+			$collection = Lead::orderBy($orderBy, $direction);
+			foreach($columns as $column) {
+				$collection = $collection->orWhere($column, 'LIKE', '%' . $request->input('filter') . '%');
+			}
+			$paginated = $collection->paginate();
+		}
+		else {
+			// Get paginated collection
+			$paginated = Lead::orderBy($orderBy, $direction)->paginate($paginate);
+		}
+
+		return $paginated;
 	}
 
 	/**
@@ -72,9 +86,22 @@ class LeadController extends Controller {
 		$orderBy = $request->input('orderBy', 'id');
 		$direction = $request->input('orderByReverse', 0) == 0 ? 'asc' : 'desc';
 		$paginate = $request->input('perPage', 15);
-		return Lead::where('tradeshow_id', $tradeshow_id)
-                ->orderBy($orderBy, $direction)
-                ->paginate($paginate);
+
+		if ($request->has('filter') && !empty($request->input('filter'))) {
+			$columns = Schema::getColumnListing('leads');
+			$collection = Lead::orderBy($orderBy, $direction);
+			foreach($columns as $column) {
+				if ($column != 'tradeshow_id') {
+					$collection = $collection->orWhere($column, 'LIKE', '%' . $request->input('filter') . '%');
+				}
+			}
+			$paginated = $collection->where('tradeshow_id', $tradeshow_id)->paginate();
+		}
+		else {
+			// Get paginated collection
+			$paginated = Lead::where('tradeshow_id', $tradeshow_id)->orderBy($orderBy, $direction)->paginate($paginate);
+		}
+		return $paginated;
 	}
 
 	/**

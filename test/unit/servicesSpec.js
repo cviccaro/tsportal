@@ -22,11 +22,11 @@ describe('loginService', function() {
 			go: function() {
 
 			}
-		}
+		};
 		module(function($provide) {
 			$provide.value('$auth', authMock);
 			$provide.value('$state', stateMock);
-		})
+		});
 		inject(function(_$httpBackend_, _$rootScope_, _$q_, _loginService_) {
 			$httpBackend = _$httpBackend_;
 			$q = _$q_;
@@ -37,7 +37,7 @@ describe('loginService', function() {
 		spyOn(loginService, "authenticate").and.callThrough();
 		spyOn(loginService, "refresh").and.callThrough();
 		spyOn(stateMock, "go");
-		spyOn(loginService.tokenCopy, "get").and.callThrough()
+		spyOn(loginService.tokenCopy, "get").and.callThrough();
 		spyOn(loginService, "login").and.callThrough();
 		spyOn(loginService, "logout").and.callThrough();
 		spyOn(authMock, "login").and.callThrough();
@@ -61,7 +61,7 @@ describe('loginService', function() {
 		var success = false;
 		loginService.login(creds).then(function() {
 			success = true;
-		})
+		});
 		expect(loginService.authenticate).toHaveBeenCalledWith(creds);
 		expect(authMock.login).toHaveBeenCalledWith(creds);
 		// until we call $digest on $scope, we are not in sync.  this should be false
@@ -84,7 +84,7 @@ describe('loginService', function() {
 		})
 		.catch(function() {
 			fail = true;
-		})
+		});
 		expect(loginService.authenticate).toHaveBeenCalledWith(creds);
 		expect(authMock.login).toHaveBeenCalledWith(creds);
 		// until we call $digest on $scope, we are not in sync.  this should be false
@@ -121,7 +121,7 @@ describe('loginService', function() {
 		loginService.checkApiAccess();
 		expect(loginService.tokenCopy.get).toHaveBeenCalled();
 		expect(stateMock.go).toHaveBeenCalledWith('auth', {});
-	})
+	});
 	it('loginService.checkApiAccess check tokenCopy if token is null, and to call loginService.refresh if tokenCopy is not null', function() {
 		loginService.token.remove();
 		loginService.tokenCopy.set('test');
@@ -129,5 +129,24 @@ describe('loginService', function() {
 		expect(loginService.tokenCopy.get).toHaveBeenCalled();
 		expect(loginService.refresh).toHaveBeenCalledWith('test');
 		$httpBackend.expectGET('api/authenticate/refresh').respond(200);
-	})
+	});
+});
+
+describe('busyService', function() {
+	var $rootScope, busyService;
+	beforeEach(function() {
+		module('tsportal');
+		inject(function(_busyService_, _$rootScope_) {
+			$rootScope = _$rootScope_;
+			busyService = _busyService_;
+		});
+	});
+	it('should be able to get and set a message', function() {
+		busyService.setMessage('test');
+		expect(busyService.message).toEqual('test');
+	});
+	it('should set busyServiceIsBusy on $rootSCope', function() {
+		busyService.show();
+		expect(busyService.isBusy()).toBeTruthy();
+	});
 });

@@ -55,7 +55,7 @@
         </div>
         <div class="toolbar-item right">
             <span>Search</span>
-            <input type="text" ng-model="query" ng-change="updatePagination()" />
+            <input type="text" ng-model="query" ng-model-options="{debounce: 500}" ng-change="refreshLeads()" />
         </div>        
     </div>
     <div class="row">
@@ -70,7 +70,7 @@
                     <th>Actions</th>
                 </thead>
                 <tbody>
-                    <tr ng-show="leads.length" ng-repeat="lead in (filteredLeads = (leads | filter:query))">
+                    <tr ng-show="leads.length" ng-repeat="lead in leads">
                         <td>{{lead.first_name}}</td>
                         <td>{{lead.last_name}}</td>
                         <td>{{lead.email_address}}</td>
