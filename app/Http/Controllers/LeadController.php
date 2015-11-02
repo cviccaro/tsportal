@@ -89,8 +89,8 @@ class LeadController extends Controller {
 		$lead = Lead::findOrFail($id);
 
 		$lead->tradeshow_id = $request->input('tradeshow_id');
-		if ($request->has('objectID')) {
-			$lead->objectID = $request->input("objectID");
+		if ($request->has('objectID') || $request->has('objectid')) {
+			$lead->objectID = $request->input("objectID", $request->input('objectid'));
 		}
         $lead->first_name = $request->input("first_name");
         $lead->last_name = $request->input("last_name");
