@@ -30,8 +30,8 @@
             </select>
         </div>
         <div class="toolbar-item right">
-            <span>Search visible</span>
-            <input type="text" ng-model="query" ng-model-options="{debounce: 500}" />
+            <span>Search</span>
+            <input type="text" ng-model="query" ng-model-options="{debounce: 500}" ng-change="refreshTradeshows()" />
         </div>
     </div>
     <div class="row">
@@ -49,7 +49,7 @@
 
                 <tbody>
 
-                <tr markable ng-repeat="tradeshow in tradeshows | filter:query" ng-click="getLeads(tradeshow)" data-id="{{tradeshow.id}}" class="clickable">
+                <tr markable ng-repeat="tradeshow in tradeshows" ng-click="getLeads(tradeshow)" data-id="{{tradeshow.id}}" class="clickable">
                     <td class="tradeshow-id">{{tradeshow.id}}</td>
                     <td>{{tradeshow.name}}</td>
                     <td>{{tradeshow.location}}</td>
@@ -62,6 +62,7 @@
                         <a class="btn btn-danger" href="" ng-click="deleteTradeshow(tradeshow.id, $event)">Delete</a>
                         &nbsp;&nbsp;&nbsp;
                         <a class="btn btn-primary" ng-click="downloadReport(tradeshow.id)" ng-show="tradeshow.lead_count > 0">Excel Report</a>
+                        <a class="btn btn-primary btn-disabled disabled" ng-show="tradeshow.lead_count == 0" style="visibility: hidden">Excel Report</a>
                     </td>
                 </tr>
                 </tbody>

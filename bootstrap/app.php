@@ -28,11 +28,10 @@ $app->withEloquent();
 $app->configure('jwt');
 
 class_alias('Tymon\JWTAuth\Facades\JWTAuth', 'JWTAuth');
-/** This gives you finer control over the payloads you create if you require it.
- *  Source: https://github.com/tymondesigns/jwt-auth/wiki/Installation
- */
 class_alias('Tymon\JWTAuth\Facades\JWTFactory', 'JWTFactory');
 
+class_alias('Maatwebsite\Excel\Facades\Excel', 'Excel');
+class_alias('Illuminate\Support\Facades\Response', 'Response');
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -90,6 +89,8 @@ $app->middleware([
 */
 
 $app->register('Tymon\JWTAuth\Providers\JWTAuthServiceProvider');
+$app->register('Conner\Kint\KintServiceProvider');
+$app->register('Maatwebsite\Excel\ExcelServiceProvider');
 
 /*
 |--------------------------------------------------------------------------

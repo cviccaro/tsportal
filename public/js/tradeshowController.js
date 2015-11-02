@@ -66,6 +66,7 @@
 		$scope.orderBy = 'id';
 		$scope.orderByReverse = '0';
 		$scope.perPage = '15';
+		$scope.lastFetchedPage = 1;
 
 		// Scope functions
 
@@ -74,10 +75,14 @@
 		 * @param  {[int]} pageNumber [requested page number]
 		 * @return {[void]}
 		 */
-		$scope.getTradeshows = function() {
+		$scope.getTradeshows = function(pageNumber) {
+			if (pageNumber === undefined) {
+				pageNumber = $scope.currentPage;
+			}
+			$scope.lastFetchedPage = pageNumber;
 			var deferred = $q.defer();
 			tradeshowService
-				.retrieve($scope.currentPage, $scope.perPage, $scope.orderBy, $scope.orderByReverse)
+				.retrieve(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse, $scope.query)
 				.then(function(payload) {
 					var response = payload.data;
 
@@ -90,7 +95,8 @@
 						pages.push(i);
 					}
 					$scope.range = pages;
-					deferred.resolve();
+
+					deferred.resolve(payload);
 				})
 				.catch(function(payload) {
 					deferred.reject(payload);
@@ -103,7 +109,12 @@
 		 * @return {[void]}
 		 */
 		$scope.refreshTradeshows = function() {
-			$scope.getTradeshows($scope.currentPage);
+			$scope.getTradeshows().then(function(payload) {
+				// Page number was out of range, fetching last page available
+				if ($scope.lastFetchedPage != payload.data.current_page) {
+					$scope.getTradeshows(payload.data.last_page);
+				}
+			});
 		};
 
 
@@ -196,32 +207,33 @@
 		$scope.downloadReport = function(tradeshow_id, $event) {
 			// $event.preventDefault();
 			// $event.stopPropagation();
-			busyService.show();
-			leadService
-				.retrieve(tradeshow_id, 1, 15, 'id', 0)
-				.then(function(payload) {
-					busyService.hide();
-					var response = payload.data;
-					var leads = response.data;
-					if (leads.length) {
-						window.location.href = '/tradeshows/' + tradeshow_id + '/report';
-					}
-					else {
-						ngDialog.open({
-							plain:true,
-							className: 'dialog-warning ngdialog-theme-default',
-							template: '<span class="glyphicon glyphicon-exclamation-sign warning icon-large"></span><span>Sorry, no leads available</span>'
-						});
-					}
-				})
-				.catch(function(payload) {
-					busyService.hide();
-					ngDialog.open({
-						plain:true,
-						className: 'dialog-error ngdialog-theme-default',
-						template: '<span class="glyphicon glyphicon-exclamation-sign danger icon-large"></span><span>Sorry, an error occured.  Please try again later.</span>'
-					});
-				});
+			// busyService.show();
+			// leadService
+			// 	.retrieve(tradeshow_id, 1, 15, 'id', 0)
+			// 	.then(function(payload) {
+			// 		busyService.hide();
+			// 		var response = payload.data;
+			// 		var leads = response.data;
+			// 		if (leads.length) {
+			// 			window.location.href = '/tradeshows/' + tradeshow_id + '/report';
+			// 		}
+			// 		else {
+			// 			ngDialog.open({
+			// 				plain:true,
+			// 				className: 'dialog-warning ngdialog-theme-default',
+			// 				template: '<span class="glyphicon glyphicon-exclamation-sign warning icon-large"></span><span>Sorry, no leads available</span>'
+			// 			});
+			// 		}
+			// 	})
+			// 	.catch(function(payload) {
+			// 		busyService.hide();
+			// 		ngDialog.open({
+			// 			plain:true,
+			// 			className: 'dialog-error ngdialog-theme-default',
+			// 			template: '<span class="glyphicon glyphicon-exclamation-sign danger icon-large"></span><span>Sorry, an error occured.  Please try again later.</span>'
+			// 		});
+			// 	});
+			window.location.href = '/api/tradeshows/' + tradeshow_id + '/report?token=' + loginService.token.get();
 		};
 
 		/**

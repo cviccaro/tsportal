@@ -15,28 +15,42 @@ $app->get('/', function() use ($app) {
     return view('angular');
 });
 
-$app->group(['prefix' => 'api'], function($app) {
-    $app->post('authenticate', 'App\Http\Controllers\Auth\ApiAuthController@authenticate');
-    $app->get('authenticate/refresh','App\Http\Controllers\Auth\ApiAuthController@refresh');
+$app->get('/test', function() use ($app) {
+    d(Schema::getColumnListing('tradeshows'));
+    // $paginated = Tradeshow::orderBy('id','asc')->paginate(15);
+    // $tradeshows = $paginated->getCollection();
+    // $tradeshows->each(function($item) {
+    //     $count = Lead::where('tradeshow_id', $item->id)->count();
+    //     $item->setAttribute('leadCount', $count);
+    // });
+    // return d($paginated);
+    return '';
 });
 
-$app->group(['middleware' => 'jwt.auth', 'prefix' => 'api/tradeshows'], function($app) {
-    $app->get('/', 'App\Http\Controllers\TradeshowController@index');
-    $app->get('/{id}', 'App\Http\Controllers\TradeshowController@show');
-    $app->get('/{id}/leads', 'App\Http\Controllers\LeadController@showByTradeshowId');
-
-    $app->post('/create', 'App\Http\Controllers\TradeshowController@create');
-    $app->post('/{id}', 'App\Http\Controllers\TradeshowController@update');
-    $app->delete('/{id}', 'App\Http\Controllers\TradeshowController@destroy');
+$app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers'], function($app) {
+    $app->post('authenticate', 'Auth\ApiAuthController@authenticate');
+    $app->get('authenticate/refresh','Auth\ApiAuthController@refresh');
 });
 
-$app->group(['middleware' => 'jwt.auth', 'prefix' => 'api/leads'], function($app) {
-    $app->get('/', 'App\Http\Controllers\LeadController@index');
-    $app->get('/{id}', 'App\Http\Controllers\LeadController@show');
+$app->group(['middleware' => 'jwt.auth', 'prefix' => 'api/tradeshows', 'namespace' => 'App\Http\Controllers'], function($app) {
+    $app->get('/', 'TradeshowController@index');
+    $app->get('/{id}', 'TradeshowController@show');
+    $app->get('/{id}/leads', 'LeadController@showByTradeshowId');
 
-    $app->post('/create', 'App\Http\Controllers\LeadController@createMany');
-    $app->post('/{id}', 'App\Http\Controllers\LeadController@update');
+    $app->post('/create', 'TradeshowController@create');
+    $app->post('/{id}', 'TradeshowController@update');
+    $app->delete('/{id}', 'TradeshowController@destroy');
 
-    $app->delete('/{id}', 'App\Http\Controllers\LeadController@destroy');
+    $app->get('/{id}/report', 'ReportingController@report');
+});
+
+$app->group(['middleware' => 'jwt.auth', 'prefix' => 'api/leads', 'namespace' => 'App\Http\Controllers'], function($app) {
+    $app->get('/', 'LeadController@index');
+    $app->get('/{id}', 'LeadController@show');
+
+    $app->post('/create', 'LeadController@createMany');
+    $app->post('/{id}', 'LeadController@update');
+
+    $app->delete('/{id}', 'LeadController@destroy');
 });
 

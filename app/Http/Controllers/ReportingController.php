@@ -1,13 +1,12 @@
 <?php
 
-namespace TSPortal\Http\Controllers;
+namespace App\Http\Controllers;
 
-use Dingo\Api\Http\Response;
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use TSPortal\Http\Controllers\Controller;
-use TSPortal\Http\Requests;
-use TSPortal\Lead;
+use App\Http\Controllers\Controller;
+use App\Lead;
 
 class ReportingController extends Controller
 {

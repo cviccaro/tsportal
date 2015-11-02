@@ -198,12 +198,12 @@
 	// Tradeshow Resource using angular-resource
 	tradeshowServices.factory('Tradeshow', ['$resource', function($resource) {
 		return $resource('api/tradeshows/:tradeshowId', {tradeshowId: '@id'}, {
-			list: {method: 'GET', params:{}, isArray: true, transformResponse: function(data) {
-				var data = angular.fromJson(data);
+			list: {method: 'GET', params:{}, isArray: true, transformResponse: function(response) {
+				var data = angular.fromJson(response);
 				return data.tradeshows;
 			}},
-			query: {method: 'GET', isArray: false, transformResponse: function(data) {
-				var data = angular.fromJson(data);
+			query: {method: 'GET', isArray: false, transformResponse: function(response) {
+				var data = angular.fromJson(response);
 				return data.tradeshow;
 			}},
 			create: {method: 'POST', url:'api/tradeshows/create'},
@@ -212,11 +212,13 @@
 	}]);
 
 	// Tradeshow service to retrieve paginated, sorted lists of Tradeshows
-	tradeshowServices.factory('tradeshowService', ['$http', 'Tradeshow', '$rootScope', 'ngDialog', 'busyService', function($http, Tradeshow, $rootScope, ngDialog, busyService) {
+	tradeshowServices.factory('tradeshowService', 
+		['$http', 'Tradeshow', '$rootScope', 'ngDialog', 'busyService', 
+		function($http, Tradeshow, $rootScope, ngDialog, busyService) {
 		var tradeshows = [],
 			activeDialog;
 			return {
-				retrieve: function(pageNumber, perPage, orderBy, orderByReverse) {
+				retrieve: function(pageNumber, perPage, orderBy, orderByReverse, filter) {
 					if(pageNumber===undefined){
 						pageNumber = '1';
 					}
@@ -229,8 +231,11 @@
 					if (perPage===undefined) {
 						perPage = 15;
 					}
+					if (filter=== undefined) {
+						filter = '';
+					}
 					return $http.
-						get('api/tradeshows?page='+pageNumber+'&perPage=' + perPage + '&orderBy=' + orderBy + '&orderByReverse=' + parseInt(orderByReverse));
+						get('api/tradeshows?page='+pageNumber+'&perPage=' + perPage + '&orderBy=' + orderBy + '&orderByReverse=' + parseInt(orderByReverse) + '&filter=' + filter);
 				},
 				getTradeshows: function() {
 					return tradeshows;
