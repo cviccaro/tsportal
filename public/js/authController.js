@@ -6,6 +6,10 @@
 		controller('AuthController',
 			['$state', '$scope', '$rootScope', 'loginService', 'busyService', 'messageService',
 			function($state, $scope, $rootScope, loginService, busyService, messageService) {
+			// If a token is already stored, try app
+			if (loginService.hasEitherToken()) {
+				$state.go('tradeshows', {});
+			}
 
 			// Watch messageService messages
 			$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
@@ -18,11 +22,6 @@
 			$rootScope.$on('event:auth-loginRequired', function(event, data) {
 				$scope.loginError();
 			});
-
-			// If a token is already stored, try app
-			if (loginService.token.get() !== null) {
-				$state.go('tradeshows', {});
-			}
 
 			// Ensure loading indicator is hidden
 			busyService.hide();
@@ -45,7 +44,7 @@
 					.then(function authLoginSuccess(payload) {
 						busyService.hide();
 						// set a copy of the token to use for refresh requests
-						loginService.tokenCopy.set(payload.data.token);
+						loginService.refreshToken.set(payload.data.token);
 						$state.go('tradeshows', {});
 					})
 					.catch(function authLoginFail(payload) {

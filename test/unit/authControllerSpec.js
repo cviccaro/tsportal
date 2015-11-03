@@ -4,7 +4,7 @@ describe('AuthController', function() {
 	var loginServiceMock, $rootScope, $scope, ctrl, messageService, busyService, $httpBackend, $q;
 
 	beforeEach(function() {
-		loginServiceMock = jasmine.createSpyObj('loginService', ['authenticate', 'login', 'token', 'tokenCopy']);
+		loginServiceMock = jasmine.createSpyObj('loginService', ['authenticate', 'login', 'token', 'refreshToken', 'hasEitherToken']);
 		module('tsportal');
 		inject(function(_$rootScope_, $controller, _$q_, _messageService_, _$httpBackend_, _busyService_) {
 			$rootScope = _$rootScope_;
@@ -27,7 +27,7 @@ describe('AuthController', function() {
 					localStorage.setItem('satellizer_token', tokenString);
 				}
 			};
-			loginServiceMock.tokenCopy = {
+			loginServiceMock.refreshToken = {
 				get: function() {
 					return localStorage.getItem('_satellizer_token');
 				},
@@ -35,6 +35,7 @@ describe('AuthController', function() {
 					localStorage.setItem('_satellizer_token', tokenString);
 				}
 			};
+			loginServiceMock.hasEitherToken.and.returnValue(false);
 			spyOn(messageService, "removeMessage").and.callThrough();
 			ctrl = $controller('AuthController', {$scope: $scope, loginService: loginServiceMock, busyService: busyService, messageService: messageService});
 			spyOn($scope, "$broadcast").and.callThrough()

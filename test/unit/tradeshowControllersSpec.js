@@ -32,7 +32,7 @@ describe('Tradeshow List Controller', function() {
                     '</tr>' +
                 '</thead>' +
                 '<tbody>' +
-                '<tr markable ng-repeat="tradeshow in tradeshows | filter:query" ng-click="getLeads(tradeshow.id)" data-id="{{tradeshow.id}}" class="clickable">' +
+                '<tr markable ng-repeat="tradeshow in tradeshows | filter:query" ng-click="getLeads(1, tradeshow.id)" data-id="{{tradeshow.id}}" class="clickable">' +
                     '<td class="tradeshow-id">{{tradeshow.id}}</td>' +
                     '<td>{{tradeshow.name}}</td>' +
                     '<td>{{tradeshow.location}}</td>' +
@@ -93,7 +93,7 @@ describe('Tradeshow List Controller', function() {
                     localStorage.setItem('satellizer_token', tokenString);
                 }
             };
-            loginServiceMock.tokenCopy = {
+            loginServiceMock.refreshToken = {
                 get: function() {
                     return localStorage.getItem('_satellizer_token');
                 },
@@ -231,7 +231,7 @@ describe('Tradeshow List Controller', function() {
 			.respond(200);
     	click(result[0]);
     	$scope.$digest();
-    	expect($scope.getLeads).toHaveBeenCalledWith(1);
+    	expect($scope.getLeads).toHaveBeenCalledWith(1, 1);
     	//expect($scope.handleLeads).toHaveBeenCalled();
     	$scope.$digest();
     	//expect(leadServiceMock.getCurrentTradeshowId()).toEqual(1)
@@ -291,7 +291,7 @@ describe('TradeshowDetailController', function() {
                     localStorage.setItem('satellizer_token', tokenString);
                 }
             };
-            loginServiceMock.tokenCopy = {
+            loginServiceMock.refreshToken = {
                 get: function() {
                     return localStorage.getItem('_satellizer_token');
                 },
@@ -519,7 +519,7 @@ describe('TradeshowCreateController', function() {
                     localStorage.setItem('satellizer_token', tokenString);
                 }
             };
-            loginServiceMock.tokenCopy = {
+            loginServiceMock.refreshToken = {
                 get: function() {
                     return localStorage.getItem('_satellizer_token');
                 },

@@ -22,7 +22,7 @@
 					localStorage.removeItem('satellizer_token');
 				}
 			},
-			tokenCopy: {
+			refreshToken: {
 				get: function() {
 					return localStorage.getItem('_satellizer_token');
 				},
@@ -54,7 +54,7 @@
 			logout: function() {
 				// Remove tokens
 				this.token.remove();
-				this.tokenCopy.remove();
+				this.refreshToken.remove();
 
 				var logout = $auth.logout();
 
@@ -75,16 +75,16 @@
 			},
 			checkApiAccess: function() {
 				if (this.token.get() === null) {
-					if (this.tokenCopy.get() !== null) {
+					if (this.refreshToken.get() !== null) {
 						var that = this;
 						// Try to refresh
-						this.refresh(this.tokenCopy.get())
+						this.refresh(this.refreshToken.get())
 						.then(function(payload) {
 
 							that.token.set(payload.data.token);
 
 							// Save a copy of the token to use for future refresh requests
-							that.tokenCopy.set(payload.data.token);
+							that.refreshToken.set(payload.data.token);
 
 							$rootScope.isLoggedIn = true;
 
@@ -96,7 +96,7 @@
 							if (payload.status == 500) {
 								// token is totally expired, cannot be refreshed
 								that.token.remove();
-								that.tokenCopy.remove();
+								that.refreshToken.remove();
 								that.checkApiAccess();
 							}
 						});
@@ -111,6 +111,9 @@
 					$rootScope.isLoggedIn = true;
 					$rootScope.$emit('event:auth-logged-in');
 				}
+			},
+			hasEitherToken: function() {
+				return this.token.get() !== null || this.refreshToken.get() !== null;
 			}
 		};
 	}]);
@@ -204,8 +207,8 @@
 	}]);
 
 	// Tradeshow service to retrieve paginated, sorted lists of Tradeshows
-	tradeshowServices.factory('tradeshowService', 
-		['$http', 'Tradeshow', '$rootScope', 'ngDialog', 'busyService', 
+	tradeshowServices.factory('tradeshowService',
+		['$http', 'Tradeshow', '$rootScope', 'ngDialog', 'busyService',
 		function($http, Tradeshow, $rootScope, ngDialog, busyService) {
 		var activeDialog;
 			return {
@@ -226,7 +229,7 @@
 						filter = '';
 					}
 					return $http.
-						get('api/tradeshows?page='+pageNumber+'&perPage=' + perPage + '&orderBy=' + orderBy + 
+						get('api/tradeshows?page='+pageNumber+'&perPage=' + perPage + '&orderBy=' + orderBy +
 							'&orderByReverse=' + parseInt(orderByReverse) + '&filter=' + filter);
 				},
 				deleteTradeshow: function(tradeshow) {

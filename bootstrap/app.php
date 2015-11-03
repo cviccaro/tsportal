@@ -89,8 +89,11 @@ $app->middleware([
 */
 
 $app->register('Tymon\JWTAuth\Providers\JWTAuthServiceProvider');
-$app->register('Conner\Kint\KintServiceProvider');
 $app->register('Maatwebsite\Excel\ExcelServiceProvider');
+
+//Development
+$app->register('Conner\Kint\KintServiceProvider');
+$app->register('Vluzrmos\Tinker\TinkerServiceProvider');
 
 /*
 |--------------------------------------------------------------------------

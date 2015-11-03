@@ -37,7 +37,7 @@ describe('loginService', function() {
 		spyOn(loginService, "authenticate").and.callThrough();
 		spyOn(loginService, "refresh").and.callThrough();
 		spyOn(stateMock, "go");
-		spyOn(loginService.tokenCopy, "get").and.callThrough();
+		spyOn(loginService.refreshToken, "get").and.callThrough();
 		spyOn(loginService, "login").and.callThrough();
 		spyOn(loginService, "logout").and.callThrough();
 		spyOn(authMock, "login").and.callThrough();
@@ -52,7 +52,7 @@ describe('loginService', function() {
 	it('loginService.isValidEmail: should invalidate an improper email', function() {
 		var valid = loginService.isValidEmail('invalid@emailcom');
 		expect(valid).toBeFalsy();
-	});	
+	});
 	it('loginService.login: should receive a resolved promise when calling login with credentials', function() {
 		var creds = {
 			email: '',
@@ -99,15 +99,15 @@ describe('loginService', function() {
 	});
 	it('loginService.token: should be able to get and set', function() {
 		expect(loginService.token.get()).not.toBeNull();
-		//expect(loginService.tokenCopy.get()).not.toBeNull();
+		//expect(loginService.refreshToken.get()).not.toBeNull();
 		loginService.token.set('test');
 		expect(loginService.token.get()).toEqual('test');
 	});
-	it('loginService.tokenCopy: should be able to get and set', function() {
-		expect(loginService.tokenCopy.get()).not.toBeNull();
-		//expect(loginService.tokenCopy.get()).not.toBeNull();
-		loginService.tokenCopy.set('test');
-		expect(loginService.tokenCopy.get()).toEqual('test');
+	it('loginService.refreshToken: should be able to get and set', function() {
+		expect(loginService.refreshToken.get()).not.toBeNull();
+		//expect(loginService.refreshToken.get()).not.toBeNull();
+		loginService.refreshToken.set('test');
+		expect(loginService.refreshToken.get()).toEqual('test');
 	});
 	it('loginService.logout: should call auth.logout and remove tokens', function() {
 		loginService.logout();
@@ -116,17 +116,17 @@ describe('loginService', function() {
 		expect(localStorage.getItem('satellizer_token')).toBeNull();
 		expect(localStorage.getItem('_satellizer_token')).toBeNull();
 	});
-	it('loginService.checkApiAccess check tokenCopy if token is null, and to call state.go if tokenCopy is null, too', function() {
+	it('loginService.checkApiAccess check refreshToken if token is null, and to call state.go if refreshToken is null, too', function() {
 		loginService.token.remove();
 		loginService.checkApiAccess();
-		expect(loginService.tokenCopy.get).toHaveBeenCalled();
+		expect(loginService.refreshToken.get).toHaveBeenCalled();
 		expect(stateMock.go).toHaveBeenCalledWith('auth', {});
 	});
-	it('loginService.checkApiAccess check tokenCopy if token is null, and to call loginService.refresh if tokenCopy is not null', function() {
+	it('loginService.checkApiAccess check refreshToken if token is null, and to call loginService.refresh if refreshToken is not null', function() {
 		loginService.token.remove();
-		loginService.tokenCopy.set('test');
+		loginService.refreshToken.set('test');
 		loginService.checkApiAccess();
-		expect(loginService.tokenCopy.get).toHaveBeenCalled();
+		expect(loginService.refreshToken.get).toHaveBeenCalled();
 		expect(loginService.refresh).toHaveBeenCalledWith('test');
 		$httpBackend.expectGET('api/authenticate/refresh').respond(200);
 	});

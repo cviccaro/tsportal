@@ -41,7 +41,7 @@
 		// Refresh authorization token when it is expired transparently to the user
 		// and re-run the request that failed (happens automatically from http-auth-interceptor)
 		$rootScope.$on('event:auth-loginRequired', function(event, data) {
-			var token = loginService.tokenCopy.get();
+			var token = loginService.refreshToken.get();
 			if (token !== null) {
 				loginService.refresh(token)
 					.then(function(payload) {
@@ -284,7 +284,7 @@
 		// Refresh authorization token when it is expired transparently to the user
 		// and re-run the request that failed (happens automatically from http-auth-interceptor)
 		$rootScope.$on('event:auth-loginRequired', function(event, data) {
-			var token = loginService.tokenCopy.get();
+			var token = loginService.refreshToken.get();
 			if (token !== null) {
 				loginService.refresh(token)
 					.then(function(payload) {
