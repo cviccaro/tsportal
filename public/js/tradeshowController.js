@@ -10,8 +10,25 @@
 	 * Displays a paginated, filtered table of all tradeshows.
 	 */
 	tradeshowControllers.controller('TradeshowController',
-		['$rootScope', '$scope', 'Tradeshow', 'tradeshowService', 'leadService', 'loginService', 'ngDialog', 'busyService', '$q', '$auth', 'messageService',
-		function TradeshowController($rootScope, $scope, Tradeshow, tradeshowService, leadService, loginService, ngDialog, busyService, $q, $auth, messageService) {
+		['$rootScope', '$scope', 'Tradeshow', 'tradeshowService', 'leadService', 'loginService', 'ngDialog', 'busyService', '$q', '$auth', 'messageService', '$localStorage',
+		function TradeshowController($rootScope, $scope, Tradeshow, tradeshowService, leadService, loginService, ngDialog, busyService, $q, $auth, messageService, $localStorage) {
+
+		// Attach $localStorage to $scope
+		$scope.$storage = $localStorage.$default({
+			'tsportal_currentPage': '1',
+			'tsportal_orderBy': 'id',
+			'tsportal_orderByReverse': '0',
+			'tsportal_perPage': '15',
+			'tsportal_query': '',
+		});
+
+		// Scope variable defaults from $localStorage
+		$scope.currentPage = $scope.$storage.tsportal_currentPage;
+		$scope.orderBy = $scope.$storage.tsportal_orderBy;
+		$scope.orderByReverse = $scope.$storage.tsportal_orderByReverse;
+		$scope.perPage = $scope.$storage.tsportal_perPage;
+		$scope.query = $scope.$storage.tsportal_query;
+		$scope.lastFetchedPage = 1;
 
 		// Watch messageService messages
 		$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
@@ -61,13 +78,6 @@
 			}
 		});
 
-		// Scope variable defaults
-		$scope.currentPage = 1;
-		$scope.orderBy = 'id';
-		$scope.orderByReverse = '0';
-		$scope.perPage = '15';
-		$scope.lastFetchedPage = 1;
-
 		// Scope functions
 
 		/**
@@ -82,12 +92,18 @@
 			$scope.lastFetchedPage = pageNumber;
 			var deferred = $q.defer();
 			tradeshowService
-				.retrieve(pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse, $scope.query)
+				.retrieve(
+					pageNumber, 
+					$scope.$storage.tsportal_perPage, 
+					$scope.$storage.tsportal_orderBy, 
+					$scope.$storage.tsportal_orderByReverse, 
+					$scope.$storage.tsportal_query
+				)
 				.then(function(payload) {
 					var response = payload.data;
 
 					$scope.tradeshows = response.data;
-					$scope.currentPage = response.current_page;
+					$scope.currentPage = $scope.$storage.tsportal_currentPage = response.current_page;
 					$scope.totalPages = response.last_page;
 
 					var pages = [];
@@ -209,34 +225,6 @@
 		 * @return {[void]}
 		 */
 		$scope.downloadReport = function(tradeshow_id, $event) {
-			// $event.preventDefault();
-			// $event.stopPropagation();
-			// busyService.show();
-			// leadService
-			// 	.retrieve(tradeshow_id, 1, 15, 'id', 0)
-			// 	.then(function(payload) {
-			// 		busyService.hide();
-			// 		var response = payload.data;
-			// 		var leads = response.data;
-			// 		if (leads.length) {
-			// 			window.location.href = '/tradeshows/' + tradeshow_id + '/report';
-			// 		}
-			// 		else {
-			// 			ngDialog.open({
-			// 				plain:true,
-			// 				className: 'dialog-warning ngdialog-theme-default',
-			// 				template: '<span class="glyphicon glyphicon-exclamation-sign warning icon-large"></span><span>Sorry, no leads available</span>'
-			// 			});
-			// 		}
-			// 	})
-			// 	.catch(function(payload) {
-			// 		busyService.hide();
-			// 		ngDialog.open({
-			// 			plain:true,
-			// 			className: 'dialog-error ngdialog-theme-default',
-			// 			template: '<span class="glyphicon glyphicon-exclamation-sign danger icon-large"></span><span>Sorry, an error occured.  Please try again later.</span>'
-			// 		});
-			// 	});
 			window.location.href = '/api/tradeshows/' + tradeshow_id + '/report?token=' + loginService.token.get();
 		};
 
@@ -260,8 +248,17 @@
 	 * Displays an edit form for a tradeshow
 	 */
 	tradeshowControllers.controller('TradeshowDetailController',
-		['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadService', '$state', 'loginService', 'busyService', 'messageService', '$q',
-		function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadService, $state, loginService, busyService, messageService, $q) {
+		['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadService', '$state', 'loginService', 'busyService', 'messageService', '$q', '$localStorage',
+		function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadService, $state, loginService, busyService, messageService, $q, $localStorage) {
+
+		// Attach $localStorage to $scope
+		$scope.$storage = $localStorage.$default({
+			'tsportal_leads_orderBy': 'last_name',
+			'tsportal_leads_orderByReverse': '0',
+			'tsportal_leads_currentPage': 1,
+			'tsportal_leads_query': '',
+			'tsportal_leads_perPage': '15'
+		});
 
 		// Get the scoped tradeshow when we are confirmed to have a valid token
 		$rootScope.$on('event:auth-logged-in', function() {
@@ -311,10 +308,12 @@
 		});
 
 		// Scope variables
+		$scope.titlePrefix = 'Editing';
 		$scope.model = 'tradeshow';
-		$scope.orderBy = 'id';
-		$scope.orderByReverse = '0';
-		$scope.perPage = '15';
+		$scope.orderBy = $scope.$storage.tsportal_leads_orderBy;
+		$scope.orderByReverse = $scope.$storage.tsportal_leads_orderByReverse;
+		$scope.perPage = $scope.$storage.tsportal_leads_perPage;
+		$scope.query = $scope.$storage.tsportal_leads_query;
 		$scope.leadCount = 0;
 		$scope.isNew = false;
 		$scope.leads = [];
@@ -336,7 +335,6 @@
 					$scope.getLeads()
 						.then(function(payload) {
 							deferred.resolve(payload);
-							$scope.setTitle();
 						})
 						.catch(function() {
 							deferred.reject(payload);
@@ -347,15 +345,6 @@
 					deferred.reject(payload);
 				});
 			return deferred.promise;
-		};
-
-		/**
-		 * Set the page title
-		 *
-		 * @return {[void]}
-		 */
-		$scope.setTitle = function() {
-			$scope.title = 'Editing Tradeshow <em>' + $scope.tradeshow.name + '</em>';
 		};
 
 		/**
@@ -385,9 +374,6 @@
 					.then(function(payload) {
 						// Set the tradeshow in scope
 						$scope.tradeshow = payload;
-
-						// Set the page title
-						$scope.setTitle();
 
 						// Manually fade out "busy" indicator
 						busyService.hide();
@@ -439,11 +425,18 @@
 			$scope.lastFetchedPage = pageNumber;
 			var deferred = $q.defer();
 			leadService
-				.retrieve($scope.tradeshow.id, pageNumber, $scope.perPage, $scope.orderBy, $scope.orderByReverse, $scope.query)
+				.retrieve(
+					$scope.tradeshow.id, 
+					pageNumber, 
+					$scope.$storage.tsportal_leads_perPage, 
+					$scope.$storage.tsportal_leads_orderBy, 
+					$scope.$storage.tsportal_leads_orderByReverse, 
+					$scope.$storage.tsportal_leads_query
+				)
 				.then(function(payload) {
 					var response = payload.data;
 					$scope.leads = response.data;
-					$scope.leadCurrentPage = response.current_page;
+					$scope.leadCurrentPage = $scope.$storage.tsportal_leads_currentPage = response.current_page;
 					$scope.leadTotalPages = response.last_page;
 					var pages = [];
 					for(var i=1;i<=response.last_page;i++) {
@@ -539,7 +532,7 @@
 		// Scope variables
 		$scope.isNew = true;
 		$scope.model = 'tradeshow';
-		$scope.title = 'Create new Tradeshow';
+		$scope.titlePrefix = 'Creating new';
 		$scope.tradeshow = {};
 		$scope.submitted = false;
 

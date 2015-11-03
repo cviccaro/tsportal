@@ -4,8 +4,9 @@
 	 */
 	var loginService = angular.module('loginService',[]);
 	loginService.factory('loginService',
-		['$auth', 'authService', '$http', '$state', '$rootScope', '$q',
-		function loginService($auth, authService, $http, $state, $rootScope, $q) {
+		['$auth', 'authService', '$http', '$state', '$rootScope', '$q', '$localStorage',
+		function loginService($auth, authService, $http, $state, $rootScope, $q, $localStorage) {
+			var $storage = $localStorage;
 		return {
 			isValidEmail: function(email) {
 				var pattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -13,30 +14,35 @@
 			},
 			token: {
 				get: function() {
-					return localStorage.getItem('satellizer_token');
+					return $storage.satellizer_token;
 				},
 				set: function(tokenString) {
+					// Fix incompatibility between ngStorage and satellizer
 					localStorage.setItem('satellizer_token', tokenString);
+					$storage.satellizer_token = tokenString;
 				},
 				remove: function() {
-					localStorage.removeItem('satellizer_token');
+					delete $storage.satellizer_token;
 				}
 			},
 			refreshToken: {
 				get: function() {
-					return localStorage.getItem('_satellizer_token');
+					return $storage._satellizer_token;
 				},
 				set: function(tokenString) {
+					// Fix incompatibility between ngStorage and satellizer
 					localStorage.setItem('_satellizer_token', tokenString);
+					$storage._satellizer_token = tokenString;
 				},
 				remove: function() {
-					localStorage.removeItem('_satellizer_token');
+					delete $storage._satellizer_token;
 				}
 			},
 			authenticate: function(credentials) {
 				return $auth.login(credentials);
 			},
 			login: function(credentials) {
+				console.log('loginService.login(',credentials,')')
 				var that = this;
 				var deferred = $q.defer();
 
@@ -62,20 +68,30 @@
 
 				return logout;
 			},
-			refresh: function(token) {
-				var ajaxCall =
-					$http({
-						method: 'GET',
-						url: 'api/authenticate/refresh',
-						headers: {
-							'Authorization': 'Bearer ' + token
-						}
-					});
-				return ajaxCall;
+			refresh: function(str) {
+				var deferred = $q.defer();
+				var that = this;
+				$http({
+					method: 'GET',
+					url: 'api/authenticate/refresh',
+					headers: {
+						'Authorization': 'Bearer ' + str
+					}
+				})
+				.then(function(payload) {
+					that.token.set(payload.data.token);
+					that.refreshToken.set(payload.data.token);
+					authService.loginConfirmed();
+					deferred.resolve(payload);
+				})
+				.catch(function(payload) {
+					deferred.reject(payload);
+				});
+				return deferred.promise;
 			},
 			checkApiAccess: function() {
-				if (this.token.get() === null) {
-					if (this.refreshToken.get() !== null) {
+				if (this.hasToken()) {
+					if (this.hasRefreshToken()) {
 						var that = this;
 						// Try to refresh
 						this.refresh(this.refreshToken.get())
@@ -93,7 +109,7 @@
 							authService.loginConfirmed();
 						})
 						.catch(function(payload) {
-							if (payload.status == 500) {
+							if (payload.status == 500 || payload.status == 400) {
 								// token is totally expired, cannot be refreshed
 								that.token.remove();
 								that.refreshToken.remove();
@@ -113,7 +129,15 @@
 				}
 			},
 			hasEitherToken: function() {
-				return this.token.get() !== null || this.refreshToken.get() !== null;
+				return this.hasToken() || this.hasRefreshToken();
+			},
+			hasToken: function() {
+				var t = this.token.get();
+				return t !== undefined || t !== null;
+			},
+			hasRefreshToken: function() {
+				var t = this.refreshToken.get();
+				return t !== undefined || t !== null;
 			}
 		};
 	}]);

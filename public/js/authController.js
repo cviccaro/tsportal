@@ -43,6 +43,7 @@
 				loginService.login(credentials)
 					.then(function authLoginSuccess(payload) {
 						busyService.hide();
+						loginService.token.set(payload.data.token);
 						// set a copy of the token to use for refresh requests
 						loginService.refreshToken.set(payload.data.token);
 						$state.go('tradeshows', {});

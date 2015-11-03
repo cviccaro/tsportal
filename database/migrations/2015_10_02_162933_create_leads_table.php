@@ -36,8 +36,8 @@ class CreateLeadsTable extends Migration {
                   $table->boolean('existing_customer')->nullable();
                   $table->text('notes')->nullable();
                   $table->string('udid')->nullable();
-                  $table->timestamp('timestamp')->nullable();
-                  $table->timestamp('modified')->nullable();
+                  $table->string('timestamp')->nullable();
+                  $table->string('modified')->nullable();
                   $table->integer('tradeshow_id')->unsigned();
                   $table->foreign('tradeshow_id')->references('id')->on('tradeshows')->onDelete('cascade');
 

@@ -67,7 +67,7 @@
     <script src="/bower_components/angular-spinkit/build/angular-spinkit.min.js"></script>
     <script src="/bower_components/satellizer/satellizer.min.js"></script>
     <script src="/bower_components/angular-http-auth/src/http-auth-interceptor.js"></script>
-
+    <script src="/bower_components/ngstorage/ngStorage.min.js"></script>
     <!-- Application Components -->
     <script type="text/javascript" src="/js/services.js"></script>
     <script type="text/javascript" src="/js/tradeshowController.js"></script>

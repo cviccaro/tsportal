@@ -1,5 +1,5 @@
 <div class="page-header">
-    <h1 ng-bind-html="title | unsafe" id="title">{{title}}</h1>
+    <h1>{{titlePrefix}} Tradeshow <em>{{tradeshow ? tradeshow.name : ''}}</em></h1>
 </div>
 <messages></messages>
 <div class="row toolbar">
@@ -35,18 +35,18 @@
     <div class="toolbar filters clearfix">
         <div class="toolbar-item">
             <span>Sort</span>
-            <select ng-model="orderBy" ng-change="refreshLeads()">
+            <select ng-model="$storage.tsportal_leads_orderBy" ng-change="refreshLeads()">
               <option value="id">Newest</option>
               <option value="last_name">Surname</option>
             </select>
-            <select ng-model="orderByReverse" ng-change="refreshLeads()">
+            <select ng-model="$storage.tsportal_leads_orderByReverse" ng-change="refreshLeads()">
               <option value="0">Descending</option>
               <option value="1">Ascending</option>
             </select>
         </div>
         <div class="toolbar-item right">
             <span>Items Per Page</span>
-            <select ng-model="perPage" ng-change="refreshLeads()">
+            <select ng-model="$storage.tsportal_leads_perPage" ng-change="refreshLeads()">
                 <option value="15">15</option>
                 <option value="30">30</option>
                 <option value="50">50</option>
@@ -55,7 +55,7 @@
         </div>
         <div class="toolbar-item right">
             <span>Search</span>
-            <input type="text" ng-model="query" ng-model-options="{debounce: 500}" ng-change="refreshLeads()" />
+            <input type="text" ng-model="$storage.tsportal_leads_query" ng-model-options="{debounce: 500}" ng-change="refreshLeads()" />
         </div>        
     </div>
     <div class="row">
@@ -75,7 +75,7 @@
                         <td>{{lead.last_name}}</td>
                         <td>{{lead.email_address}}</td>
                         <td>{{lead.phone_number}}</td>
-                        <td>{{lead.timestamp}}</td>
+                        <td>{{lead.created_at}}</td>
                         <td>
                         	<a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
                             <a class="btn btn-danger" href="" ng-click="deleteLead(lead.id, $event)">Delete</a>

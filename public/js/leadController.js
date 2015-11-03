@@ -48,7 +48,6 @@
 				$promise.
 				then(function(payload) {
 					$scope.lead = payload;
-					$scope.setTitle();
 					angular.forEach(['existing_customer', 'contact_by_phone', 'contact_by_email'], function(key) {
 						if ($scope.lead[key] == 1) {
 							$('input[name="' + key + '"]').bootstrapSwitch('state', true);
@@ -72,15 +71,6 @@
 		};
 
 		// Scope methods
-
-		/**
-		 * Sets the title scope var based on the current lead in scope
-		 *
-		 * @return {[void]}
-		 */
-		$scope.setTitle = function setTitle() {
-			$scope.title = 'Editing Lead <em>' + $scope.lead.first_name + ' ' + $scope.lead.last_name + '</em>';
-		};
 
 		/**
 		 * [Callback to 'Back' button]
@@ -109,9 +99,6 @@
 					then(function(payload) {
 						// Set the lead in scope
 						$scope.lead = payload;
-
-						// Set the page title
-						$scope.setTitle();
 
 						// Manually fade out the "busy" indicator
 						busyService.hide();

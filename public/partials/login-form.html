@@ -3,10 +3,10 @@
         <h3>Login</h3>
         <form id="login_form">
             <div class="form-group">
-                <input type="email" class="form-control" placeholder="Email" ng-model="email" ng-change="clearErrors()">
+                <input type="email" class="form-control" placeholder="Email" ng-model="email" name="email" ng-change="clearErrors()">
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" placeholder="Password" ng-model="password" ng-change="clearErrors()">
+                <input type="password" class="form-control" placeholder="Password" ng-model="password" name="password" ng-change="clearErrors()">
             </div>
             <messages></messages>
             <button class="btn btn-primary" ng-click="login()">Submit</button>

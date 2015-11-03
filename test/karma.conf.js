@@ -26,6 +26,7 @@ module.exports = function(config) {
       'public/bower_components/ng-dialog/js/ngDialog.min.js',
       'public/bower_components/jquery/dist/jquery.min.js',
       'public/bower_components/angular-http-auth/src/http-auth-interceptor.js',
+      'public/bower_components/ngstorage/ngStorage.js',
       'public/js/**/*.js',
       'test/unit/**/*.js'
     ],

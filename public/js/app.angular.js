@@ -9,6 +9,7 @@ var tsportal = angular.module('tsportal', [
     'ngDialog',
     'satellizer',
     'http-auth-interceptor',
+    'ngStorage',
     // Custom
     'tradeshowServices',
     'leadServices',
@@ -20,8 +21,10 @@ var tsportal = angular.module('tsportal', [
     'messageService'
 ]);
 
-tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtInterceptorProvider', '$authProvider',
-    function($stateProvider, $urlRouterProvider, $httpProvider, jwtInterceptorProvider, $authProvider) {
+tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtInterceptorProvider', '$authProvider', '$localStorageProvider',
+    function($stateProvider, $urlRouterProvider, $httpProvider, jwtInterceptorProvider, $authProvider, $localStorageProvider) {
+
+        $localStorageProvider.setKeyPrefix('');
         $httpProvider.useLegacyPromiseExtensions = false;
         // Satellizer configuration that specifies which API
         // route the JWT should be retrieved from
