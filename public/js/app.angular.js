@@ -94,7 +94,7 @@ tsportal.directive('leadPagination', function(){
       '</ul>'
    };
 });
-//@credit: http://stackoverflow.com/questions/21287845/adding-a-css-class-to-element-on-ng-click
+
 tsportal.directive("markable", function() {
     return {
         link: function(scope, elem, attrs) {
@@ -125,7 +125,7 @@ tsportal.directive('bs', function() {
     }
 });
 
-tsportal.directive('stateLoadingIndicator', ['busyService', '$rootScope', function(busyService, $rootScope) {
+tsportal.directive('stateLoadingIndicator', ['busyService', '$rootScope', '$timeout', function(busyService, $rootScope, $timeout) {
   return {
     restrict: 'E',
     template: "<div ng-show='isStateLoading || busyServiceIsBusy' class='loading-indicator'>" +
@@ -143,7 +143,7 @@ tsportal.directive('stateLoadingIndicator', ['busyService', '$rootScope', functi
       });
       $rootScope.$on('$stateChangeSuccess', function() {
         scope.isStateLoading = false;
-        setTimeout(function() {
+        $timeout(function() {
             if (!busyService.isBusy() && busyService.isVisible()) {
                 busyService.hide();
             }

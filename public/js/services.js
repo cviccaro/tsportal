@@ -40,7 +40,7 @@
 				return $auth.login(credentials);
 			},
 			login: function(credentials) {
-				
+
 				var that = this;
 				var deferred = $q.defer();
 
@@ -140,14 +140,14 @@
 	 * Message service
 	 */
 	var messageService = angular.module('messageService', []);
-	messageService.factory('messageService', function() {
+	messageService.factory('messageService', function($timeout) {
 		var messages = [];
 		return {
 			messages: [],
 			addMessage: function(opts) {
 				opts.id = this.messages.length + 1;
 				this.messages.push(opts);
-				setTimeout(function() {
+				$timeout(function() {
 					$('.messages .alert').css('opacity', 1);
 				},50);
 			},
@@ -203,11 +203,6 @@
 			},
 			hide: function() {
 				$rootScope.busyServiceIsBusy = false;
-				// setTimeout(function() {
-				// 	if ($('.loading-indicator').is(':visible')) {
-				// 		$('.loading-indicator').fadeOut(500);
-				// 	}
-				// }, 600);
 			}
 		};
 	}]);

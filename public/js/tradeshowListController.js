@@ -9,8 +9,8 @@
 	angular
 	.module('tradeshowControllers')
 	.controller('TradeshowController',
-		['$rootScope', '$scope', 'Tradeshow', 'tradeshowService', 'leadService', 'loginService', 'ngDialog', 'busyService', '$q', '$auth', 'messageService', 'CacheFactory',
-		function TradeshowController($rootScope, $scope, Tradeshow, tradeshowService, leadService, loginService, ngDialog, busyService, $q, $auth, messageService, CacheFactory) {
+		['$rootScope', '$scope', 'tradeshowService', 'leadService', 'loginService', 'ngDialog', 'busyService', '$q', 'messageService', 'CacheFactory',
+		function TradeshowController($rootScope, $scope, tradeshowService, leadService, loginService, ngDialog, busyService, $q, messageService, CacheFactory) {
 
 		if (!CacheFactory.get('formCache')) {
 			CacheFactory('formCache', {
@@ -22,7 +22,7 @@
 		var formCache = CacheFactory.get('formCache');
 
 		$scope.lastFetchedPage = 1;
-		
+
 		// Cached scope vars
 		$scope.currentPage = 1;
 		$scope.orderBy = 'id';
@@ -108,10 +108,10 @@
 			var deferred = $q.defer();
 			tradeshowService
 				.retrieve(
-					pageNumber, 
+					pageNumber,
 					$scope.perPage,
-					$scope.orderBy, 
-					$scope.orderByReverse, 
+					$scope.orderBy,
+					$scope.orderByReverse,
 					$scope.query
 				)
 				.then(function(payload) {
