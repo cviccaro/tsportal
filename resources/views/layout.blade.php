@@ -3,7 +3,6 @@
 <head>
 <title>Tradeshow Portal</title>
     <!-- Bootstrap -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/yeti/bootstrap.min.css">
 
     <!-- jQuery -->
@@ -47,7 +46,7 @@
                             <li ng-show="!isLoggedIn">
                                 <a href="/#/auth">Login</a>
                             </li>
-                            <li ng-show="isLoggedIn">
+                            <li ng-show="isLoggedIn" class="ng-hide">
                                 <a href="/#/logout">Logout</a>
                             </li>
                         </ul>
@@ -60,17 +59,22 @@
     <script src="/bower_components/angular/angular.js"></script>
 
     <script src="/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
-    <script src="/bower_components/angular-resource/angular-resource.min.js"></script>
-    <script src="/bower_components/angular-animate/angular-animate.min.js"></script>
     <script src="/bower_components/angular-jwt/dist/angular-jwt.min.js"></script>
-    <script src="/bower_components/ng-dialog/js/ngDialog.min.js"></script>
-    <script src="/bower_components/angular-spinkit/build/angular-spinkit.min.js"></script>
     <script src="/bower_components/satellizer/satellizer.min.js"></script>
     <script src="/bower_components/angular-http-auth/src/http-auth-interceptor.js"></script>
-    <script src="/bower_components/ngstorage/ngStorage.min.js"></script>
+    <script src="/bower_components/angular-cache/dist/angular-cache.min.js"></script>
+    <script src="/bower_components/angular-resource/angular-resource.min.js"></script>
+
+    <script src="/bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="/bower_components/ng-dialog/js/ngDialog.min.js"></script>
+    <script src="/bower_components/angular-spinkit/build/angular-spinkit.min.js"></script>
+
     <!-- Application Components -->
     <script type="text/javascript" src="/js/services.js"></script>
-    <script type="text/javascript" src="/js/tradeshowController.js"></script>
+    <script type="text/javascript" src="/js/controllers.js"></script>
+    <script type="text/javascript" src="/js/tradeshowListController.js"></script>
+    <script type="text/javascript" src="/js/tradeshowDetailController.js"></script>
+    <script type="text/javascript" src="/js/tradeshowCreateController.js"></script>
     <script type="text/javascript" src="/js/leadController.js"></script>
     <script type="text/javascript" src="/js/authController.js"></script>
     <script type="text/javascript" src="/js/app.angular.js"></script>

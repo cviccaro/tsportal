@@ -9,20 +9,20 @@
     <div class="toolbar filters clearfix">
         <div class="toolbar-item">
             <span>Sort</span>
-            <select ng-model="$storage.tsportal_orderBy" ng-change="refreshTradeshows()">
+            <select ng-model="orderBy" ng-change="refreshTradeshows()">
               <option value="id">Age</option>
               <option value="name">Name</option>
               <option value="location">Location</option>
               <option value="active">Active</option>
             </select>
-            <select ng-model="$storage.tsportal_orderByReverse" ng-change="refreshTradeshows()">
+            <select ng-model="orderByReverse" ng-change="refreshTradeshows()">
               <option value="0">Descending</option>
               <option value="1">Ascending</option>
             </select>
         </div>
         <div class="toolbar-item right">
             <span>Items Per Page</span>
-            <select ng-model="$storage.tsportal_perPage" ng-change="refreshTradeshows()">
+            <select ng-model="perPage" ng-change="refreshTradeshows()">
                 <option value="15">15</option>
                 <option value="30">30</option>
                 <option value="50">50</option>
@@ -31,7 +31,7 @@
         </div>
         <div class="toolbar-item right">
             <span>Search</span>
-            <input type="text" ng-model="$storage.tsportal_query" ng-model-options="{debounce: 500}" ng-change="refreshTradeshows()" />
+            <input type="text" ng-model="query" ng-model-options="{debounce: 500}" ng-change="refreshTradeshows()" />
         </div>
     </div>
     <div class="row">

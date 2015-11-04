@@ -9,7 +9,7 @@ var tsportal = angular.module('tsportal', [
     'ngDialog',
     'satellizer',
     'http-auth-interceptor',
-    'ngStorage',
+    'angular-cache',
     // Custom
     'tradeshowServices',
     'leadServices',
@@ -21,10 +21,9 @@ var tsportal = angular.module('tsportal', [
     'messageService'
 ]);
 
-tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtInterceptorProvider', '$authProvider', '$localStorageProvider',
-    function($stateProvider, $urlRouterProvider, $httpProvider, jwtInterceptorProvider, $authProvider, $localStorageProvider) {
+tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtInterceptorProvider', '$authProvider',
+    function($stateProvider, $urlRouterProvider, $httpProvider, jwtInterceptorProvider, $authProvider) {
 
-        $localStorageProvider.setKeyPrefix('');
         $httpProvider.useLegacyPromiseExtensions = false;
         // Satellizer configuration that specifies which API
         // route the JWT should be retrieved from
@@ -176,4 +175,15 @@ tsportal.directive('messages', function() {
         link: function(scope, elem, attrs) {
         },
     };
+});
+
+tsportal.run(function ($http, CacheFactory) {
+  if (!CacheFactory.get('defaultCache')) {
+    CacheFactory('defaultCache', {
+        maxAge: 15 * 60 * 1000, // Items added to this cache expire after 15 minutes
+        cacheFlushInterval: 60 * 60 * 1000, // This cache will clear itself every hour
+        deleteOnExpire: 'aggressive' // Items will be deleted from this cache when they expire
+      });
+  }
+  $http.defaults.cache = CacheFactory.get('defaultCache');
 });

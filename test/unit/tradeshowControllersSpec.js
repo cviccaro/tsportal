@@ -18,8 +18,9 @@ window.authService = {
 	loginConfirmed: function() { }
 };
 describe('Tradeshow Controllers', function() {
-	var $scope, $rootScope, tradeshowServiceMock, tradeshowResourceMock, loginServiceMock, leadServiceMock, eventMock, messageService;
-	var ctrl, $httpBackend, $q, $controller, $compile, compiled, element, stateMock;
+	var $scope, $rootScope, tradeshowServiceMock, tradeshowResourceMock, loginServiceMock, leadServiceMock;
+	var $httpBackend, $q, $controller, eventMock, messageService, busyServiceMock;
+	var ctrl, $compile, compiled, element, stateMock, $timeout;
 	beforeEach(function() {
 		localStorage.removeItem('_satellizer_token');
 		localStorage.removeItem('satellizer_token');
@@ -30,15 +31,16 @@ describe('Tradeshow Controllers', function() {
 			$provide.value('$event', eventMock);
 		});
 
-		inject(function(_$q_, _$httpBackend_, _$controller_, _messageService_) {
+		inject(function(_$q_, _$httpBackend_, _$controller_, _messageService_, _$timeout_) {
     		$q = _$q_;
 	      	$httpBackend = _$httpBackend_;
 	      	$controller = _$controller_;
 	      	messageService = _messageService_;
+	      	$timeout = _$timeout_;
 	      });
 
 		stateMock = jasmine.createSpyObj('$state', ['go']);
-    	
+    	busyServiceMock = jasmine.createSpyObj('busyService', ['show', 'hide', 'setMessage']);
     	tradeshowServiceMock = jasmine.createSpyObj('tradeshowService', ['retrieve', 'deleteTradeshow']);
 
     	leadServiceMock = jasmine.createSpyObj('leadService', ['retrieve', 'deleteLead']);
@@ -85,7 +87,7 @@ describe('Tradeshow Controllers', function() {
     		}
     	};	
 
-    	tradeshowResourceMock = jasmine.createSpyObj('Tradeshow', ['get', 'save']);
+    	tradeshowResourceMock = jasmine.createSpyObj('Tradeshow', ['get', 'save', 'create']);
     	tradeshowResourceMock.get.and.callFake(function() {
     		var deferred = $q.defer();
     		deferred.resolve({id: 1, name: 'tradeshow', location: 'a place', active: 1});
@@ -424,13 +426,13 @@ describe('Tradeshow Controllers', function() {
 			expect($scope.tradeshow.name).toEqual('test save');
 			$scope.$digest();
 			expect(messageService.addMessage).toHaveBeenCalledWith({
-								icon: 'ok',
-								type: 'success',
-								iconClass: 'icon-medium',
-								dismissible: true,
-								message: 'Your changes have been saved',
-								id: 1
-							});
+				icon: 'ok',
+				type: 'success',
+				iconClass: 'icon-medium',
+				dismissible: true,
+				message: 'Your changes have been saved',
+				id: 1
+			});
 		});
 		it('should call save on Tradeshow Resource when calling $scope.save() and if received rejection of promise, display error message', function() {
 			tradeshowResourceMock.save.and.callFake(function() {
@@ -445,13 +447,15 @@ describe('Tradeshow Controllers', function() {
 			expect(tradeshowResourceMock.save).toHaveBeenCalledWith(newValues);
 			$scope.$digest();
 			expect(messageService.addMessage).toHaveBeenCalledWith({
-								icon: 'exclamation-sign',
-								type: 'danger',
-								iconClass: 'icon-medium',
-								dismissible: true,
-								message: 'Sorry, something went wrong.',
-								id: 1
-							});
+				icon: 'exclamation-sign',
+				type: 'danger',
+				iconClass: 'icon-medium',
+				dismissible: true,
+				message: 'Sorry, something went wrong.',
+				id: 1
+			});
+			expect(messageService.messages.length).toEqual(1)
+			expect(messageService.messages[0].type).toEqual('danger');
 		});
 	});
 	describe('TradeshowCreateController', function() {
@@ -465,11 +469,15 @@ describe('Tradeshow Controllers', function() {
 	                $rootScope: $rootScope,
 					$scope: $scope,
 					loginService: loginServiceMock,
-					$state: stateMock
+					$state: stateMock,
+					Tradeshow: tradeshowResourceMock,
+					messageService: messageService,
+					busyService: busyServiceMock
 				});
 
 				loginServiceMock.checkApiAccess.and.callThrough();
 			});
+			spyOn($scope, "validate").and.callThrough();
 		});
 
 		it('should have an instance of TradeshowCreateController with default values in scope, and loginService.checkApiAccess was called', function() {
@@ -488,6 +496,75 @@ describe('Tradeshow Controllers', function() {
 			$scope.$digest();
 			expect(stateMock.go).toHaveBeenCalledWith('tradeshows');
 		});
+		it('save() should NOT call Tradeshow.create if validate() returns false', function() {
+			var values = {name: '', location: '', active: 1};
+			$scope.validate.and.returnValue(false)
+			tradeshowResourceMock.create.and.callFake(function() {
+				var deferred = $q.defer();
+				deferred.reject({status: 500, data:{}});
+				deferred.$promise = deferred.promise;
+				return deferred;
+			});
+			$scope.tradeshowForm = $scope.tradeshow = values;
+			
+			$scope.save();
+			expect($scope.validate).toHaveBeenCalled();
+			expect(tradeshowResourceMock.create).not.toHaveBeenCalled()
+			$scope.$digest();
+			//expect($scope.tradeshow.name).toEqual('test save');
+		});
+		it('save() call create() on Tradeshow resource if validate() returns true and set tradeshow on $scope to saved tradeshow', function() {
+			var values = {name: 'test save', location: 'test save', active: 1};
+			tradeshowResourceMock.create.and.callFake(function() {
+				var deferred = $q.defer();
+				values.id = 1;
+				deferred.resolve(values);
+				deferred.$promise = deferred.promise;
+				return deferred;
+			});
+			$scope.tradeshowForm = $scope.tradeshow = values;
+			$scope.save();
+			expect($scope.validate).toHaveBeenCalled();
+			expect(tradeshowResourceMock.create).toHaveBeenCalledWith(values);
+			$scope.$digest();
+			expect($scope.tradeshow.name).toEqual('test save');
+		});
+		it('save() call create() on Tradeshow resource if validate() returns true and show error when receiving rejected promise', function() {
+			var values = {name: '', location: 'test save', active: 1};
+			tradeshowResourceMock.create.and.callFake(function() {
+				var deferred = $q.defer();
+				deferred.reject({status: 500, data:{}});
+				deferred.$promise = deferred.promise;
+				return deferred;
+			});
+
+			$scope.tradeshowForm = $scope.tradeshow = values;
+			$scope.save();
+			expect($scope.validate).toHaveBeenCalled();
+			$scope.$digest();
+			expect(tradeshowResourceMock.create).toHaveBeenCalledWith(values);
+			expect(messageService.addMessage).toHaveBeenCalledWith({
+				icon: 'exclamation-sign',
+				type: 'danger',
+				iconClass: 'icon-medium',
+				dismissible: true,
+				message: 'Sorry, something went wrong.',
+				id: 1
+			});
+		});
+		it('removeMessage() should call removeMessage() on messageService', function() {
+			messageService.addMessage({
+				type: 'danger',
+				message: 'test'
+			});
+			expect(messageService.messages.length).toEqual(1)
+			$scope.removeMessage()
+			expect(messageService.removeMessage).toHaveBeenCalled()
+		});
+		it('should call busyService.hide() when $timeout is flushed', function() {
+			$timeout.flush()
+			expect(busyServiceMock.hide).toHaveBeenCalled()
+		})
 	});
 });
 

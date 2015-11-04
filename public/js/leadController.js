@@ -1,12 +1,14 @@
 (function($) {
 	'use strict';
 
-	var leadControllers = angular.module('leadControllers', ['ngDialog']);
+	
 	/**
 	 * Edit Lead Controller
 	 * @class LeadController
 	 */
-	leadControllers.controller('LeadController',
+	angular
+	  .module('leadControllers')
+	  .controller('LeadController',
 		['$rootScope', '$scope', '$stateParams', 'Lead', 'ngDialog', 'Tradeshow', '$state', 'loginService', 'busyService', 'messageService', '$q',
 		function LeadController($rootScope, $scope, $stateParams, Lead, ngDialog, Tradeshow, $state, loginService, busyService, messageService, $q) {
 

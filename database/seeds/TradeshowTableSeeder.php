@@ -23,26 +23,6 @@ class TradeshowTableSeeder extends Seeder {
 
             Tradeshow::create($tradeshow);
         }
-        // Tradeshow::create([
-        //     'id' => 1,
-        //     'name' => 'test show 1',
-        //     'location' => 'Baltimore, MD',
-        //     'active' => 1
-        // ]);
-
-        // Tradeshow::create([
-        //     'id' => 2,
-        //     'name' => 'test show 2',
-        //     'location' => 'Pittsburgh, PA',
-        //     'active' => 1
-        // ]);
-
-        // Tradeshow::create([
-        //     'id' => 3,
-        //     'name' => 'inactive show',
-        //     'location' => 'stfu',
-        //     'active' => 0
-        // ]);
     }
 
 }

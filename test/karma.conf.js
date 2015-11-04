@@ -26,7 +26,8 @@ module.exports = function(config) {
       'public/bower_components/ng-dialog/js/ngDialog.min.js',
       'public/bower_components/jquery/dist/jquery.min.js',
       'public/bower_components/angular-http-auth/src/http-auth-interceptor.js',
-      'public/bower_components/ngstorage/ngStorage.js',
+      'public/bower_components/angular-cache/dist/angular-cache.min.js',
+      'public/js/controllers.js',
       'public/js/**/*.js',
       'test/unit/**/*.js'
     ],
@@ -42,7 +43,9 @@ module.exports = function(config) {
     preprocessors: {
       'public/js/authController.js': 'coverage',
       'public/js/leadController.js': 'coverage',
-      'public/js/tradeshowController.js': 'coverage',
+      'public/js/tradeshowListController.js': 'coverage',
+      'public/js/tradeshowDetailController.js': 'coverage',
+      'public/js/tradeshowCreateController.js': 'coverage',
       'public/js/services.js': 'coverage'
     },
 

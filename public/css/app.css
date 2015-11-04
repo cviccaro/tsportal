@@ -352,3 +352,8 @@ table > tbody > tr.clickable.active > td {
 .glyphicon {
   margin-right: 0.5em;
 }
+
+/* line 314, ../../resources/assets/sass/app.scss */
+.glyphicon-triangle-left:before {
+  content: "\e251";
+}

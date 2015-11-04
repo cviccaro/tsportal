@@ -3,7 +3,7 @@
 </div>
 <messages></messages>
 <div class="row toolbar">
-	<button id="goBack" class="btn btn-primary" ng-click="goBack()"><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span> Go Back</button>
+	<button id="goBack" class="btn btn-primary" ng-click="goBack()"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Go Back</button>
 	<button id="save" class="btn btn-success" ng-click="save()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save</button>
     <div class="col-md-4" style="text-align: right; float: right;" ng-show="!isNew">
         <p>Last updated on {{tradeshow.updated_at}}</p>
@@ -35,18 +35,18 @@
     <div class="toolbar filters clearfix">
         <div class="toolbar-item">
             <span>Sort</span>
-            <select ng-model="$storage.tsportal_leads_orderBy" ng-change="refreshLeads()">
+            <select ng-model="orderBy" ng-change="refreshLeads()">
               <option value="id">Newest</option>
               <option value="last_name">Surname</option>
             </select>
-            <select ng-model="$storage.tsportal_leads_orderByReverse" ng-change="refreshLeads()">
+            <select ng-model="orderByReverse" ng-change="refreshLeads()">
               <option value="0">Descending</option>
               <option value="1">Ascending</option>
             </select>
         </div>
         <div class="toolbar-item right">
             <span>Items Per Page</span>
-            <select ng-model="$storage.tsportal_leads_perPage" ng-change="refreshLeads()">
+            <select ng-model="perPage" ng-change="refreshLeads()">
                 <option value="15">15</option>
                 <option value="30">30</option>
                 <option value="50">50</option>
@@ -55,7 +55,7 @@
         </div>
         <div class="toolbar-item right">
             <span>Search</span>
-            <input type="text" ng-model="$storage.tsportal_leads_query" ng-model-options="{debounce: 500}" ng-change="refreshLeads()" />
+            <input type="text" ng-model="query" ng-model-options="{debounce: 500}" ng-change="refreshLeads()" />
         </div>        
     </div>
     <div class="row">

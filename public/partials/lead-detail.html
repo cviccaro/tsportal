@@ -1,9 +1,9 @@
 <div class="page-header">
-    <h1>Editing Lead <em>{{lead.first_name}} {{$scope.lead.last_name}}</em></h1>
+    <h1>Editing Lead <em>{{lead.first_name}} {{lead.last_name}}</em></h1>
 </div>
 <messages></messages>
 <div class="toolbar row">
-	<button id="goBack" class="btn btn-primary" ng-click="goBack()"><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span> Go Back</button>
+	<button id="goBack" class="btn btn-primary" ng-click="goBack()"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Go Back</button>
 	<button id="save" class="btn btn-success" ng-click="save()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save</button>
 	<div class="col-md-4" style="text-align: right; float: right;">
 		<p>Last updated on {{lead.updated_at}}</p>

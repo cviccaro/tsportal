@@ -4,9 +4,9 @@
 	 */
 	var loginService = angular.module('loginService',[]);
 	loginService.factory('loginService',
-		['$auth', 'authService', '$http', '$state', '$rootScope', '$q', '$localStorage',
-		function loginService($auth, authService, $http, $state, $rootScope, $q, $localStorage) {
-			var $storage = $localStorage;
+		['$auth', 'authService', '$http', '$state', '$rootScope', '$q',
+		function loginService($auth, authService, $http, $state, $rootScope, $q) {
+			$rootScope.isLoggedIn = false;
 		return {
 			isValidEmail: function(email) {
 				var pattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -14,35 +14,33 @@
 			},
 			token: {
 				get: function() {
-					return $storage.satellizer_token;
+					return localStorage.getItem('satellizer_token');
 				},
 				set: function(tokenString) {
 					// Fix incompatibility between ngStorage and satellizer
 					localStorage.setItem('satellizer_token', tokenString);
-					$storage.satellizer_token = tokenString;
 				},
 				remove: function() {
-					delete $storage.satellizer_token;
+					localStorage.removeItem('satellizer_token');
 				}
 			},
 			refreshToken: {
 				get: function() {
-					return $storage._satellizer_token;
+					return localStorage.getItem('_satellizer_token');
 				},
 				set: function(tokenString) {
 					// Fix incompatibility between ngStorage and satellizer
 					localStorage.setItem('_satellizer_token', tokenString);
-					$storage._satellizer_token = tokenString;
 				},
 				remove: function() {
-					delete $storage._satellizer_token;
+					localStorage.removeItem('_satellizer_token');
 				}
 			},
 			authenticate: function(credentials) {
 				return $auth.login(credentials);
 			},
 			login: function(credentials) {
-				console.log('loginService.login(',credentials,')')
+				
 				var that = this;
 				var deferred = $q.defer();
 
@@ -71,12 +69,8 @@
 			refresh: function(str) {
 				var deferred = $q.defer();
 				var that = this;
-				$http({
-					method: 'GET',
-					url: 'api/authenticate/refresh',
-					headers: {
-						'Authorization': 'Bearer ' + str
-					}
+				$http.get('api/authenticate/refresh', {
+					'Authorization': 'Bearer ' + str
 				})
 				.then(function(payload) {
 					that.token.set(payload.data.token);
@@ -90,7 +84,7 @@
 				return deferred.promise;
 			},
 			checkApiAccess: function() {
-				if (this.hasToken()) {
+				if (!this.hasToken()) {
 					if (this.hasRefreshToken()) {
 						var that = this;
 						// Try to refresh
@@ -133,11 +127,11 @@
 			},
 			hasToken: function() {
 				var t = this.token.get();
-				return t !== undefined || t !== null;
+				return t !== undefined && t !== null;
 			},
 			hasRefreshToken: function() {
 				var t = this.refreshToken.get();
-				return t !== undefined || t !== null;
+				return t !== undefined && t !== null;
 			}
 		};
 	}]);
@@ -223,8 +217,9 @@
 	var tradeshowServices = angular.module('tradeshowServices', ['ngResource']);
 
 	// Tradeshow Resource using angular-resource
-	tradeshowServices.factory('Tradeshow', ['$resource', function($resource) {
+	tradeshowServices.factory('Tradeshow', ['$resource', 'CacheFactory', function($resource, CacheFactory) {
 		return $resource('api/tradeshows/:tradeshowId', {tradeshowId: '@id'}, {
+			get: {cache: CacheFactory.get('defaultCache')},
 			create: {method: 'POST', url:'api/tradeshows/create'},
 			delete: {method: 'DELETE'}
 		});
@@ -254,7 +249,7 @@
 					}
 					return $http.
 						get('api/tradeshows?page='+pageNumber+'&perPage=' + perPage + '&orderBy=' + orderBy +
-							'&orderByReverse=' + parseInt(orderByReverse) + '&filter=' + filter);
+							'&orderByReverse=' + parseInt(orderByReverse) + '&filter=' + filter, {cache: true});
 				},
 				deleteTradeshow: function(tradeshow) {
 					var tradeshow_name = tradeshow.name,
@@ -318,12 +313,15 @@
 	var leadServices = angular.module('leadServices', []);
 
 	// Lead Resource using angular-resource
-	leadServices.factory('Lead', ['$resource', function ($resource) {
-		return $resource('api/leads/:id', {id: '@id'});
+	leadServices.factory('Lead', ['$resource', 'CacheFactory', function ($resource, CacheFactory) {
+		return $resource('api/leads/:id', {id: '@id'}, {
+			get: {cache: CacheFactory.get('defaultCache')}
+		});
 	}]);
 
 	// Lead service for fetching paginated, sorted lists of Leads based on a single tradeshow
-	leadServices.factory('leadService', ['$http', 'ngDialog', 'Lead', '$rootScope', 'busyService', function($http, ngDialog, Lead, $rootScope, busyService) {
+	leadServices.factory('leadService', ['$http', 'ngDialog', 'Lead', '$rootScope', 'busyService',
+	 function($http, ngDialog, Lead, $rootScope, busyService) {
 		var activeDialog;
 		return {
 			retrieve: function(tradehow_id, pageNumber, perPage, orderBy, orderByReverse, filter) {
@@ -344,7 +342,7 @@
 				}
 				return $http.
 					get('api/tradeshows/' + tradehow_id + '/leads?page='+pageNumber+'&perPage='+perPage+
-						'&orderBy=' +orderBy + '&orderByReverse=' + parseInt(orderByReverse) + '&filter=' + filter);
+						'&orderBy=' +orderBy + '&orderByReverse=' + parseInt(orderByReverse) + '&filter=' + filter, {cache: true});
 			},
 			deleteLead: function (lead) {
 				var lead_name = lead.first_name + ' ' + lead.last_name;

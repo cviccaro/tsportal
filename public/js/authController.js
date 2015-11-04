@@ -1,9 +1,9 @@
 (function($) {
 	'use strict';
 
-	angular.
-		module('authControllers', ['satellizer']).
-		controller('AuthController',
+	angular
+		.module('authControllers')
+		.controller('AuthController',
 			['$state', '$scope', '$rootScope', 'loginService', 'busyService', 'messageService',
 			function($state, $scope, $rootScope, loginService, busyService, messageService) {
 			// If a token is already stored, try app
