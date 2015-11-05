@@ -60,14 +60,13 @@
 
     <script src="/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
     <script src="/bower_components/angular-jwt/dist/angular-jwt.min.js"></script>
-    <script src="/bower_components/satellizer/satellizer.min.js"></script>
-    <script src="/bower_components/angular-http-auth/src/http-auth-interceptor.js"></script>
     <script src="/bower_components/angular-cache/dist/angular-cache.min.js"></script>
     <script src="/bower_components/angular-resource/angular-resource.min.js"></script>
-
+    <script src="/bower_components/angular-resource/angular-resource.min.js"></script>
     <script src="/bower_components/angular-animate/angular-animate.min.js"></script>
     <script src="/bower_components/ng-dialog/js/ngDialog.min.js"></script>
     <script src="/bower_components/angular-spinkit/build/angular-spinkit.min.js"></script>
+    <script src="/bower_components/moment/min/moment.min.js"></script>
 
     <!-- Application Components -->
     <script type="text/javascript" src="/js/services.js"></script>

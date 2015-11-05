@@ -12,24 +12,6 @@
 		['$rootScope', '$scope', '$stateParams', 'Lead', 'ngDialog', 'Tradeshow', '$state', 'loginService', 'busyService', 'messageService', '$q',
 		function LeadController($rootScope, $scope, $stateParams, Lead, ngDialog, Tradeshow, $state, loginService, busyService, messageService, $q) {
 
-		// Get the lead when it is confirmed we have a valid token
-		$rootScope.$on('event:auth-logged-in', function() {
-			$scope.getLead().then(function() {
-				busyService.hide();
-			})
-			.catch(function(payload) {
-				busyService.hide();
-				messageService.addMessage({
-					type: 'danger',
-					dismissible: true,
-					icon: 'exclamation-sign',
-					iconClass: 'icon-medium',
-					message: "Sorry, something went wrong.",
-				});
-			});
-		});
-
-
 		// Watch messageService messages
 		$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
 		    if (typeof newVal !== 'undefined') {
@@ -145,6 +127,18 @@
 		};
 
 		// Check API Access
-		loginService.checkApiAccess();
+		loginService.checkApiAccess().then(function() {
+			$scope.getLead().then(function() {
+				busyService.hide();
+			})
+			.catch(function(payload) {
+				busyService.hide();
+				ngDialog.open({
+					plain: true,
+					className: 'dialog-save ngdialog-theme-default',
+					template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>Sorry, something went wrong.  Try again later.</span>'
+				});
+			});
+		});
 	}]);
 })(jQuery);

@@ -7,10 +7,11 @@ var tsportal = angular.module('tsportal', [
     'angular-spinkit',
     'ngAnimate',
     'ngDialog',
-    'satellizer',
-    'http-auth-interceptor',
+  //  'satellizer',
+    // 'http-auth-interceptor',
     'angular-cache',
     // Custom
+    'authInterceptor',
     'tradeshowServices',
     'leadServices',
     'authControllers',
@@ -21,13 +22,12 @@ var tsportal = angular.module('tsportal', [
     'messageService'
 ]);
 
-tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtInterceptorProvider', '$authProvider',
-    function($stateProvider, $urlRouterProvider, $httpProvider, jwtInterceptorProvider, $authProvider) {
-
+tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider',
+    function($stateProvider, $urlRouterProvider, $httpProvider) {
         $httpProvider.useLegacyPromiseExtensions = false;
         // Satellizer configuration that specifies which API
         // route the JWT should be retrieved from
-        $authProvider.loginUrl = '/api/authenticate';
+       // $authProvider.loginUrl = '/api/authenticate';
 
         // Router States
         $urlRouterProvider.otherwise('/auth');
@@ -91,6 +91,21 @@ tsportal.directive('pager', function(){
    };
 });
 
+tsportal.directive("timeago", function() {
+    return {
+        restrict: 'E',
+        scope: {
+            time: '=',
+        },
+        template: '<span class="time-ago">{{getTimeAgo(time)}}</span>',
+        link: function(scope, elem, attrs) {
+            scope.getTimeAgo = function(time) {
+                return moment(time, moment.ISO_8601).fromNow();
+            }
+        }
+    };
+});
+
 tsportal.directive("markable", function() {
     return {
         link: function(scope, elem, attrs) {
@@ -136,14 +151,10 @@ tsportal.directive('stateLoadingIndicator', ['busyService', '$rootScope', '$time
 
       $rootScope.$on('$stateChangeStart', function() {
         scope.isStateLoading = true;
+        busyService.show();
       });
       $rootScope.$on('$stateChangeSuccess', function() {
         scope.isStateLoading = false;
-        $timeout(function() {
-            if (!busyService.isBusy() && busyService.isVisible()) {
-                busyService.hide();
-            }
-        },0);
       });
     }
   };

@@ -93,7 +93,7 @@
                             <td>{{lead.last_name}}</td>
                             <td>{{lead.email_address}}</td>
                             <td>{{lead.phone_number}}</td>
-                            <td>{{lead.timestamp}}</td>
+                            <td><timeago time="lead.created_at"></timeago></td>
                             <td>
                                 <a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
                             </td>

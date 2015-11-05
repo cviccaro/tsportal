@@ -16,9 +16,8 @@
     "angular-ui-router": "~0.2.15",
     "angular-animate": "~1.4.7",
     "ng-dialog": "*",
-    "angular-http-auth": "~1.2.2",
-    "satellizer": "~0.12.5",
-    "angular-cache": "~4.4.2"
+    "angular-cache": "~4.4.2",
+    "moment": "~2.10.6"
   },
   "resolutions": {
     "angular": "1.4.7",

@@ -1,12 +1,21 @@
 (function() {
 	/**
-	 * Wrapper around $auth service
+	 * login Service
 	 */
-	var loginService = angular.module('loginService',[]);
-	loginService.factory('loginService',
-		['$auth', 'authService', '$http', '$state', '$rootScope', '$q',
-		function loginService($auth, authService, $http, $state, $rootScope, $q) {
-			$rootScope.isLoggedIn = false;
+	angular
+	.module('loginService',[])
+	.factory('loginService', loginService);
+
+	function loginService($state, $rootScope, $q, CacheFactory, $http, httpBuffer) {
+		$rootScope.isLoggedIn = false;
+		if (!CacheFactory.get('authCache')) {
+			CacheFactory('authCache', {
+				maxAge: 60 * 60 * 1000,
+				deleteOnExpire: 'aggressive',
+				storageMode: 'localStorage'
+			});
+		}
+		var cache = CacheFactory.get('authCache');
 		return {
 			isValidEmail: function(email) {
 				var pattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -14,41 +23,21 @@
 			},
 			token: {
 				get: function() {
-					return localStorage.getItem('satellizer_token');
+					return cache.get('token');
 				},
 				set: function(tokenString) {
-					// Fix incompatibility between ngStorage and satellizer
-					localStorage.setItem('satellizer_token', tokenString);
+					cache.put('token', tokenString);
 				},
 				remove: function() {
-					localStorage.removeItem('satellizer_token');
+					cache.remove('token');
 				}
-			},
-			refreshToken: {
-				get: function() {
-					return localStorage.getItem('_satellizer_token');
-				},
-				set: function(tokenString) {
-					// Fix incompatibility between ngStorage and satellizer
-					localStorage.setItem('_satellizer_token', tokenString);
-				},
-				remove: function() {
-					localStorage.removeItem('_satellizer_token');
-				}
-			},
-			authenticate: function(credentials) {
-				return $auth.login(credentials);
 			},
 			login: function(credentials) {
-
-				var that = this;
 				var deferred = $q.defer();
 
-				this.authenticate(credentials)
+				$http.post('/api/authenticate', credentials, {cache: false})
 					.then(function(payload) {
 						deferred.resolve(payload);
-						$rootScope.$emit('event:auth-logged-in');
-						$rootScope.isLoggedIn = true;
 					})
 					.catch(function(payload) {
 						deferred.reject(payload);
@@ -56,85 +45,184 @@
 				return deferred.promise;
 			},
 			logout: function() {
-				// Remove tokens
 				this.token.remove();
-				this.refreshToken.remove();
-
-				var logout = $auth.logout();
-
 				$state.go('auth');
-
-				return logout;
 			},
-			refresh: function(str) {
+			refresh: function() {
 				var deferred = $q.defer();
 				var that = this;
-				$http.get('api/authenticate/refresh', {
-					'Authorization': 'Bearer ' + str
-				})
+				$http.get('api/authenticate/refresh', {cache: false})
 				.then(function(payload) {
 					that.token.set(payload.data.token);
-					that.refreshToken.set(payload.data.token);
-					authService.loginConfirmed();
+					that.loginConfirmed();
 					deferred.resolve(payload);
 				})
 				.catch(function(payload) {
+					that.loginCancelled();
 					deferred.reject(payload);
 				});
 				return deferred.promise;
 			},
 			checkApiAccess: function() {
-				if (!this.hasToken()) {
-					if (this.hasRefreshToken()) {
-						var that = this;
-						// Try to refresh
-						this.refresh(this.refreshToken.get())
-						.then(function(payload) {
-
-							that.token.set(payload.data.token);
-
-							// Save a copy of the token to use for future refresh requests
-							that.refreshToken.set(payload.data.token);
-
-							$rootScope.isLoggedIn = true;
-
-							// Broadcast events
-							$rootScope.$emit('event:auth-logged-in');
-							authService.loginConfirmed();
-						})
-						.catch(function(payload) {
-							if (payload.status == 500 || payload.status == 400) {
-								// token is totally expired, cannot be refreshed
-								that.token.remove();
-								that.refreshToken.remove();
-								that.checkApiAccess();
-							}
-						});
-					}
-					else {
-						// Go to auth view
-						this.token.remove();
-						$state.go('auth', {});
-					}
+				var deferred = $q.defer();
+				if (this.hasToken()) {
+					$rootScope.isLoggedIn = true;
+					deferred.resolve();
 				}
 				else {
-					$rootScope.isLoggedIn = true;
-					$rootScope.$emit('event:auth-logged-in');
+					this.loginCancelled();
+					deferred.reject();
 				}
-			},
-			hasEitherToken: function() {
-				return this.hasToken() || this.hasRefreshToken();
+				return deferred.promise;
 			},
 			hasToken: function() {
 				var t = this.token.get();
 				return t !== undefined && t !== null;
 			},
-			hasRefreshToken: function() {
-				var t = this.refreshToken.get();
-				return t !== undefined && t !== null;
+			loginConfirmed: function(data, configUpdater) {
+				var updater = configUpdater || function(config) {return config;};
+				$rootScope.$broadcast('event:auth-logged-in', data);
+				$rootScope.isLoggedIn = true;
+				httpBuffer.retryAll(updater);
+			},
+			loginCancelled: function(data, reason) {
+			  httpBuffer.rejectAll(reason);
+			  $rootScope.$broadcast('event:auth-login-cancelled', data);
+			  this.logout();
 			}
 		};
-	}]);
+	}
+
+	/**
+	 * Auth Interceptor
+	 * 	@credit : largely modified from http-auth-interceptor package
+	 */
+	angular
+		.module('authInterceptor',[])
+		.factory('authInterceptor', authInterceptor)
+		.factory('httpBuffer', httpBuffer)
+		.config(['$httpProvider', function($httpProvider) {
+			$httpProvider.interceptors.push(authInterceptor);
+		}]);
+	
+	function authInterceptor ($injector, $rootScope, $q, httpBuffer, $log) {
+		// Will get resolved later using $injector to avoid circular dependency issues
+		var loginService, ngDialog;
+
+		return {
+			request: function(config) {
+				loginService = loginService || $injector.get('loginService');
+
+				// Append the token to any request that isn't to login URL
+				if (config.url != '/api/authenticate') {
+					config.headers.Authorization = 'Bearer ' + loginService.token.get();
+				}
+
+				return config;
+			},
+			response: function(response) {
+				var config 	 = response.config;
+
+				loginService = loginService || $injector.get('loginService');
+
+				// Intercept and snatch a successful token from the HTTP response
+				if (config.url == '/api/authenticate' && config.method == "POST" && response.status == 200) {
+					if (response.data.hasOwnProperty('token')) {
+						loginService.token.set(response.data.token);
+						loginService.loginConfirmed();
+					}
+				}
+				return response;
+			},
+			responseError: function(rejection) {
+				var deferred = $q.defer();
+
+				loginService = loginService || $injector.get('loginService');
+
+				switch (rejection.status) {
+				  case 401:
+				  	// If token is expired, refresh it
+				  	if (rejection.data.hasOwnProperty('error') && rejection.data.error == 'token_expired') {
+					    httpBuffer.append(rejection.config, deferred);
+					    $rootScope.$broadcast('event:auth-login-required', rejection);
+					    if (loginService.hasToken()) {
+						    loginService.refresh();
+					    }
+					    return deferred.promise;
+					}
+				    break;
+				  case 403:
+				    $rootScope.$broadcast('event:auth-forbidden', rejection);
+				    loginServe.loginCancelled();
+				    break;
+			      case 500:
+			      	ngDialog = ngDialog || $injector.get('ngDialog');
+					ngDialog.open({
+						plain: true,
+						className: 'dialog-save ngdialog-theme-default',
+						template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>Sorry, something went wrong.  Try again later.</span>'
+					});
+			      	break;
+				}
+				deferred.reject(rejection);
+				return deferred.promise;
+			}
+		};
+	}
+
+	/**
+	 * @credit Largely taken and modified from http-auth-interceptor
+	 */
+	function httpBuffer($injector) {
+		var buffer = [];
+
+		var $http;
+
+		function retryHttpRequest(config, deferred) {
+		  function successCallback(response) {
+		    deferred.resolve(response);
+		  }
+		  function errorCallback(response) {
+		    deferred.reject(response);
+		  }
+		  $http = $http || $injector.get('$http');
+		  $http(config).then(successCallback, errorCallback);
+		}
+
+		return {
+		  /**
+		   * Appends HTTP request configuration object with deferred response attached to buffer.
+		   */
+		  append: function(config, deferred) {
+		    buffer.push({
+		      config: config,
+		      deferred: deferred
+		    });
+		  },
+
+		  /**
+		   * Abandon or reject (if reason provided) all the buffered requests.
+		   */
+		  rejectAll: function(reason) {
+		    if (reason) {
+		      for (var i = 0; i < buffer.length; ++i) {
+		        buffer[i].deferred.reject(reason);
+		      }
+		    }
+		    buffer = [];
+		  },
+
+		  /**
+		   * Retries all the buffered requests clears the buffer.
+		   */
+		  retryAll: function(updater) {
+		    for (var i = 0; i < buffer.length; ++i) {
+		      retryHttpRequest(updater(buffer[i].config), buffer[i].deferred);
+		    }
+		    buffer = [];
+		  }
+		};
+	}
 
 	/**
 	 * Message service
@@ -206,6 +294,7 @@
 			}
 		};
 	}]);
+
 	/**
 	 * Tradeshow Services module
 	 */

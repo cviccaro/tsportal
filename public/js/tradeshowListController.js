@@ -8,9 +8,9 @@
 	 */
 	angular
 	.module('tradeshowControllers')
-	.controller('TradeshowListController',
-		['$rootScope', '$scope', 'tradeshowService', 'leadService', 'loginService', 'ngDialog', 'busyService', '$q', 'messageService', 'CacheFactory',
-		function TradeshowListController($rootScope, $scope, tradeshowService, leadService, loginService, ngDialog, busyService, $q, messageService, CacheFactory) {
+	.controller('TradeshowListController', TradeshowListController);
+
+	function TradeshowListController($rootScope, $scope, tradeshowService, leadService, loginService, busyService, $q, messageService, CacheFactory, ngDialog, $timeout, $log) {
 
 		if (!CacheFactory.get('formCache')) {
 			CacheFactory('formCache', {
@@ -52,47 +52,6 @@
 		    }
 		});
 
-		// Get the scoped tradeshow when we are confirmed to have a valid token
-		$rootScope.$on('event:auth-logged-in', function() {
-			$scope.getTradeshows().then(function() {
-				busyService.hide();
-			})
-			.catch(function(payload) {
-				busyService.hide();
-				messageService.addMessage({
-					type: 'danger',
-					dismissible: true,
-					icon: 'exclamation-sign',
-					iconClass: 'icon-medium',
-					message: "Sorry, something went wrong.",
-				});
-			});
-		});
-
-
-		// Refresh authorization token when it is expired transparently to the user
-		// and re-run the request that failed (happens automatically from http-auth-interceptor)
-		$rootScope.$on('event:auth-loginRequired', function(event, data) {
-			var token = loginService.refreshToken.get();
-			if (token !== null) {
-				loginService.refresh(token)
-					.then(function(payload) {
-						authService.loginConfirmed();
-						$scope.refreshTradeshows();
-					})
-					.catch(function(payload) {
-						if (payload.status == 500 || payload.status == 400) {
-							// token is totally expired, cannot be refreshed, return to login
-							loginService.logout();
-						}
-					});
-			}
-			else {
-				// token is totally expired, cannot be refreshed, return to login
-				loginService.logout();
-			}
-		});
-
 		// Scope functions
 
 		/**
@@ -100,14 +59,18 @@
 		 * @param  {[int]} pageNumber [requested page number]
 		 * @return {[void]}
 		 */
-		$scope.getTradeshows = function(pageNumber) {
-			busyService.setMessage('Working on it');
-			busyService.show();
+		$scope.getTradeshows = function(pageNumber, hideBusyService) {
+			if (hideBusyService === undefined) {
+				hideBusyService = true;
+			}
 			if (pageNumber === undefined) {
 				pageNumber = $scope.currentPage;
 			}
 			$scope.lastFetchedPage = pageNumber;
 
+			busyService.setMessage('Working on it');
+			busyService.show();
+			
 			var deferred = $q.defer();
 
 			tradeshowService
@@ -126,10 +89,15 @@
 					$scope.totalPages = response.last_page;
 
 					deferred.resolve(payload);
+					if (hideBusyService) {
+						busyService.hide();
+					}
 				})
 				.catch(function(payload) {
-					$scope.$emit('event:auth-loginRequired');
 					deferred.reject(payload);
+					if (hideBusyService) {
+						busyService.hide();
+					}
 				});
 			return deferred.promise;
 		};
@@ -167,6 +135,7 @@
 			leadService
 				.retrieve(tradeshow.id, pageNumber, 50, 'id', 0)
 				.then(function(payload) {
+					
 					var response = payload.data;
 
 					$scope.leads = response.data;
@@ -235,7 +204,19 @@
 		};
 
 		// No token, no access
-		loginService.checkApiAccess();
-	}]);
+		loginService.checkApiAccess().then(function(payload) {
+			$scope.getTradeshows($scope.currentPage, false).then(function() {
+				busyService.hide();
+			})
+			.catch(function(payload) {
+				busyService.hide();
+				ngDialog.open({
+					plain: true,
+					className: 'dialog-save ngdialog-theme-default',
+					template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>Sorry, something went wrong.  Try again later.</span>'
+				});
+			});
+		});
+	}
 
 })(jQuery);

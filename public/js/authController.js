@@ -7,9 +7,9 @@
 			['$state', '$scope', '$rootScope', 'loginService', 'busyService', 'messageService',
 			function($state, $scope, $rootScope, loginService, busyService, messageService) {
 			// If a token is already stored, try app
-			if (loginService.hasEitherToken()) {
+			loginService.checkApiAccess().then(function() {
 				$state.go('tradeshows', {});
-			}
+			});
 
 			// Watch messageService messages
 			$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
@@ -41,14 +41,10 @@
 				busyService.show();
 				// Use satellizer's $auth service to login
 				loginService.login(credentials)
-					.then(function authLoginSuccess(payload) {
-						busyService.hide();
-						loginService.token.set(payload.data.token);
-						// set a copy of the token to use for refresh requests
-						loginService.refreshToken.set(payload.data.token);
+					.then(function(payload) {
 						$state.go('tradeshows', {});
 					})
-					.catch(function authLoginFail(payload) {
+					.catch(function(payload) {
 						$scope.loginError();
 					});
 			};

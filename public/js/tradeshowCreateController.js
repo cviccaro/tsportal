@@ -102,12 +102,12 @@
 			messageService.removeMessage(message_id);
 		};
 
-		// Ensure "busy" indicator is hidden
-		$timeout(function() {
-			busyService.hide();
-		},100);
-
 		// No token, no access
-		loginService.checkApiAccess();
+		loginService.checkApiAccess().then(function() {
+			// Ensure "busy" indicator is hidden
+			$timeout(function() {
+				busyService.hide();
+			},100);
+		});
 	}]);
 })(jQuery);

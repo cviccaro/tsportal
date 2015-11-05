@@ -9,8 +9,8 @@
 	angular
 	.module('tradeshowControllers')
 	.controller('TradeshowDetailController',
-		['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', 'leadService', '$state', 'loginService', 'busyService', 'messageService', '$q', 'CacheFactory',
-		function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, leadService, $state, loginService, busyService, messageService, $q, CacheFactory) {
+		['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'leadService', '$state', 'loginService', 'busyService', 'messageService', '$q', 'CacheFactory', 'ngDialog',
+		function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, leadService, $state, loginService, busyService, messageService, $q, CacheFactory, ngDialog) {
 
 		if (!CacheFactory.get('leadFormCache')) {
 			CacheFactory('leadFormCache', {
@@ -50,24 +50,6 @@
 		$scope.leads = [];
 		$scope.submitted = false;
 		$scope.lastFetchedPage = 1;
-
-		// Get the scoped tradeshow when we are confirmed to have a valid token
-		$rootScope.$on('event:auth-logged-in', function() {
-			$scope.getTradeshow()
-				.then(function() {
-					busyService.hide();
-				})
-				.catch(function(payload) {
-					busyService.hide();
-					messageService.addMessage({
-						type: 'danger',
-						dismissible: true,
-						icon: 'exclamation-sign',
-						iconClass: 'icon-medium',
-						message: "Sorry, something went wrong.",
-					});
-				});
-		});
 
 		// Refresh authorization token when it is expired transparently to the user
 		// and re-run the request that failed (happens automatically from http-auth-interceptor)
@@ -291,6 +273,19 @@
 
 
 		// Check API Access, refresh token
-		loginService.checkApiAccess();
+		loginService.checkApiAccess().then(function() {
+			$scope.getTradeshow()
+				.then(function() {
+					busyService.hide();
+				})
+				.catch(function(payload) {
+					busyService.hide();
+					ngDialog.open({
+						plain: true,
+						className: 'dialog-save ngdialog-theme-default',
+						template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>Sorry, something went wrong.  Try again later.</span>'
+					});
+				});
+		});
 	}]);
 })(jQuery);
