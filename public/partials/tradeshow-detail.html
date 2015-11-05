@@ -11,26 +11,26 @@
 </div>
 
 <div class="row">
-<form name="tradeshowForm">
-	<div class="col-md-6 form-item required" 
-        ng-class="{'has-error': (tradeshowForm.name.$dirty || submitted) && tradeshowForm.name.$invalid && tradeshowForm.name.$error.required}">
-        <label for="name">Name</label><input id="tradeshow_name" type="text" name="name" ng-model="tradeshow.name" required />
-        <span class="help-block" ng-show="(tradeshowForm.name.$dirty || submitted) && tradeshowForm.name.$invalid && tradeshowForm.name.$error.required">Tradeshow name is required.</span>
-    </div>
-	<div class="col-md-6 form-item required" ng-class="{'has-error': (tradeshowForm.location.$dirty || submitted) && tradeshowForm.location.$invalid && tradeshowForm.location.$error.required}">
-        <label for="location">Location</label><input type="text" name="location" ng-model="tradeshow.location" required />
-        <span class="help-block" ng-show="(tradeshowForm.location.$dirty || submitted) && tradeshowForm.location.$invalid && tradeshowForm.location.$error.required">Tradeshow location is required.
-    </div>
-	<div class="col-md-6 form-item omega">
-		<label for="active">Active</label>
-		<input bs type="checkbox" name="active" ng-model="tradeshow.active" ng-true-value="1" ng-false-value="0" />
-	</div>
-</form>    
+    <form name="tradeshowForm">
+    	<div class="col-md-6 form-item required"
+            ng-class="{'has-error': (tradeshowForm.name.$dirty || submitted) && tradeshowForm.name.$invalid && tradeshowForm.name.$error.required}">
+            <label for="name">Name</label><input id="tradeshow_name" type="text" name="name" ng-model="tradeshow.name" required />
+            <span class="help-block" ng-show="(tradeshowForm.name.$dirty || submitted) && tradeshowForm.name.$invalid && tradeshowForm.name.$error.required">Tradeshow name is required.</span>
+        </div>
+    	<div class="col-md-6 form-item required" ng-class="{'has-error': (tradeshowForm.location.$dirty || submitted) && tradeshowForm.location.$invalid && tradeshowForm.location.$error.required}">
+            <label for="location">Location</label><input type="text" name="location" ng-model="tradeshow.location" required />
+            <span class="help-block" ng-show="(tradeshowForm.location.$dirty || submitted) && tradeshowForm.location.$invalid && tradeshowForm.location.$error.required">Tradeshow location is required.
+        </div>
+    	<div class="col-md-6 form-item omega">
+    		<label for="active">Active</label>
+    		<input bs type="checkbox" name="active" ng-model="tradeshow.active" ng-true-value="1" ng-false-value="0" />
+    	</div>
+    </form>
 </div>
 
 <div class="lead-container" ng-show="!isNew">
     <div class="page-header">
-        <h1>Leads <span ng-show="leads.length">({{leadCount}})</span></h1>
+        <h1>Leads <span ng-show="leads.length">({{totalPages * perPage}})</span></h1>
     </div>
     <div class="toolbar filters clearfix">
         <div class="toolbar-item">
@@ -56,7 +56,7 @@
         <div class="toolbar-item right">
             <span>Search</span>
             <input type="text" ng-model="query" ng-model-options="{debounce: 500}" ng-change="refreshLeads()" />
-        </div>        
+        </div>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -86,9 +86,7 @@
                     </tr>
                 </tbody>
             </table>
-            <div>
-                 <lead-pagination></lead-pagination>
-               </div>
+            <pager current-page="currentPage" total-pages="totalPages" tradeshow="tradeshow" get-results="getLeads(num)"></pager>
         </div>
     </div>
 </div>

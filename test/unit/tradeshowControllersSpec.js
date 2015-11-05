@@ -24,7 +24,7 @@ describe('Tradeshow Controllers', function() {
 	beforeEach(function() {
 		localStorage.removeItem('_satellizer_token');
 		localStorage.removeItem('satellizer_token');
-		
+
 		module('tsportal');
 
 		module(function($provide) {
@@ -85,7 +85,7 @@ describe('Tradeshow Controllers', function() {
     		set: function(str) {
     			localStorage.setItem('_satellizer_token', str);
     		}
-    	};	
+    	};
 
     	tradeshowResourceMock = jasmine.createSpyObj('Tradeshow', ['get', 'save', 'create']);
     	tradeshowResourceMock.get.and.callFake(function() {
@@ -113,7 +113,7 @@ describe('Tradeshow Controllers', function() {
 		};
 		spyOn(eventMock, "preventDefault").and.callThrough();
 		spyOn(eventMock, "stopPropagation").and.callThrough();
-		
+
 		spyOn(messageService, "removeMessage").and.callThrough();
 		spyOn(messageService, "addMessage").and.callThrough();
 		spyOn(authService, "loginConfirmed").and.callThrough();
@@ -212,7 +212,7 @@ describe('Tradeshow Controllers', function() {
 					return deferred.promise;
 				});
 
-				ctrl = $controller('TradeshowController', {
+				ctrl = $controller('TradeshowListController', {
 	                $rootScope: $rootScope,
 					$scope: $scope,
 					loginService: loginServiceMock,
@@ -227,7 +227,7 @@ describe('Tradeshow Controllers', function() {
 		    });
 
 	    });
-	    it('should have a TradeshowController with defaults and call checkApiAccess on loginService', function() {
+	    it('should have a TradeshowListController with defaults and call checkApiAccess on loginService', function() {
 	      expect(ctrl).toBeDefined();
 	      expect($scope.orderBy).toBe('id');
 	      expect($scope.orderByReverse).toEqual('0');
@@ -506,7 +506,7 @@ describe('Tradeshow Controllers', function() {
 				return deferred;
 			});
 			$scope.tradeshowForm = $scope.tradeshow = values;
-			
+
 			$scope.save();
 			expect($scope.validate).toHaveBeenCalled();
 			expect(tradeshowResourceMock.create).not.toHaveBeenCalled()

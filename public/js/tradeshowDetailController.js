@@ -21,17 +21,16 @@
 		}
 		var formCache = CacheFactory.get('leadFormCache');
 
-		$scope.lastFetchedPage = 1;
-		
+
 		// Cached scope vars
-		$scope.leadCurrentPage = 1;
+		$scope.currentPage = 1;
 		$scope.orderBy = 'id';
 		$scope.orderByReverse = '0';
 		$scope.perPage = '15';
 		$scope.query = '';
 
 		// Watch scope variables to update cache
-		var watch = ['leadCurrentPage', 'orderBy', 'orderByReverse', 'perPage', 'query'];
+		var watch = ['currentPage', 'orderBy', 'orderByReverse', 'perPage', 'query'];
 		angular.forEach(watch, function(varName) {
 			var val = formCache.get(varName);
 			if (val !== undefined && val !== null) {
@@ -47,7 +46,6 @@
 		// Scope variables
 		$scope.titlePrefix = 'Editing';
 		$scope.model = 'tradeshow';
-		$scope.leadCount = 0;
 		$scope.isNew = false;
 		$scope.leads = [];
 		$scope.submitted = false;
@@ -113,7 +111,7 @@
 					if ($scope.tradeshow.active == 1) {
 						jQuery('input[name="active"]').bootstrapSwitch('state', true);
 					}
-					$scope.getLeads()
+					$scope.getLeads($scope.currentPage)
 						.then(function(payload) {
 							deferred.resolve(payload);
 						})
@@ -201,34 +199,30 @@
 		 */
 		$scope.getLeads = function(pageNumber) {
 			if (pageNumber === undefined) {
-				pageNumber = $scope.leadCurrentPage;
+				pageNumber = $scope.currentPage;
 			}
 			$scope.lastFetchedPage = pageNumber;
+
+			busyService.show();
+
 			var deferred = $q.defer();
+
 			leadService
 				.retrieve(
-					$scope.tradeshow.id, 
-					pageNumber, 
-					$scope.perPage, 
-					$scope.orderBy, 
-					$scope.orderByReverse, 
+					$scope.tradeshow.id,
+					pageNumber,
+					$scope.perPage,
+					$scope.orderBy,
+					$scope.orderByReverse,
 					$scope.query
 				)
 				.then(function(payload) {
 					var response = payload.data;
 					$scope.leads = response.data;
-					$scope.leadCurrentPage = response.current_page;
-					$scope.leadTotalPages = response.last_page;
-					var pages = [];
-					for(var i=1;i<=response.last_page;i++) {
-						pages.push(i);
-					}
-					$scope.leadRange = pages;
+					$scope.currentPage = response.current_page;
+					$scope.totalPages = response.last_page;
 
-					// Calculate leads from pagination
-					if ($scope.leadCount === 0) {
-						$scope.leadCount = $scope.leadTotalPages * $scope.leads.length;
-					}
+					busyService.hide();
 
 					// Resolve promise
 					deferred.resolve(payload);
@@ -246,7 +240,6 @@
 				if ($scope.lastFetchedPage > payload.data.current_page) {
 					$scope.getLeads(payload.data.last_page);
 				}
-				$scope.leadCount = payload.data.data.length;
 			});
 		};
 
@@ -282,7 +275,7 @@
 		 * @return {[void]}
 		 */
 		$scope.updatePagination = function() {
-			if ($scope.leadCurrentPage != 1) {
+			if ($scope.currentPage != 1) {
 				$scope.getLeads(1);
 			}
 		};

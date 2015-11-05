@@ -46,7 +46,7 @@ tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtIn
             state('tradeshows', {
                 url: '/tradeshows',
                 templateUrl: '../partials/tradeshow-list.html',
-                controller: 'TradeshowController'
+                controller: 'TradeshowListController'
             }).
             state('tradeshowEdit', {
                 url: '/tradeshows/:tradeshowId/edit',
@@ -65,33 +65,29 @@ tsportal.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'jwtIn
             });
 }]);
 
- // @credit http://blog.kettle.io/dynamic-pagination-angularjs-laravel/
-tsportal.directive('tradeshowPagination', function(){
+tsportal.directive('pager', function(){
    return{
       restrict: 'E',
+      scope: {
+        currentPage: '=',
+        totalPages: '=',
+        getResults: '&getResults',
+        tradeshow: '='
+      },
       template: '<ul class="pagination">'+
-        '<li ng-show="currentPage != 1"><a href="javascript:void(0)" ng-click="getTradeshows(1)">&laquo;</a></li>'+
-        '<li ng-show="currentPage != 1"><a href="javascript:void(0)" ng-click="getTradeshows(currentPage-1)">&lsaquo; Prev</a></li>'+
-        '<li ng-repeat="i in range" ng-class="{active : currentPage == i}">'+
-            '<a href="javascript:void(0)" ng-click="getTradeshows(i)">{{i}}</a>'+
+        '<li ng-show="currentPage != 1"><a href="javascript:void(0)" ng-click="getResults({num:1})">&laquo;</a></li>'+
+        '<li ng-show="currentPage != 1"><a href="javascript:void(0)" ng-click="getResults({num:currentPage-1})">&lsaquo; Prev</a></li>'+
+        '<li ng-repeat="i in getRange(totalPages) track by $index" ng-class="{active : currentPage-1 == $index}">'+
+            '<a href="javascript:void(0)" ng-click="getResults({num:$index+1})">{{$index + 1}}</a>'+
         '</li>'+
-        '<li ng-show="currentPage != totalPages"><a href="javascript:void(0)" ng-click="getTradeshows(currentPage+1)">Next &rsaquo;</a></li>'+
-        '<li ng-show="currentPage != totalPages"><a href="javascript:void(0)" ng-click="getTradeshows(totalPages)">&raquo;</a></li>'+
-      '</ul>'
-   };
-});
-tsportal.directive('leadPagination', function(){
-   return{
-      restrict: 'E',
-      template: '<ul class="pagination" ng-show="leadCurrentPage != undefined && leadTotalPages != undefined">'+
-        '<li ng-show="leadCurrentPage != 1"><a href="javascript:void(0)" ng-click="getLeads(1)">&laquo;</a></li>'+
-        '<li ng-show="leadCurrentPage != 1"><a href="javascript:void(0)" ng-click="getLeads(leadCurrentPage-1)">&lsaquo; Prev</a></li>'+
-        '<li ng-repeat="i in leadRange" ng-class="{active : leadCurrentPage == i}">'+
-            '<a href="javascript:void(0)" ng-click="getLeads(i)">{{i}}</a>'+
-        '</li>'+
-        '<li ng-show="leadCurrentPage != leadTotalPages"><a href="javascript:void(0)" ng-click="getLeads(leadCurrentPage+1)">Next &rsaquo;</a></li>'+
-        '<li ng-show="leadCurrentPage != leadTotalPages"><a href="javascript:void(0)" ng-click="getLeads(leadTotalPages)">&raquo;</a></li>'+
-      '</ul>'
+        '<li ng-show="currentPage != totalPages"><a href="javascript:void(0)" ng-click="getResults({num:currentPage+1})">Next &rsaquo;</a></li>'+
+        '<li ng-show="currentPage != totalPages"><a href="javascript:void(0)" ng-click="getResults({num:totalPages})">&raquo;</a></li>'+
+      '</ul>',
+      link: function(scope, elem, attrs) {
+        scope.getRange = function(num) {
+            return new Array(num);
+        };
+      }
    };
 });
 

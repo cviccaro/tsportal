@@ -1,3 +1,4 @@
+
     <div class="page-header">
         <h1>Tradeshows</h1>
     </div>
@@ -67,10 +68,8 @@
                 </tr>
                 </tbody>
             </table>
-            <div>
-                 <tradeshow-pagination></tradeshow-pagination>
-           </div>
-        </div>
+        <div>
+        <pager current-page="currentPage" total-pages="totalPages" get-results="getTradeshows(num)"></pager>
     </div>
 
     <div ng-show="leads != undefined">
@@ -104,9 +103,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <div>
-                     <lead-pagination></lead-pagination>
-                   </div>
+                <pager current-page="leadCurrentPage" total-pages="leadTotalPages" tradeshow="selectedTradeshow" get-results="getLeads(num)"></pager>
             </div>
         </div>
     </div>
