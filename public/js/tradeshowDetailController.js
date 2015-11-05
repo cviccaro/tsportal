@@ -1,16 +1,15 @@
 'use strict';
-(function() {
-	/**
-	 * Tradeshow Edit Controller
-	 * @class TradeshowDetailController
-	 * ---------------------------------
-	 * Displays an edit form for a tradeshow
-	 */
-	angular
-	.module('tradeshowControllers')
-	.controller('TradeshowDetailController',
-		['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'leadService', '$state', 'loginService', 'busyService', 'messageService', '$q', 'CacheFactory', 'ngDialog',
-		function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, leadService, $state, loginService, busyService, messageService, $q, CacheFactory, ngDialog) {
+
+/**
+ * Tradeshow Edit Controller
+ * @class TradeshowDetailController
+ * ---------------------------------
+ * Displays an edit form for a tradeshow
+ */
+angular
+.module('tradeshowControllers')
+.controller('TradeshowDetailController',
+	function TradeshowDetailController($rootScope, $scope, Tradeshow, $stateParams, leadService, $state, loginService, busyService, messageService, $q, CacheFactory, ngDialog) {
 
 		if (!CacheFactory.get('leadFormCache')) {
 			CacheFactory('leadFormCache', {
@@ -20,7 +19,6 @@
 			});
 		}
 		var formCache = CacheFactory.get('leadFormCache');
-
 
 		// Cached scope vars
 		$scope.currentPage = 1;
@@ -51,36 +49,6 @@
 		$scope.submitted = false;
 		$scope.lastFetchedPage = 1;
 
-		// Refresh authorization token when it is expired transparently to the user
-		// and re-run the request that failed (happens automatically from http-auth-interceptor)
-		$rootScope.$on('event:auth-loginRequired', function(event, data) {
-			var token = loginService.refreshToken.get();
-			if (token !== null) {
-				loginService.refresh(token)
-					.then(function(payload) {
-						authService.loginConfirmed();
-					})
-					.catch(function(payload) {
-						if (payload.status == 500) {
-							// token is totally expired, cannot be refreshed, return to login
-							loginService.logout();
-						}
-					});
-			}
-			else {
-				// token is totally expired, cannot be refreshed, return to login
-				loginService.logout();
-			}
-		});
-
-		// Watch messageService messages
-		$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
-		    if (typeof newVal !== 'undefined') {
-		        $scope.messages = messageService.messages;
-		    }
-		});
-
-
 		// Get the Tradeshow using the Tradeshow resource
 		$scope.getTradeshow = function() {
 			busyService.show();
@@ -89,6 +57,7 @@
 				get({tradeshowId:$stateParams.tradeshowId}).
 				$promise.
 				then(function(payload) {
+					console.log('$scope.getTradeshow.Tradeshow.get.then')
 					$scope.tradeshow = payload;
 					if ($scope.tradeshow.active == 1) {
 						jQuery('input[name="active"]').bootstrapSwitch('state', true);
@@ -204,7 +173,8 @@
 					$scope.currentPage = response.current_page;
 					$scope.totalPages = response.last_page;
 
-					busyService.hide();
+					// busyService.hide();
+					console.log('leadService.retrieve.then')
 
 					// Resolve promise
 					deferred.resolve(payload);
@@ -262,20 +232,11 @@
 			}
 		};
 
-		/**
-		 * Remove a message from messageService
-		 * @param  {[type]} message_id [description]
-		 * @return {[void]}
-		 */
-		$scope.removeMessage = function(message_id) {
-			messageService.removeMessage(message_id);
-		};
-
-
 		// Check API Access, refresh token
 		loginService.checkApiAccess().then(function() {
 			$scope.getTradeshow()
 				.then(function() {
+					console.log('loginService.checkApiAccess.$scope.getTradeshow.then')
 					busyService.hide();
 				})
 				.catch(function(payload) {
@@ -287,5 +248,5 @@
 					});
 				});
 		});
-	}]);
-})(jQuery);
+	}
+);

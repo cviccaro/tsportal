@@ -1,29 +1,21 @@
 'use strict';
-(function() {
-	/**
-	 * Create a Tradeshow Controller
-	 * @class TradeshowCreateController
-	 *--------------------------------------
-	 * Displays a form for the creation of a new tradeshow
-	 */
-	angular
-	.module('tradeshowControllers')
-	.controller('TradeshowCreateController',
-		['$rootScope', '$scope', 'Tradeshow', '$stateParams', 'ngDialog', '$state', 'loginService', 'busyService', 'messageService', '$timeout',
-		function TradeshowCreateController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, $state, loginService, busyService, messageService, $timeout) {
+
+/**
+ * Create a Tradeshow Controller
+ * @class TradeshowCreateController
+ *--------------------------------------
+ * Displays a form for the creation of a new tradeshow
+ */
+angular
+.module('tradeshowControllers')
+.controller('TradeshowCreateController',
+	function TradeshowCreateController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, $state, loginService, busyService, messageService, $timeout) {
 		// Scope variables
 		$scope.isNew = true;
 		$scope.model = 'tradeshow';
 		$scope.titlePrefix = 'Creating new';
 		$scope.tradeshow = {};
 		$scope.submitted = false;
-
-		// Watch messageService messages
-		$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
-		    if (typeof newVal !== 'undefined') {
-		        $scope.messages = messageService.messages;
-		    }
-		});
 
 		/**
 		 * Callback to 'Back' button
@@ -93,15 +85,6 @@
 			return !( $scope.tradeshowForm.name.$invalid || $scope.tradeshowForm.location.$invalid );
 		};
 
-		/**
-		 * Remove a message from messageService
-		 * @param  {[type]} message_id [description]
-		 * @return {[void]}
-		 */
-		$scope.removeMessage = function(message_id) {
-			messageService.removeMessage(message_id);
-		};
-
 		// No token, no access
 		loginService.checkApiAccess().then(function() {
 			// Ensure "busy" indicator is hidden
@@ -109,5 +92,5 @@
 				busyService.hide();
 			},100);
 		});
-	}]);
-})(jQuery);
+	}
+);

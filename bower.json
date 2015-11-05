@@ -17,7 +17,8 @@
     "angular-animate": "~1.4.7",
     "ng-dialog": "*",
     "angular-cache": "~4.4.2",
-    "moment": "~2.10.6"
+    "moment": "~2.10.6",
+    "bootstrap-switch": "~3.3.2"
   },
   "resolutions": {
     "angular": "1.4.7",

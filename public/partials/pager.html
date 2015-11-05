@@ -1,0 +1,9 @@
+<ul class="pagination">
+    <li ng-show="currentPage != 1"><a href="javascript:void(0)" ng-click="getResults({num:1})">&laquo;</a></li>
+    <li ng-show="currentPage != 1"><a href="javascript:void(0)" ng-click="getResults({num:currentPage-1})">&lsaquo; Prev</a></li>
+    <li ng-repeat="i in getRange(totalPages) track by $index" ng-class="{active : currentPage-1 == $index}">
+        <a href="javascript:void(0)" ng-click="getResults({num:$index+1})">{{$index + 1}}</a>
+    </li>
+    <li ng-show="currentPage != totalPages"><a href="javascript:void(0)" ng-click="getResults({num:currentPage+1})">Next &rsaquo;</a></li>
+    <li ng-show="currentPage != totalPages"><a href="javascript:void(0)" ng-click="getResults({num:totalPages})">&raquo;</a></li>
+</ul>

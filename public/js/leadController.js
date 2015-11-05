@@ -1,23 +1,14 @@
-(function($) {
-	'use strict';
+'use strict';
 
-	
-	/**
-	 * Edit Lead Controller
-	 * @class LeadController
-	 */
-	angular
-	  .module('leadControllers')
-	  .controller('LeadController',
-		['$rootScope', '$scope', '$stateParams', 'Lead', 'ngDialog', 'Tradeshow', '$state', 'loginService', 'busyService', 'messageService', '$q',
-		function LeadController($rootScope, $scope, $stateParams, Lead, ngDialog, Tradeshow, $state, loginService, busyService, messageService, $q) {
 
-		// Watch messageService messages
-		$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
-		    if (typeof newVal !== 'undefined') {
-		        $scope.messages = messageService.messages;
-		    }
-		});
+/**
+ * Edit Lead Controller
+ * @class LeadController
+ */
+angular
+.module('leadControllers')
+.controller('LeadController',
+	function LeadController($rootScope, $scope, $stateParams, Lead, ngDialog, Tradeshow, $state, loginService, busyService, messageService, $q) {
 
 		// Scope variables
 		$scope.model = 'lead';
@@ -117,15 +108,6 @@
 			return ! ($scope.leadForm.first_name.$invalid || $scope.leadForm.last_name.$invalid);
 		};
 
-		/**
-		 * Remove a message from messageService
-		 * @param  {[type]} message_id [description]
-		 * @return {[void]}
-		 */
-		$scope.removeMessage = function(message_id) {
-			messageService.removeMessage(message_id);
-		};
-
 		// Check API Access
 		loginService.checkApiAccess().then(function() {
 			$scope.getLead().then(function() {
@@ -140,5 +122,5 @@
 				});
 			});
 		});
-	}]);
-})(jQuery);
+	}
+);

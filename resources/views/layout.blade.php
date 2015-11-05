@@ -5,15 +5,8 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/yeti/bootstrap.min.css">
 
-    <!-- jQuery -->
-    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-
-    <!-- Bootstrap Switch -->
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap-switch.min.css" />
-    <script type="text/javascript" src="/js/bootstrap-switch.min.js"></script>
-
     <!-- Application Styles -->
+    <link rel="stylesheet" type="text/css" href="/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css" />
     <link rel="stylesheet" type="text/css" href="/bower_components/angular-spinkit/build/angular-spinkit.min.css" />
     <link rel="stylesheet" type="text/css" href="/bower_components/ng-dialog/css/ngDialog.min.css" />
     <link rel="stylesheet" type="text/css" href="/bower_components/ng-dialog/css/ngDialog-theme-default.min.css" />
@@ -55,9 +48,13 @@
             </nav>
             @yield('content')
         </div>
-    <!-- Application Dependencies -->
-    <script src="/bower_components/angular/angular.js"></script>
 
+    <!-- Application Dependencies -->
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js"></script>
     <script src="/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
     <script src="/bower_components/angular-jwt/dist/angular-jwt.min.js"></script>
     <script src="/bower_components/angular-cache/dist/angular-cache.min.js"></script>

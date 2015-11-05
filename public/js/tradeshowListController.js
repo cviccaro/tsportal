@@ -1,15 +1,14 @@
 'use strict';
-(function($) {
-	/**
-	 * Tradeshow List Controller
-	 * @class TradeshowListController
-	 * ------------------------------------------------------
-	 * Displays a paginated, filtered table of all tradeshows.
-	 */
-	angular
-	.module('tradeshowControllers')
-	.controller('TradeshowListController', TradeshowListController);
 
+/**
+ * Tradeshow List Controller
+ * @class TradeshowListController
+ * ------------------------------------------------------
+ * Displays a paginated, filtered table of all tradeshows.
+ */
+angular
+.module('tradeshowControllers')
+.controller('TradeshowListController',
 	function TradeshowListController($rootScope, $scope, tradeshowService, leadService, loginService, busyService, $q, messageService, CacheFactory, ngDialog, $timeout, $log) {
 
 		if (!CacheFactory.get('formCache')) {
@@ -44,14 +43,6 @@
 			});
 		});
 
-
-		// Watch messageService messages
-		$scope.$watch(function () { return messageService.messages; }, function (newVal, oldVal) {
-		    if (typeof newVal !== 'undefined') {
-		        $scope.messages = messageService.messages;
-		    }
-		});
-
 		// Scope functions
 
 		/**
@@ -70,7 +61,7 @@
 
 			busyService.setMessage('Working on it');
 			busyService.show();
-			
+
 			var deferred = $q.defer();
 
 			tradeshowService
@@ -135,7 +126,7 @@
 			leadService
 				.retrieve(tradeshow.id, pageNumber, 50, 'id', 0)
 				.then(function(payload) {
-					
+
 					var response = payload.data;
 
 					$scope.leads = response.data;
@@ -194,15 +185,6 @@
 			window.location.href = '/api/tradeshows/' + tradeshow_id + '/report?token=' + loginService.token.get();
 		};
 
-		/**
-		 * Remove a message from messageService
-		 * @param  {[type]} message_id [description]
-		 * @return {[void]}
-		 */
-		$scope.removeMessage = function(message_id) {
-			messageService.removeMessage(message_id);
-		};
-
 		// No token, no access
 		loginService.checkApiAccess().then(function(payload) {
 			$scope.getTradeshows($scope.currentPage, false).then(function() {
@@ -218,5 +200,4 @@
 			});
 		});
 	}
-
-})(jQuery);
+);
