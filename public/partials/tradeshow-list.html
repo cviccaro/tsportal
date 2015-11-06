@@ -39,7 +39,6 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>NAME</th>
                         <th>LOCATION</th>
                         <th>ACTIVE</th>
@@ -50,7 +49,6 @@
 
                 <tbody>
                     <tr clickable ng-repeat="tradeshow in ctrl.tradeshows" ng-click="ctrl.getLeads(1, tradeshow)" data-id="{{tradeshow.id}}">
-                        <td class="tradeshow-id">{{tradeshow.id}}</td>
                         <td>{{tradeshow.name}}</td>
                         <td>{{tradeshow.location}}</td>
                         <td>

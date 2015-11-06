@@ -13,6 +13,17 @@
 	function messageService($timeout, $rootScope) {
 		var messages = [];
 
+		var service = {
+			addMessage: addMessage,
+			getMessages: getMessages,
+			purge: purge,
+			removeMessage: removeMessage
+		};
+
+		return service;
+
+		/////////
+
 		function addMessage(opts) {
 			opts.id = messages.length + 1;
 			messages.push(opts);
@@ -55,12 +66,5 @@
 				}
 			}
 		}
-
-		return {
-			addMessage: addMessage,
-			getMessages: getMessages,
-			purge: purge,
-			removeMessage: removeMessage
-		};
 	}
 })();

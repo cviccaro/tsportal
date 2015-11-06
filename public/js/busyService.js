@@ -16,6 +16,19 @@
 		$rootScope.workingMessage = message;
 		$rootScope.busyServiceIsBusy = true;
 
+		var service = {
+			getMessage: getMessage,
+			hide: hide,
+			isBusy: isBusy,
+			isVisible: isVisible,
+			setMessage: setMessage,
+			show: show
+		};
+
+		return service;
+
+		/////////
+		
 		function getMessage(msg) {
 			return message;
 		}
@@ -42,14 +55,5 @@
 			if (timer) { $timeout.cancel(timer); }
 			$rootScope.busyServiceIsBusy = true;
 		}
-
-		return {
-			getMessage: getMessage,
-			hide: hide,
-			isBusy: isBusy,
-			isVisible: isVisible,
-			setMessage: setMessage,
-			show: show
-		};
 	}
 })();

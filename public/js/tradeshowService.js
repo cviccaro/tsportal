@@ -9,6 +9,15 @@
 	function tradeshowService($http, Tradeshow, $rootScope, ngDialog, busyService) {
 		var activeDialog;
 
+		var service = {
+			retrieve: retrieve,
+			deleteTradeshow: deleteTradeshow
+		};
+
+		return service;
+
+		/////////
+
 		function deleteTradeshow(tradeshow) {
 			var tradeshow_name = tradeshow.name,
 				tradeshow_id   = tradeshow.id;
@@ -76,10 +85,5 @@
 				get('api/tradeshows?page='+pageNumber+'&perPage=' + perPage + '&orderBy=' + orderBy +
 					'&orderByReverse=' + parseInt(orderByReverse) + '&filter=' + filter, {cache: true});
 		}
-
-		return {
-			retrieve: retrieve,
-			deleteTradeshow: deleteTradeshow
-		};
 	}
 })();

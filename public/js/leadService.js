@@ -9,6 +9,15 @@
 	function leadService($http, ngDialog, Lead, $rootScope, busyService) {
 			var activeDialog;
 
+			var service = {
+				deleteLead: deleteLead,
+				retrieve: retrieve
+			};
+
+			return service;
+
+			/////////
+
 			function retrieve(tradehow_id, pageNumber, perPage, orderBy, orderByReverse, filter) {
 				if(pageNumber===undefined){
 					pageNumber = '1';
@@ -75,10 +84,5 @@
 						});
 				});
 			}
-
-			return {
-				deleteLead: deleteLead,
-				retrieve: retrieve
-			};
 		}
 })();

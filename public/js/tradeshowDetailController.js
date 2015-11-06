@@ -13,7 +13,7 @@
 		.module('tradeshowControllers')
 		.controller('TradeshowDetailController', TradeshowDetailController);
 
-	function TradeshowDetailController($scope, $q, CacheFactory, $state, $stateParams, ngDialog, loginService, busyService, messageService, Tradeshow, leadService) {
+	function TradeshowDetailController($scope, $q, $http, CacheFactory, $state, $stateParams, ngDialog, loginService, busyService, messageService, Tradeshow, leadService) {
 
 		var vm = this;
 
@@ -163,6 +163,8 @@
 							dismissible: true,
 							message: 'Your changes have been saved'
 						});
+
+						$http.defaults.cache.removeAll();
 					})
 					.catch(function(payload) {
 						// Show error alert

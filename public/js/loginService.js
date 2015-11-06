@@ -33,6 +33,26 @@
 			cache = CacheFactory.get('authCache');
 		}
 
+		var service = {
+			checkApiAccess: checkApiAccess,
+			hasToken: hasToken,
+			isValidEmail: isValidEmail,
+			login: login,
+			loginCancelled: loginCancelled,
+			loginConfirmed: loginConfirmed,
+			logout: logout,
+			refresh: refresh,
+			token: {
+				get: tokenGet,
+				set: tokenSet,
+				remove: tokenRemove
+			}
+		};
+
+		return service;
+
+		/////////
+
 		function checkApiAccess() {
 			var deferred = $q.defer();
 			if (this.hasToken()) {
@@ -120,21 +140,5 @@
 		function tokenSet(tokenString) {
 			cache.put('token', tokenString);
 		}
-
-		return {
-			checkApiAccess: checkApiAccess,
-			hasToken: hasToken,
-			isValidEmail: isValidEmail,
-			login: login,
-			loginCancelled: loginCancelled,
-			loginConfirmed: loginConfirmed,
-			logout: logout,
-			refresh: refresh,
-			token: {
-				get: tokenGet,
-				set: tokenSet,
-				remove: tokenRemove
-			}
-		};
 	}
 })();

@@ -11,7 +11,7 @@
 		.module('leadControllers')
 		.controller('LeadController', LeadController);
 
-	function LeadController($scope, $q, $state, $stateParams, ngDialog, Lead, Tradeshow, loginService, busyService, messageService) {
+	function LeadController($scope, $q, $http, $state, $stateParams, ngDialog, Lead, Tradeshow, loginService, busyService, messageService) {
 
 		var vm = this;
 
@@ -67,7 +67,7 @@
 		 * @return {[void]}
 		 */
 		function goBack() {
-			window.history.back();
+			$state.go('tradeshowEdit', {tradeshowId: vm.lead.tradeshow_id});
 		}
 
 		/**
@@ -96,6 +96,8 @@
 							dismissible: true,
 							message: 'Your changes have been saved'
 						});
+
+						$http.defaults.cache.removeAll();
 					})
 					.catch(function(payload) {
 						messageService.addMessage({

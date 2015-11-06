@@ -1,12 +1,12 @@
 <div class="page-header">
-    <h1>{{ctrl.titlePrefix}} Tradeshow <em>{{::ctrl.tradeshow.name}}</em></h1>
+    <h1>{{ctrl.titlePrefix}} Tradeshow <em ng-show="!ctrl.isNew">{{::ctrl.tradeshow.name}}</em></h1>
 </div>
 <messages></messages>
 <div class="row toolbar">
 	<button id="goBack" class="btn btn-primary" ng-click="ctrl.goBack()"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Go Back</button>
 	<button id="save" class="btn btn-success" ng-click="ctrl.save()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save</button>
     <div class="col-md-4" style="text-align: right; float: right;" ng-show="!ctrl.isNew">
-        <p>Last updated on {{ctrl.tradeshow.updated_at}}</p>
+        <p>Last updated <timeago time="ctrl.tradeshow.updated_at"></timeago></p>
     </div>
 </div>
 

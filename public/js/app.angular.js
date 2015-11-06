@@ -60,23 +60,6 @@
                 controller: 'LeadController as ctrl'
             });
     })
-    .directive('pager', function(){
-       return{
-          restrict: 'E',
-          scope: {
-            currentPage: '=',
-            totalPages: '=',
-            getResults: '&getResults',
-            tradeshow: '='
-          },
-          templateUrl: '../partials/pager.html',
-          link: function(scope, elem, attrs) {
-            scope.getRange = function(num) {
-                return new Array(num);
-            };
-          }
-       };
-    })
     .run(function ($http, CacheFactory) {
       if (!CacheFactory.get('defaultCache')) {
         CacheFactory('defaultCache', {

@@ -10,8 +10,8 @@
 		<span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save
 	</button>
 	<div class="col-md-4" style="text-align: right; float: right;">
-		<p>Last updated on {{ctrl.lead.updated_at}}</p>
-		<p ng-show="ctrl.tradeshow != undefined">Registered on Tradeshow <em><a href="#/tradeshows/{{tradeshow.id}}/edit">{{::ctrl.tradeshow.name}}</a></em></p>
+		<p>Last updated <timeago time="ctrl.lead.updated_at"></timeago></p>
+		<p ng-show="ctrl.tradeshow != undefined">Registered on Tradeshow <em><a href="#/tradeshows/{{ctrl.tradeshow.id}}/edit">{{::ctrl.tradeshow.name}}</a></em></p>
 	</div>
 </div>
 
