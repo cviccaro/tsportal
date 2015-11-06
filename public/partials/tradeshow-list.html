@@ -1,4 +1,3 @@
-
     <div class="page-header">
         <h1>Tradeshows</h1>
     </div>
@@ -10,20 +9,20 @@
     <div class="toolbar filters clearfix">
         <div class="toolbar-item">
             <span>Sort</span>
-            <select ng-model="orderBy" ng-change="refreshTradeshows()">
+            <select ng-model="ctrl.orderBy" ng-change="ctrl.refreshTradeshows()">
               <option value="updated_at">Updated</option>
               <option value="name">Name</option>
               <option value="location">Location</option>
               <option value="active">Active</option>
             </select>
-            <select ng-model="orderByReverse" ng-change="refreshTradeshows()">
+            <select ng-model="ctrl.orderByReverse" ng-change="ctrl.refreshTradeshows()">
               <option value="0">Ascending</option>
               <option value="1">Descending</option>
             </select>
         </div>
         <div class="toolbar-item right">
             <span>Items Per Page</span>
-            <select ng-model="perPage" ng-change="refreshTradeshows()">
+            <select ng-model="ctrl.perPage" ng-change="ctrl.refreshTradeshows()">
                 <option value="15">15</option>
                 <option value="30">30</option>
                 <option value="50">50</option>
@@ -32,7 +31,7 @@
         </div>
         <div class="toolbar-item right">
             <span>Search</span>
-            <input type="text" ng-model="query" ng-model-options="{debounce: 500}" ng-change="refreshTradeshows()" />
+            <input type="text" ng-model="ctrl.query" ng-model-options="{debounce: 500}" ng-change="ctrl.refreshTradeshows()" />
         </div>
     </div>
     <div class="row">
@@ -50,7 +49,7 @@
                 </thead>
 
                 <tbody>
-                    <tr clickable ng-repeat="tradeshow in tradeshows" ng-click="getLeads(1, tradeshow)" data-id="{{tradeshow.id}}">
+                    <tr clickable ng-repeat="tradeshow in ctrl.tradeshows" ng-click="ctrl.getLeads(1, tradeshow)" data-id="{{tradeshow.id}}">
                         <td class="tradeshow-id">{{tradeshow.id}}</td>
                         <td>{{tradeshow.name}}</td>
                         <td>{{tradeshow.location}}</td>
@@ -61,21 +60,21 @@
                         <td><timeago time="tradeshow.updated_at"></timeago></td>
                         <td class="text-right">
                             <a class="btn btn-warning" href="#/tradeshows/{{tradeshow.id}}/edit" ng-click="$event.stopPropagation()">Edit</a>
-                            <a class="btn btn-danger" href="" ng-click="$event.stopPropagation(); deleteTradeshow(tradeshow.id)">Delete</a>
+                            <a class="btn btn-danger" href="" ng-click="$event.stopPropagation(); ctrl.deleteTradeshow(tradeshow.id)">Delete</a>
                             &nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-primary" ng-click="$event.stopPropagation(); downloadReport(tradeshow.id)" ng-show="tradeshow.lead_count > 0">Excel Report</a>
+                            <a class="btn btn-primary" ng-click="$event.stopPropagation(); ctrl.downloadReport(tradeshow.id)" ng-show="tradeshow.lead_count > 0">Excel Report</a>
                             <a class="btn btn-primary btn-disabled disabled" ng-show="tradeshow.lead_count == 0" style="visibility: hidden">Excel Report</a>
                         </td>
                     </tr>
                 </tbody>
             </table>
         <div>
-        <pager current-page="currentPage" total-pages="totalPages" get-results="getTradeshows(num)"></pager>
+        <pager current-page="ctrl.currentPage" total-pages="ctrl.totalPages" get-results="ctrl.getTradeshows(num)"></pager>
     </div>
 
-    <div ng-show="leads != undefined">
+    <div ng-show="ctrl.leads != undefined">
         <div class="page-header">
-            <h1>Leads for Tradeshow {{selectedTradeshow.name}}</h1>
+            <h1>Leads for Tradeshow {{ctrl.selectedTradeshow.name}}</h1>
         </div>
         <div class="row">
             <div class="col-md-12">
@@ -89,7 +88,7 @@
                         <th>ACTIONS</th>
                     </thead>
                     <tbody>
-                        <tr ng-show="leads.length" ng-repeat="lead in leads">
+                        <tr ng-show="ctrl.leads.length" ng-repeat="lead in ctrl.leads">
                             <td>{{lead.first_name}}</td>
                             <td>{{lead.last_name}}</td>
                             <td>{{lead.email_address}}</td>
@@ -99,12 +98,12 @@
                                 <a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
                             </td>
                         </tr>
-                        <tr ng-show="!leads.length">
+                        <tr ng-show="!ctrl.leads.length">
                             <td colspan="6">No leads available.</td>
                         </tr>
                     </tbody>
                 </table>
-                <pager current-page="leadCurrentPage" total-pages="leadTotalPages" tradeshow="selectedTradeshow" get-results="getLeads(num)"></pager>
+                <pager current-page="ctrl.leadCurrentPage" total-pages="ctrl.leadTotalPages" tradeshow="ctrl.selectedTradeshow" get-results="ctrl.getLeads(num)"></pager>
             </div>
         </div>
     </div>

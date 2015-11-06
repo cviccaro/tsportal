@@ -50,9 +50,9 @@
         </div>
 
     <!-- Application Dependencies -->
-    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/bower_components/jquery-migrate/jquery-migrate.min.js"></script>
+    <script src="/bower_components/angular/angular.min.js"></script>
     <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js"></script>
     <script src="/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
@@ -66,13 +66,22 @@
     <script src="/bower_components/moment/min/moment.min.js"></script>
 
     <!-- Application Components -->
-    <script type="text/javascript" src="/js/services.js"></script>
-    <script type="text/javascript" src="/js/controllers.js"></script>
-    <script type="text/javascript" src="/js/tradeshowListController.js"></script>
-    <script type="text/javascript" src="/js/tradeshowDetailController.js"></script>
-    <script type="text/javascript" src="/js/tradeshowCreateController.js"></script>
-    <script type="text/javascript" src="/js/leadController.js"></script>
-    <script type="text/javascript" src="/js/authController.js"></script>
-    <script type="text/javascript" src="/js/app.angular.js"></script>
+    <script src="/js/loginService.js"></script>
+    <script src="/js/authInterceptor.js"></script>
+    <script src="/js/messageService.js"></script>
+    <script src="/js/busyService.js"></script>
+    <script src="/js/tradeshowResource.js"></script>
+    <script src="/js/tradeshowService.js"></script>
+    <script src="/js/leadResource.js"></script>
+    <script src="/js/leadService.js"></script>
+    <script src="/js/controllers.js"></script>
+    <script src="/js/tradeshowListController.js"></script>
+    <script src="/js/tradeshowDetailController.js"></script>
+    <script src="/js/tradeshowCreateController.js"></script>
+    <script src="/js/leadController.js"></script>
+    <script src="/js/authController.js"></script>
+    <script src="/js/logoutController.js"></script>
+    <script src="/js/directives.js"></script>
+    <script src="/js/app.angular.js"></script>
 </body>
 </html>

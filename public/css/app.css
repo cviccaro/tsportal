@@ -357,3 +357,17 @@ table > tbody > tr.clickable.active > td {
 .glyphicon-triangle-left:before {
   content: "\e251";
 }
+
+/* line 316, ../../resources/assets/sass/app.scss */
+.help-block {
+  display: none;
+}
+
+/* line 320, ../../resources/assets/sass/app.scss */
+.has-error .help-block {
+  display: block;
+  -moz-transition: all 0.5s linear;
+  -o-transition: all 0.5s linear;
+  -webkit-transition: all 0.5s linear;
+  transition: all 0.5s linear;
+}

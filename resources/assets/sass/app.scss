@@ -312,3 +312,13 @@ table>tbody>tr.clickable
 }
 
 .glyphicon-triangle-left:before{content:"\e251"}
+
+.help-block {
+	display: none;
+}
+.has-error {
+	.help-block {
+		display: block;
+		@include transition(all linear 0.5s);
+	}
+}

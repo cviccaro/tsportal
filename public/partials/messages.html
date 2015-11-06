@@ -1,6 +1,6 @@
-<div class="row messages" ng-show="messages.length">
-    <div ng-repeat="message in messages" class="alert alert-{{message.type}} {{message.dismissible ? 'alert-dismissible' : ''}}" role="alert" style="opacity: 0">
-        <button type="button" class="close" ng-click="removeMessage(message.id)" data-dismiss="alert" aria-label="Close" ng-show="message.dismissible">
+<div class="row messages" ng-show="ctrl.messages.length">
+    <div ng-repeat="message in ctrl.messages" class="alert alert-{{message.type}} {{message.dismissible ? 'alert-dismissible' : ''}}" role="alert" style="opacity: 0">
+        <button type="button" class="close" ng-click="ctrl.removeMessage(message.id)" data-dismiss="alert" aria-label="Close" ng-show="message.dismissible">
             <span aria-hidden="true">×</span>
         </button>
         <span class="glyphicon glyphicon-{{message.icon}} {{message.iconClass ? message.iconClass : ''}}" ng-show="message.hasOwnProperty('icon')"></span>

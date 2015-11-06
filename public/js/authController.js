@@ -1,44 +1,61 @@
-'use strict';
 
-angular
-.module('authControllers')
-.controller('AuthController',
-	function($state, $scope, $rootScope, loginService, busyService, messageService) {
-		// If a token is already stored, try app
-		loginService.checkApiAccess().then(function() {
-			$state.go('tradeshows', {});
-		});
+/**
+ * Auth Controller
+ */
+(function() {
 
-		// Ensure loading indicator is hidden
-		busyService.hide();
+	'use strict';
+
+	angular
+		.module('authControllers')
+		.controller('AuthController', AuthController);
+
+	function AuthController($rootScope, $scope, $state, loginService, busyService, messageService) {
+	
+		var vm = this;
+
+		vm.clearErrors = clearErrors;
+		vm.login = login;
+		vm.loginError = loginError;
+
+		////////
 
 		/**
-		 * Login
-		 *
-		 * Use loginService to login
-		 *
+		 * Clear errors
 		 * @return {[void]}
 		 */
-		$scope.login = function login() {
+		function clearErrors() {
+			if (vm.messages.length) {
+				for (var i = 0, msg; (msg = vm.messages[i]); i++) {
+					messageService.removeMessage(msg.id);
+				}
+			}
+		}
+
+		/**
+		 * Use loginService to login
+		 * @return {[void]}
+		 */
+		function login() {
 			var credentials = {
-				email: $scope.email,
-				password: $scope.password
+				email: vm.email,
+				password: vm.password
 			};
-			busyService.show();
-			// Use satellizer's $auth service to login
+		
 			loginService.login(credentials)
 				.then(function(payload) {
-					$state.go('tradeshows', {});
+					$state.go("tradeshows");
 				})
 				.catch(function(payload) {
-					$scope.loginError();
+					vm.loginError();
 				});
-		};
+		}
 
 		/**
 		 * Show a login error
+		 * @return {[void]}
 		 */
-		$scope.loginError = function() {
+		function loginError() {
 			messageService.purge();
 			messageService.addMessage({
 				type: 'danger',
@@ -47,23 +64,14 @@ angular
 				dismissible: true,
 				iconClass: '',
 			});
+		}
 
-			busyService.hide();
-		};
-
-		/**
-		 * Clear errors
-		 * @return {[void]}
-		 */
-		$scope.clearErrors = function() {
-			if ($scope.messages.length) {
-				for (var i = 0, msg; (msg = $scope.messages[i]); i++) {
-					messageService.removeMessage(msg.id);
-				}
-			}
-		};
+		/////////
+		
+		// If a token is already stored, try app
+		loginService.checkApiAccess().then(function() {
+			$state.go("tradeshows");
+		});
 	}
-)
-.controller('LogoutController', function(loginService) {
-	loginService.logout();
-});
+
+})();

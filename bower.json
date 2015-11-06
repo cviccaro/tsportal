@@ -18,7 +18,8 @@
     "ng-dialog": "*",
     "angular-cache": "~4.4.2",
     "moment": "~2.10.6",
-    "bootstrap-switch": "~3.3.2"
+    "bootstrap-switch": "~3.3.2",
+    "jquery-migrate": "~1.2.1"
   },
   "resolutions": {
     "angular": "1.4.7",

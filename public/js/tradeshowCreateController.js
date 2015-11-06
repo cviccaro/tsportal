@@ -1,56 +1,59 @@
-'use strict';
-
 /**
  * Create a Tradeshow Controller
  * @class TradeshowCreateController
  *--------------------------------------
  * Displays a form for the creation of a new tradeshow
  */
-angular
-.module('tradeshowControllers')
-.controller('TradeshowCreateController',
-	function TradeshowCreateController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, $state, loginService, busyService, messageService, $timeout) {
-		// Scope variables
-		$scope.isNew = true;
-		$scope.model = "tradeshow";
-		$scope.titlePrefix = "Creating new";
-		$scope.tradeshow = {};
-		$scope.submitted = false;
+
+(function() {
+
+	'use strict';
+
+	angular
+		.module('tradeshowControllers')
+		.controller('TradeshowCreateController', TradeshowCreateController);
+
+	function TradeshowCreateController($scope, $timeout, $state, $stateParams, ngDialog, Tradeshow, loginService, busyService, messageService) {
+		var vm = this;
+
+		vm.goBack = goBack;
+		vm.save = save;
+		vm.validate = validate;
+
+		vm.isNew = true;
+		vm.model = "tradeshow";
+		vm.submitted = false;
+		vm.titlePrefix = "Creating new";
+		vm.tradeshow = {};
+
+		/////////
 
 		/**
 		 * Callback to 'Back' button
-		 *
-		 * @return {[void]}
 		 */
-		$scope.goBack = function() {
+		function goBack() {
 			$state.go("tradeshows");
-		};
+		}
 
 		/**
 		 * Save the new tradeshow using the Tradeshow resource
-		 *
-		 * @return {[void]}
 		 */
-		$scope.save = function() {
-			if ($scope.validate()) {
-				// Alter the working message, show working indicator
+		function save() {
+			if (vm.validate()) {
+				// Alter the working message
 				busyService.setMessage('Saving new');
-				busyService.show();
 
 				// Collect 'active' value if it is not set
-				if (!$scope.tradeshow.hasOwnProperty('active')) {
-					$scope.tradeshow.active = $('input[name="active"]')[0].checked;
+				if (!vm.tradeshow.hasOwnProperty('active')) {
+					vm.tradeshow.active = $('input[name="active"]')[0].checked;
 				}
 
 				// Create Tradeshow using Tradeshow resource
 				Tradeshow
-					.create($scope.tradeshow)
+					.create(vm.tradeshow)
 					.$promise
 					.then(function(payload) {
 						var tradeshow_id = payload.id;
-
-						// Fade out the "busy" indicator
-						busyService.hide();
 
 						// Show a confirmation dialog
 						ngDialog.open({
@@ -66,7 +69,6 @@ angular
 						});
 					})
 					.catch(function(payload) {
-						busyService.hide();
 						messageService.addMessage({
 							type: 'danger',
 							dismissible: true,
@@ -76,21 +78,18 @@ angular
 						});
 					});
 			}
-		};
+		}
 		/**
 		 * Validate the form
 		 */
-		$scope.validate = function() {
-			$scope.submitted = true;
-			return !( $scope.tradeshowForm.name.$invalid || $scope.tradeshowForm.location.$invalid );
-		};
+		function validate() {
+			vm.submitted = true;
+			return !( vm.tradeshowForm.name.$invalid || vm.tradeshowForm.location.$invalid );
+		}
+
+		/////////
 
 		// No token, no access
-		loginService.checkApiAccess().then(function() {
-			// Ensure "busy" indicator is hidden
-			$timeout(function() {
-				busyService.hide();
-			},100);
-		});
+		loginService.checkApiAccess();
 	}
-);
+})();

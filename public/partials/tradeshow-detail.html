@@ -1,52 +1,52 @@
 <div class="page-header">
-    <h1>{{titlePrefix}} Tradeshow <em>{{::tradeshow.name}}</em></h1>
+    <h1>{{ctrl.titlePrefix}} Tradeshow <em>{{::ctrl.tradeshow.name}}</em></h1>
 </div>
 <messages></messages>
 <div class="row toolbar">
-	<button id="goBack" class="btn btn-primary" ng-click="goBack()"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Go Back</button>
-	<button id="save" class="btn btn-success" ng-click="save()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save</button>
-    <div class="col-md-4" style="text-align: right; float: right;" ng-show="!isNew">
-        <p>Last updated on {{tradeshow.updated_at}}</p>
+	<button id="goBack" class="btn btn-primary" ng-click="ctrl.goBack()"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Go Back</button>
+	<button id="save" class="btn btn-success" ng-click="ctrl.save()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save</button>
+    <div class="col-md-4" style="text-align: right; float: right;" ng-show="!ctrl.isNew">
+        <p>Last updated on {{ctrl.tradeshow.updated_at}}</p>
     </div>
 </div>
 
 <div class="row">
-    <form name="tradeshowForm">
+    <form name="ctrl.tradeshowForm">
     	<div class="col-md-6 form-item required"
-            ng-class="{'has-error': (tradeshowForm.name.$dirty || submitted) && tradeshowForm.name.$invalid && tradeshowForm.name.$error.required}">
-            <label for="name">Name</label><input id="tradeshow_name" type="text" name="name" ng-model="tradeshow.name" required />
-            <span class="help-block" ng-show="(tradeshowForm.name.$dirty || submitted) && tradeshowForm.name.$invalid && tradeshowForm.name.$error.required">Tradeshow name is required.</span>
+            ng-class="{'has-error': (ctrl.tradeshowForm.name.$dirty || ctrl.submitted) && ctrl.tradeshowForm.name.$invalid && ctrl.tradeshowForm.name.$error.required}">
+            <label for="name">Name</label><input id="ctrl.tradeshow_name" type="text" name="name" ng-model="ctrl.tradeshow.name" required />
+            <span class="help-block" ng-show="(ctrl.tradeshowForm.name.$dirty || ctrl.submitted) && ctrl.tradeshowForm.name.$invalid && ctrl.tradeshowForm.name.$error.required">Tradeshow name is required.</span>
         </div>
-    	<div class="col-md-6 form-item required" ng-class="{'has-error': (tradeshowForm.location.$dirty || submitted) && tradeshowForm.location.$invalid && tradeshowForm.location.$error.required}">
-            <label for="location">Location</label><input type="text" name="location" ng-model="tradeshow.location" required />
-            <span class="help-block" ng-show="(tradeshowForm.location.$dirty || submitted) && tradeshowForm.location.$invalid && tradeshowForm.location.$error.required">Tradeshow location is required.
+    	<div class="col-md-6 form-item required" ng-class="{'has-error': (ctrl.tradeshowForm.location.$dirty || ctrl.submitted) && ctrl.tradeshowForm.location.$invalid && ctrl.tradeshowForm.location.$error.required}">
+            <label for="location">Location</label><input type="text" name="location" ng-model="ctrl.tradeshow.location" required />
+            <span class="help-block" ng-show="(ctrl.tradeshowForm.location.$dirty || ctrl.submitted) && ctrl.tradeshowForm.location.$invalid && ctrl.tradeshowForm.location.$error.required">Tradeshow location is required.
         </div>
     	<div class="col-md-6 form-item omega">
     		<label for="active">Active</label>
-    		<input bs type="checkbox" name="active" ng-model="tradeshow.active" ng-true-value="1" ng-false-value="0" />
+    		<input bs type="checkbox" name="active" ng-model="ctrl.tradeshow.active" ng-true-value="1" ng-false-value="0" />
     	</div>
     </form>
 </div>
 
-<div class="lead-container" ng-show="!isNew">
+<div class="lead-container" ng-show="!ctrl.isNew">
     <div class="page-header">
-        <h1>Leads <span ng-show="leads.length">({{totalPages * perPage}})</span></h1>
+        <h1>Leads <span ng-show="ctrl.leads.length">({{ctrl.totalPages * ctrl.perPage}})</span></h1>
     </div>
     <div class="toolbar filters clearfix">
         <div class="toolbar-item">
             <span>Sort</span>
-            <select ng-model="orderBy" ng-change="refreshLeads()">
+            <select ng-model="ctrl.orderBy" ng-change="ctrl.refreshLeads()">
               <option value="updated_at">Updated</option>
               <option value="last_name">Surname</option>
             </select>
-            <select ng-model="orderByReverse" ng-change="refreshLeads()">
+            <select ng-model="ctrl.orderByReverse" ng-change="ctrl.refreshLeads()">
               <option value="0">Ascending</option>
               <option value="1">Descending</option>
             </select>
         </div>
         <div class="toolbar-item right">
             <span>Items Per Page</span>
-            <select ng-model="perPage" ng-change="refreshLeads()">
+            <select ng-model="ctrl.perPage" ng-change="ctrl.refreshLeads()">
                 <option value="15">15</option>
                 <option value="30">30</option>
                 <option value="50">50</option>
@@ -55,7 +55,7 @@
         </div>
         <div class="toolbar-item right">
             <span>Search</span>
-            <input type="text" ng-model="query" ng-model-options="{debounce: 500}" ng-change="refreshLeads()" />
+            <input type="text" ng-model="ctrl.query" ng-model-options="{debounce: 500}" ng-change="ctrl.refreshLeads()" />
         </div>
     </div>
     <div class="row">
@@ -70,7 +70,7 @@
                     <th>Actions</th>
                 </thead>
                 <tbody>
-                    <tr ng-show="leads.length" ng-repeat="lead in leads">
+                    <tr ng-show="ctrl.leads.length" ng-repeat="lead in ctrl.leads">
                         <td>{{lead.first_name}}</td>
                         <td>{{lead.last_name}}</td>
                         <td>{{lead.email_address}}</td>
@@ -78,15 +78,15 @@
                         <td><timeago time="lead.created_at"></timeago></td>
                         <td>
                         	<a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
-                            <a class="btn btn-danger" href="" ng-click="deleteLead(lead.id, $event)">Delete</a>
+                            <a class="btn btn-danger" href="" ng-click="ctrl.deleteLead(lead.id)">Delete</a>
                         </td>
                     </tr>
-                    <tr ng-show="!leads.length">
+                    <tr ng-show="!ctrl.leads.length">
                         <td colspan="6">No leads available.</td>
                     </tr>
                 </tbody>
             </table>
-            <pager current-page="currentPage" total-pages="totalPages" tradeshow="tradeshow" get-results="getLeads(num)"></pager>
+            <pager current-page="ctrl.currentPage" total-pages="ctrl.totalPages" tradeshow="ctrl.tradeshow" get-results="ctrl.getLeads(num)"></pager>
         </div>
     </div>
 </div>

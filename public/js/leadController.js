@@ -1,38 +1,53 @@
-'use strict';
-
-
 /**
  * Edit Lead Controller
  * @class LeadController
  */
-angular
-.module('leadControllers')
-.controller('LeadController',
-	function LeadController($rootScope, $scope, $stateParams, Lead, ngDialog, Tradeshow, $state, loginService, busyService, messageService, $q) {
 
-		// Scope variables
-		$scope.model = 'lead';
-		$scope.title = 'Editing Lead';
-		$scope.submitted = false;
+(function() {
 
-		// Get the lead using the Lead resource
-		$scope.getLead = function() {
+	'use strict';
+
+	angular
+		.module('leadControllers')
+		.controller('LeadController', LeadController);
+
+	function LeadController($scope, $q, $state, $stateParams, ngDialog, Lead, Tradeshow, loginService, busyService, messageService) {
+
+		var vm = this;
+
+		vm.getLead = getLead;
+		vm.goBack = goBack;
+		vm.save = save;
+		vm.validate = validate;
+
+		vm.model = 'lead';
+		vm.submitted = false;
+		vm.title = 'Editing Lead';
+
+		/////////
+		
+		/**
+		 * Get the lead
+		 * @return {[$q promise]}
+		 */
+		function getLead() {
 			var deferred = $q.defer();
+
 			Lead.
 				get({id:$stateParams.id}).
 				$promise.
 				then(function(payload) {
-					$scope.lead = payload;
+					vm.lead = payload;
 					angular.forEach(['existing_customer', 'contact_by_phone', 'contact_by_email'], function(key) {
-						if ($scope.lead[key] == 1) {
+						if (vm.lead[key] == 1) {
 							$('input[name="' + key + '"]').bootstrapSwitch('state', true);
 						}
 					});
 					Tradeshow.
-						get({tradeshowId: $scope.lead.tradeshow_id}).
+						get({tradeshowId: vm.lead.tradeshow_id}).
 						$promise.
 						then(function(payload) {
-							$scope.tradeshow = payload;
+							vm.tradeshow = payload;
 							deferred.resolve(payload);
 						})
 						.catch(function(payload) {
@@ -42,41 +57,36 @@ angular
 				.catch(function(payload) {
 					deferred.reject(payload);
 				});
-			return deferred.promise;
-		};
 
-		// Scope methods
+			return deferred.promise;
+		}
 
 		/**
 		 * [Callback to 'Back' button]
 		 *
 		 * @return {[void]}
 		 */
-		$scope.goBack = function goBack() {
+		function goBack() {
 			window.history.back();
-		};
+		}
 
 		/**
 		 * Save the Lead
 		 *
 		 * @return {[void]}
 		 */
-		$scope.save = function save() {
-			if ($scope.validate()) {
-				// Alter the working message, show working indicator
+		function save() {
+			if (vm.validate()) {
+				// Alter the working message
 				busyService.setMessage('Saving');
-				busyService.show();
 
 				// Save the Lead using the Lead resource
 				Lead.
-					save($scope.lead).
+					save(vm.lead).
 					$promise.
 					then(function(payload) {
 						// Set the lead in scope
-						$scope.lead = payload;
-
-						// Manually fade out the "busy" indicator
-						busyService.hide();
+						vm.lead = payload;
 
 						// Show success alert
 						messageService.addMessage({
@@ -88,7 +98,6 @@ angular
 						});
 					})
 					.catch(function(payload) {
-						busyService.hide();
 						messageService.addMessage({
 							type: 'danger',
 							dismissible: true,
@@ -98,23 +107,24 @@ angular
 						});
 					});
 			}
-		};
+		}
+
 		/**
 		 * Validate the form
 		 * @return {[bool]} is validated
 		 */
-		$scope.validate = function validate() {
-			$scope.submitted = true;
-			return ! ($scope.leadForm.first_name.$invalid || $scope.leadForm.last_name.$invalid);
-		};
+		function validate() {
+			vm.submitted = true;
+			return ! (vm.leadForm.first_name.$invalid || vm.leadForm.last_name.$invalid);
+		}
+
+		/////////
 
 		// Check API Access
 		loginService.checkApiAccess().then(function() {
-			$scope.getLead().then(function() {
-				busyService.hide();
-			})
+			vm.getLead()
+			.then()
 			.catch(function(payload) {
-				busyService.hide();
 				ngDialog.open({
 					plain: true,
 					className: 'dialog-save ngdialog-theme-default',
@@ -123,4 +133,4 @@ angular
 			});
 		});
 	}
-);
+})();
