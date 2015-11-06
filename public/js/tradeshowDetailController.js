@@ -22,10 +22,10 @@ angular
 
 		// Cached scope vars
 		$scope.currentPage = 1;
-		$scope.orderBy = 'id';
-		$scope.orderByReverse = '0';
-		$scope.perPage = '15';
-		$scope.query = '';
+		$scope.orderBy = "updated_at";
+		$scope.orderByReverse = 0;
+		$scope.perPage = 15;
+		$scope.query = "";
 
 		// Watch scope variables to update cache
 		var watch = ['currentPage', 'orderBy', 'orderByReverse', 'perPage', 'query'];
@@ -57,7 +57,6 @@ angular
 				get({tradeshowId:$stateParams.tradeshowId}).
 				$promise.
 				then(function(payload) {
-					console.log('$scope.getTradeshow.Tradeshow.get.then')
 					$scope.tradeshow = payload;
 					if ($scope.tradeshow.active == 1) {
 						jQuery('input[name="active"]').bootstrapSwitch('state', true);
@@ -173,8 +172,7 @@ angular
 					$scope.currentPage = response.current_page;
 					$scope.totalPages = response.last_page;
 
-					// busyService.hide();
-					console.log('leadService.retrieve.then')
+					busyService.hide();
 
 					// Resolve promise
 					deferred.resolve(payload);
@@ -236,7 +234,6 @@ angular
 		loginService.checkApiAccess().then(function() {
 			$scope.getTradeshow()
 				.then(function() {
-					console.log('loginService.checkApiAccess.$scope.getTradeshow.then')
 					busyService.hide();
 				})
 				.catch(function(payload) {

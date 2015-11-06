@@ -36,12 +36,12 @@
         <div class="toolbar-item">
             <span>Sort</span>
             <select ng-model="orderBy" ng-change="refreshLeads()">
-              <option value="id">Newest</option>
+              <option value="updated_at">Updated</option>
               <option value="last_name">Surname</option>
             </select>
             <select ng-model="orderByReverse" ng-change="refreshLeads()">
-              <option value="0">Descending</option>
-              <option value="1">Ascending</option>
+              <option value="0">Ascending</option>
+              <option value="1">Descending</option>
             </select>
         </div>
         <div class="toolbar-item right">

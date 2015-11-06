@@ -305,7 +305,7 @@ var busyService = angular.module('busyService',[])
 		hide: function() {
 			timer = $timeout(function() {
 				$rootScope.busyServiceIsBusy = false;
-			},0);
+			},100);
 		}
 	};
 });

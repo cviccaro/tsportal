@@ -12,8 +12,8 @@ angular
 	function TradeshowCreateController($rootScope, $scope, Tradeshow, $stateParams, ngDialog, $state, loginService, busyService, messageService, $timeout) {
 		// Scope variables
 		$scope.isNew = true;
-		$scope.model = 'tradeshow';
-		$scope.titlePrefix = 'Creating new';
+		$scope.model = "tradeshow";
+		$scope.titlePrefix = "Creating new";
 		$scope.tradeshow = {};
 		$scope.submitted = false;
 
@@ -23,7 +23,7 @@ angular
 		 * @return {[void]}
 		 */
 		$scope.goBack = function() {
-			$state.go('tradeshows');
+			$state.go("tradeshows");
 		};
 
 		/**

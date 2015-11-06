@@ -37,7 +37,7 @@ class LeadTableSeeder extends Seeder {
                 'contact_by_email' => $factory->numberBetween(0,1),
                 'notes' => $factory->realText(),
                 'timestamp' => time(),
-                'tradeshow_id' => $factory->numberBetween(1,100)
+                'tradeshow_id' => $factory->numberBetween(1,30)
             ];
 
             Lead::create($lead);

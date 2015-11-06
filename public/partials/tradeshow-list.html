@@ -11,14 +11,14 @@
         <div class="toolbar-item">
             <span>Sort</span>
             <select ng-model="orderBy" ng-change="refreshTradeshows()">
-              <option value="id">Age</option>
+              <option value="updated_at">Updated</option>
               <option value="name">Name</option>
               <option value="location">Location</option>
               <option value="active">Active</option>
             </select>
             <select ng-model="orderByReverse" ng-change="refreshTradeshows()">
-              <option value="0">Descending</option>
-              <option value="1">Ascending</option>
+              <option value="0">Ascending</option>
+              <option value="1">Descending</option>
             </select>
         </div>
         <div class="toolbar-item right">
@@ -44,6 +44,7 @@
                         <th>NAME</th>
                         <th>LOCATION</th>
                         <th>ACTIVE</th>
+                        <th>UPDATED</th>
                         <th class="text-right">ACTIONS</th>
                     </tr>
                 </thead>
@@ -57,11 +58,12 @@
                             <span ng-show="{{tradeshow.active}}" class="green">Active</span>
                             <span ng-hide="{{tradeshow.active}}" class="red">Inactive</span>
                         </td>
+                        <td><timeago time="tradeshow.updated_at"></timeago></td>
                         <td class="text-right">
-                            <a class="btn btn-warning" href="#/tradeshows/{{tradeshow.id}}/edit">Edit</a>
-                            <a class="btn btn-danger" href="" ng-click="deleteTradeshow(tradeshow.id, $event)">Delete</a>
+                            <a class="btn btn-warning" href="#/tradeshows/{{tradeshow.id}}/edit" ng-click="$event.stopPropagation()">Edit</a>
+                            <a class="btn btn-danger" href="" ng-click="$event.stopPropagation(); deleteTradeshow(tradeshow.id)">Delete</a>
                             &nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-primary" ng-click="downloadReport(tradeshow.id)" ng-show="tradeshow.lead_count > 0">Excel Report</a>
+                            <a class="btn btn-primary" ng-click="$event.stopPropagation(); downloadReport(tradeshow.id)" ng-show="tradeshow.lead_count > 0">Excel Report</a>
                             <a class="btn btn-primary btn-disabled disabled" ng-show="tradeshow.lead_count == 0" style="visibility: hidden">Excel Report</a>
                         </td>
                     </tr>

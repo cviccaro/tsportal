@@ -9,8 +9,7 @@
 angular
 .module('tradeshowControllers')
 .controller('TradeshowListController',
-	function TradeshowListController($rootScope, $scope, tradeshowService, leadService, loginService, busyService, $q, messageService, CacheFactory, ngDialog, $timeout, $log) {
-
+	function TradeshowListController($rootScope, $scope, tradeshowService, leadService, loginService, busyService, $q, messageService, CacheFactory, ngDialog, $timeout) {
 		if (!CacheFactory.get('formCache')) {
 			CacheFactory('formCache', {
 			  maxAge: 60 * 60 * 1000,
@@ -21,17 +20,14 @@ angular
 		var formCache = CacheFactory.get('formCache');
 
 		$scope.lastFetchedPage = 1;
-
-		// Cached scope vars
-		$scope.currentPage = 1;
-		$scope.orderBy = 'id';
-		$scope.orderByReverse = '0';
-		$scope.perPage = '15';
-		$scope.query = '';
+		$scope.currentPage 		= 1;
+		$scope.orderBy 			= "updated_at";
+		$scope.orderByReverse 	= 0;
+		$scope.perPage 			= 15;
+		$scope.query 			= "";
 
 		// Watch scope variables to update cache
-		var watch = ['currentPage', 'orderBy', 'orderByReverse', 'perPage', 'query'];
-		angular.forEach(watch, function(varName) {
+		angular.forEach(['currentPage', 'orderBy', 'orderByReverse', 'perPage', 'query'], function(varName) {
 			var val = formCache.get(varName);
 			if (val !== undefined && val !== null) {
 				$scope[varName] = val;
@@ -110,12 +106,13 @@ angular
 		/**
 		 * Use leadService to fetch leads for the tradeshow
 		 *
-		 * @param  {[int]} tradeshow_id  [tradeshow ID]
-		 * @param  {[int]} pageNumber [requested page number]
-		 * @return {[void]}
+		 * @param  {int} pageNumber
+		 * @param  {obj} tradeshow
+		 * @return {void}
 		 */
 		$scope.getLeads = function(pageNumber, tradeshow) {
 			busyService.show();
+
 			if (tradeshow === undefined) {
 				tradeshow = $scope.selectedTradeshow;
 			}
@@ -164,12 +161,9 @@ angular
 		 * Delete a tradeshow using the tradeshow service
 		 *
 		 * @param  {[int]} tradeshow_id
-		 * @param  {[event]} $event      [angular event]
 		 * @return {[void]}
 		 */
-		$scope.deleteTradeshow = function(tradeshow_id, $event) {
-			$event.preventDefault();
-			$event.stopPropagation();
+		$scope.deleteTradeshow = function(tradeshow_id) {
 			var tradeshow = $scope.pluckTradeshow(tradeshow_id);
 			tradeshowService.deleteTradeshow(tradeshow);
 		};
@@ -181,7 +175,7 @@ angular
 		 * @param  {[obj]} $event       [angular $event]
 		 * @return {[void]}
 		 */
-		$scope.downloadReport = function(tradeshow_id, $event) {
+		$scope.downloadReport = function(tradeshow_id) {
 			window.location.href = '/api/tradeshows/' + tradeshow_id + '/report?token=' + loginService.token.get();
 		};
 

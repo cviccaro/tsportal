@@ -10,7 +10,7 @@ class TradeshowTableSeeder extends Seeder {
         DB::table('tradeshows')->delete();
 
         $n = 1;
-        while ($n <= 100) {
+        while ($n <= 30) {
             $factory = Faker\Factory::create();
 
             $citystate = $factory->city . ', ' . $factory->state;
