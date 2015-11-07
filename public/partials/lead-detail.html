@@ -11,18 +11,18 @@
 	</button>
 	<div class="col-md-4" style="text-align: right; float: right;">
 		<p>Last updated <timeago time="ctrl.lead.updated_at"></timeago></p>
-		<p ng-show="ctrl.tradeshow != undefined">Registered on Tradeshow <em><a href="#/tradeshows/{{ctrl.tradeshow.id}}/edit">{{::ctrl.tradeshow.name}}</a></em></p>
+		<p>Registered on Tradeshow <em><a href="#/tradeshows/{{::ctrl.lead.tradeshow_id}}/edit">{{::ctrl.lead.tradeshow_name}}</a></em></p>
 	</div>
 </div>
 
 <div class="row">
 	<form name="ctrl.leadForm">
-		<div class="col-md-6 form-item required" ng-class="{'has-error': (ctrl.leadForm.first_name.$dirty || ctrl.submitted) && ctrl.leadForm.first_name.$invalid && ctrl.leadForm.first_name.$error.required}">
+		<div class="col-md-6 form-item required" ng-class="{'has-error': (ctrl.leadForm.first_name.$dirty || ctrl.leadForm.$submitted) && ctrl.leadForm.first_name.$invalid && ctrl.leadForm.first_name.$error.required}">
 			<label for="first_name">First Name</label>
 			<input type="text" name="first_name" ng-model="ctrl.lead.first_name" required />
 			<span class="help-block">First name is required.</span>
 		</div>
-		<div class="col-md-6 form-item required" ng-class="{'has-error': (ctrl.leadForm.last_name.$dirty || ctrl.submitted) && ctrl.leadForm.last_name.$invalid && ctrl.leadForm.last_name.$error.required}">
+		<div class="col-md-6 form-item required" ng-class="{'has-error': (ctrl.leadForm.last_name.$dirty || ctrl.leadForm.$submitted) && ctrl.leadForm.last_name.$invalid && ctrl.leadForm.last_name.$error.required}">
 			<label for="last_name">Last Name</label>
 			<input type="text" name="last_name" ng-model="ctrl.lead.last_name" required />
 			<span class="help-block">Last name is required.</span>
@@ -39,12 +39,12 @@
 			<label for="representative_name">Representative Name</label>
 			<input size="3" type="text" name="representative_name" ng-model="ctrl.lead.representative_name" />
 		</div>
-		<div class="col-md-6 form-item required" ng-class="{'has-error': (ctrl.leadForm.phone_number.$dirty || ctrl.submitted) && ctrl.leadForm.phone_number.$invalid && ctrl.leadForm.phone_number.$error.required}">
+		<div class="col-md-6 form-item required" ng-class="{'has-error': (ctrl.leadForm.phone_number.$dirty || ctrl.leadForm.$submitted) && ctrl.leadForm.phone_number.$invalid && ctrl.leadForm.phone_number.$error.required}">
 			<label for="phone_number">Phone Number</label>
 			<input type="text" name="phone_number" ng-model="ctrl.lead.phone_number" />
 			<span class="help-block">Phone number is required.</span>
 		</div>
-		<div class="col-md-6 form-item required" ng-class="{'has-error': (ctrl.leadForm.email_address.$dirty || ctrl.submitted) && ctrl.leadForm.email_address.$invalid && ctrl.leadForm.email_address.$error.required}">
+		<div class="col-md-6 form-item required" ng-class="{'has-error': (ctrl.leadForm.email_address.$dirty || ctrl.leadForm.$submitted) && ctrl.leadForm.email_address.$invalid && ctrl.leadForm.email_address.$error.required}">
 			<label for="email_address">Email Address</label>
 			<input type="email" name="email_address" ng-model="ctrl.lead.email_address" required />
 			<span class="help-block">Email address is required.</span>
@@ -60,7 +60,7 @@
 		<div class="col-md-6 form-item">
 			<label for="address2">Address 2</label>
 			<input type="text" name="address2" ng-model="ctrl.lead.address2" />
-		</div>	
+		</div>
 		<div class="col-md-6 form-item">
 			<label for="city">City</label>
 			<input type="text" name="city" ng-model="ctrl.lead.city" />
@@ -68,22 +68,22 @@
 		<div class="col-md-6 form-item">
 			<label for="state">State</label>
 			<input type="text" name="state" ng-model="ctrl.lead.state" />
-		</div>	
+		</div>
 		<div class="col-md-6 form-item">
 			<label for="zip_code">Zip Code</label>
 			<input type="text" name="zip_code" ng-model="ctrl.lead.zip_code" />
-		</div>	
+		</div>
 		<div class="col-md-6 form-item">
 			<label for="existing_customer">Existing Customer</label>
-			<input bs type="checkbox" name="existing_customer" ng-model="ctrl.lead.existing_customer" ng-true-value="1" ng-false-value="0" />
+			<input bs-switch type="checkbox" name="existing_customer" ng-model="ctrl.lead.existing_customer" ng-true-value="1" ng-false-value="0" />
 		</div>
 		<div class="col-md-6 form-item">
 			<label for="contact_by_phone">Contact By Phone</label>
-			<input bs type="checkbox" name="contact_by_phone" ng-model="ctrl.lead.contact_by_phone" ng-true-value="1" ng-false-value="0" />
-		</div>	
+			<input bs-switch type="checkbox" name="contact_by_phone" ng-model="ctrl.lead.contact_by_phone" ng-true-value="1" ng-false-value="0" />
+		</div>
 		<div class="col-md-6 form-item">
 			<label for="contact_by_email">Contact By Email</label>
-			<input bs type="checkbox" name="contact_by_email" ng-model="ctrl.lead.contact_by_email" ng-true-value="1" ng-false-value="0" />
-		</div>	
-	</form>	
+			<input bs-switch type="checkbox" name="contact_by_email" ng-model="ctrl.lead.contact_by_email" ng-true-value="1" ng-false-value="0" />
+		</div>
+	</form>
 </div>

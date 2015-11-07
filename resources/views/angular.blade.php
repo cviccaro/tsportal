@@ -3,6 +3,6 @@
 @section('content')
 
 <div ui-view></div>
-<state-loading-indicator></state-loading-indicator>
+<busy-indicator></busy-indicator>
 
 @endsection

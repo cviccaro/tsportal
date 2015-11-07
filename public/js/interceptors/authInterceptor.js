@@ -13,7 +13,7 @@
 		.config(function($httpProvider) {
 			$httpProvider.interceptors.push(authInterceptor);
 		});
-	
+
 	function httpBuffer($injector) {
 		var buffer = [], $http;
 
@@ -23,7 +23,7 @@
 			retryAll: retryAll,
 			retryHttpRequest: retryHttpRequest
 		};
-		
+
 		return service;
 
 		/**
@@ -73,18 +73,24 @@
 		}
 	}
 
-	function authInterceptor ($injector, $rootScope, $q, httpBuffer, busyService) {
+	function authInterceptor ($injector, $rootScope, $q, httpBuffer) {
 		// Will get resolved later using $injector to avoid circular dependency issues
-		var loginService, ngDialog;
+		var loginService, ngDialog, $state;
+		var apiPattern = /\/{0,1}api\/[a-zA-Z\/0-9\?\=\&\%\+\-\_]*/g;
 
 		return {
 			request: function(config) {
-				busyService.show();
-				// Append the token to any request that isn't to login URL or doesn't have a token set
-				if (config.url != '/api/authenticate' && !config.headers.hasOwnProperty('Authorization')) {
-					loginService = loginService || $injector.get('loginService');
+				loginService = loginService || $injector.get('loginService');
 
-					config.headers.Authorization = 'Bearer ' + loginService.token.get();
+				// Append the token to any request that isn't to login URL or doesn't have a token set
+				if (config.url.match(apiPattern) && config.url != '/api/authenticate' && !config.headers.hasOwnProperty('Authorization')) {
+					if (loginService.hasToken()) {
+						config.headers.Authorization = 'Bearer ' + loginService.token.get();
+					}
+					else {
+						$state = $state || $injector.get('$state');
+						$state.go('auth');
+					}
 				}
 
 				return config;
@@ -101,8 +107,8 @@
 						loginService.loginConfirmed();
 					}
 				}
-				
-				busyService.hide();
+
+				// busyService.hide();
 
 				return response;
 			},
@@ -110,34 +116,36 @@
 				var deferred = $q.defer();
 
 				loginService = loginService || $injector.get('loginService');
+				$state 		 = $state || $injector.get('$state');
 
 				switch (rejection.status) {
-				  case 401:
-				  	// If token is expired, refresh it
-				  	if (rejection.data.hasOwnProperty('error') && rejection.data.error == 'token_expired') {
-					    httpBuffer.append(rejection.config, deferred);
-					    $rootScope.$broadcast('event:auth-login-required', rejection);
-					    if (loginService.hasToken()) {
-						    loginService.refresh();
-					    }
-					    return deferred.promise;
-					}
+					case 400:
+						loginService.loginCancelled();
+					break;
+					case 401:
+						// If token is expired, refresh it
+						if (rejection.data.hasOwnProperty('error') && rejection.data.error == 'token_expired') {
+					    	httpBuffer.append(rejection.config, deferred);
+					    	$rootScope.$broadcast('event:auth-login-required', rejection);
+					    	if (loginService.hasToken()) {
+						    	loginService.refresh();
+					    	}
+					    	return deferred.promise;
+						}
 				    break;
-				  case 403:
-				    $rootScope.$broadcast('event:auth-forbidden', rejection);
-				    loginService.loginCancelled();
+				    case 403:
+				    	$rootScope.$broadcast('event:auth-forbidden', rejection);
+				    	loginService.loginCancelled();
 				    break;
-			      case 500:
-			      	ngDialog = ngDialog || $injector.get('ngDialog');
-					ngDialog.open({
-						plain: true,
-						className: 'dialog-save ngdialog-theme-default',
-						template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>Sorry, something went wrong.  Try again later.</span>'
-					});
+				    case 500:
+				    	ngDialog = ngDialog || $injector.get('ngDialog');
+				    	ngDialog.open({
+				    		plain: true,
+				    		className: 'dialog-save ngdialog-theme-default',
+				    		template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>Sorry, something went wrong.  Try again later.</span>'
+				    	});
 			      	break;
 				}
-
-				busyService.hide();
 
 				deferred.reject(rejection);
 

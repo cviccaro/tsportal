@@ -1,10 +1,11 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\showByTradeshowId;
 use App\Lead;
 use App\Tradeshow;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 
 class LeadController extends Controller {
@@ -25,7 +26,7 @@ class LeadController extends Controller {
 			foreach($columns as $column) {
 				$collection = $collection->orWhere($column, 'LIKE', '%' . $request->input('filter') . '%');
 			}
-			$paginated = $collection->paginate();
+			$paginated = $collection->paginate($paginate);
 		}
 		else {
 			// Get paginated collection
@@ -72,7 +73,11 @@ class LeadController extends Controller {
 	 */
 	public function show($id)
 	{
-		return Lead::findOrFail($id);
+		$lead = Lead::findOrFail($id);
+        if ($lead) {
+            $lead->tradeshow_name = Tradeshow::find(1)->pluck('name');
+        }
+        return $lead;
 	}
 
 	/**
@@ -95,11 +100,11 @@ class LeadController extends Controller {
 					$collection = $collection->orWhere($column, 'LIKE', '%' . $request->input('filter') . '%');
 				}
 			}
-			$paginated = $collection->where('tradeshow_id', $tradeshow_id)->paginate();
+			$paginated = $collection->where('tradeshow_id', $tradeshow_id)->paginate($paginate);
 		}
 		else {
 			// Get paginated collection
-			$paginated = Lead::where('tradeshow_id', $tradeshow_id)->orderBy($orderBy, $direction)->paginate($paginate);
+			$paginated = Lead::where('tradeshow_id', (int)$tradeshow_id)->orderBy($orderBy, $direction)->paginate($paginate);
 		}
 		return $paginated;
 	}
@@ -146,7 +151,7 @@ class LeadController extends Controller {
 
 		$lead->save();
 
-		return $lead;
+		return self::show($id);
 	}
 
 	/**

@@ -13,7 +13,7 @@
 		.module('tradeshowControllers')
 		.controller('TradeshowListController', TradeshowListController);
 
-	function TradeshowListController($scope, $q, CacheFactory, ngDialog, loginService, busyService, messageService, tradeshowService, leadService) {
+	function TradeshowListController($scope, $q, CacheFactory, ngDialog, loginService, busyService, messageService, tradeshowService, leadService, promisedData) {
 		var vm = this;
 
 		vm.deleteTradeshow = deleteTradeshow;
@@ -23,15 +23,43 @@
 		vm.pluckTradeshow = pluckTradeshow;
 		vm.refreshTradeshows = refreshTradeshows;
 
-		vm.currentPage 		= 1;
+		vm.currentPage 		= promisedData.data.current_page;
 		vm.lastFetchedPage = 1;
 		vm.orderBy 			= "updated_at";
 		vm.orderByReverse 	= "0";
 		vm.perPage 			= "15";
 		vm.query 			= "";
+		vm.totalPages		= promisedData.data.last_page;
+		vm.tradeshows		= promisedData.data.data;
+
+		activate();
 
 		/////////
-		
+
+		function activate() {
+			if (!CacheFactory.get('formCache')) {
+				new CacheFactory('formCache', {
+				  maxAge: 60 * 60 * 1000,
+				  deleteOnExpire: 'aggressive',
+				  storageMode: 'localStorage'
+				});
+			}
+			var formCache = CacheFactory.get('formCache');
+
+			// Watch scope variables to update cache
+			angular.forEach(['currentPage', 'orderBy', 'orderByReverse', 'perPage', 'query'], function(varName) {
+				var val = formCache.get(varName);
+				if (val !== undefined && val !== null) {
+					vm[varName] = val;
+				}
+				$scope.$watch('ctrl.' + varName, function(newVal, oldVal) {
+					if (typeof newVal !== 'undefined') {
+					    formCache.put(varName, newVal);
+					}
+				});
+			});
+		}
+
 		/**
 		 * Delete a tradeshow using the tradeshow service
 		 */
@@ -135,42 +163,5 @@
 				}
 			});
 		}
-
-		/////////
-
-		if (!CacheFactory.get('formCache')) {
-			CacheFactory('formCache', {
-			  maxAge: 60 * 60 * 1000,
-			  deleteOnExpire: 'aggressive',
-			  storageMode: 'localStorage'
-			});
-		}
-		var formCache = CacheFactory.get('formCache');
-
-		// Watch scope variables to update cache
-		angular.forEach(['currentPage', 'orderBy', 'orderByReverse', 'perPage', 'query'], function(varName) {
-			var val = formCache.get(varName);
-			if (val !== undefined && val !== null) {
-				vm[varName] = val;
-			}
-			$scope.$watch('ctrl.' + varName, function(newVal, oldVal) {
-				if (typeof newVal !== 'undefined') {
-				    formCache.put(varName, newVal);
-				}
-			});
-		});
-
-		// No token, no access
-		loginService.checkApiAccess().then(function(payload) {
-			vm.getTradeshows(vm.currentPage)
-			.then()
-			.catch(function(payload) {
-				ngDialog.open({
-					plain: true,
-					className: 'dialog-save ngdialog-theme-default',
-					template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>Sorry, something went wrong.  Try again later.</span>'
-				});
-			});
-		});
 	}
 })();

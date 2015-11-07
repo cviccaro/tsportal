@@ -11,13 +11,8 @@
 		.factory('loginService', loginService);
 
 	function loginService($state, $rootScope, $q, CacheFactory, $http, httpBuffer, $injector) {
-
-		$rootScope.isLoggedIn = false;
-
-		var cache;
-
 		if (!CacheFactory.get('authCache')) {
-			cache = CacheFactory('authCache', {
+			new CacheFactory('authCache', {
 				maxAge: 60 * 59 * 1000,
 				deleteOnExpire: 'aggressive',
 				storageMode: 'localStorage',
@@ -29,9 +24,9 @@
 				}
 			});
 		}
-		else {
-			cache = CacheFactory.get('authCache');
-		}
+		var cache = CacheFactory.get('authCache');
+
+		$rootScope.isLoggedIn = cache.get('token') !== undefined;
 
 		var service = {
 			checkApiAccess: checkApiAccess,
@@ -90,6 +85,7 @@
 		}
 
 		function loginCancelled(data,reason) {
+			console.log('loginCancelled')
 			httpBuffer.rejectAll(reason);
 			$rootScope.$broadcast('event:auth-login-cancelled', data);
 			this.logout();

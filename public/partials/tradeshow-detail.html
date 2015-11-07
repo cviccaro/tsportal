@@ -13,17 +13,16 @@
 <div class="row">
     <form name="ctrl.tradeshowForm">
     	<div class="col-md-6 form-item required"
-            ng-class="{'has-error': (ctrl.tradeshowForm.name.$dirty || ctrl.submitted) && ctrl.tradeshowForm.name.$invalid && ctrl.tradeshowForm.name.$error.required}">
+            ng-class="{'has-error': (ctrl.tradeshowForm.name.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.name.$invalid && ctrl.tradeshowForm.name.$error.required}">
             <label for="name">Name</label><input id="ctrl.tradeshow_name" type="text" name="name" ng-model="ctrl.tradeshow.name" required />
-            <span class="help-block" ng-show="(ctrl.tradeshowForm.name.$dirty || ctrl.submitted) && ctrl.tradeshowForm.name.$invalid && ctrl.tradeshowForm.name.$error.required">Tradeshow name is required.</span>
+            <span class="help-block" ng-show="(ctrl.tradeshowForm.name.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.name.$invalid && ctrl.tradeshowForm.name.$error.required">Tradeshow name is required.</span>
         </div>
-    	<div class="col-md-6 form-item required" ng-class="{'has-error': (ctrl.tradeshowForm.location.$dirty || ctrl.submitted) && ctrl.tradeshowForm.location.$invalid && ctrl.tradeshowForm.location.$error.required}">
+    	<div class="col-md-6 form-item required" ng-class="{'has-error': (ctrl.tradeshowForm.location.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.location.$invalid && ctrl.tradeshowForm.location.$error.required}">
             <label for="location">Location</label><input type="text" name="location" ng-model="ctrl.tradeshow.location" required />
-            <span class="help-block" ng-show="(ctrl.tradeshowForm.location.$dirty || ctrl.submitted) && ctrl.tradeshowForm.location.$invalid && ctrl.tradeshowForm.location.$error.required">Tradeshow location is required.
+            <span class="help-block" ng-show="(ctrl.tradeshowForm.location.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.location.$invalid && ctrl.tradeshowForm.location.$error.required">Tradeshow location is required.
         </div>
     	<div class="col-md-6 form-item omega">
-    		<label for="active">Active</label>
-    		<input bs type="checkbox" name="active" ng-model="ctrl.tradeshow.active" ng-true-value="1" ng-false-value="0" />
+    		<input bs-switch type="checkbox" switch-label="Active" ng-model="ctrl.tradeshow.active" name="active" ng-true-value="1" ng-false-value="0" />
     	</div>
     </form>
 </div>

@@ -101,7 +101,7 @@ table > tbody > tr.clickable.active > td {
 }
 
 /* line 98, ../../resources/assets/sass/app.scss */
-.loading-indicator {
+.busy-indicator {
   width: 100%;
   position: fixed;
   height: 100%;
@@ -118,22 +118,22 @@ table > tbody > tr.clickable.active > td {
   text-align: center;
 }
 /* line 111, ../../resources/assets/sass/app.scss */
-.loading-indicator.ng-hide {
+.busy-indicator.ng-hide {
   opacity: 0;
 }
 /* line 115, ../../resources/assets/sass/app.scss */
-.loading-indicator .loading-title {
+.busy-indicator .loading-title {
   margin: 0 auto;
   font-size: 22px;
   font-weight: normal;
 }
 /* line 121, ../../resources/assets/sass/app.scss */
-.loading-indicator .loading-indicator-body {
+.busy-indicator .loading-indicator-body {
   position: relative;
   top: 45%;
 }
 /* line 126, ../../resources/assets/sass/app.scss */
-.loading-indicator .wave-spinner {
+.busy-indicator .wave-spinner {
   margin: 25px auto;
 }
 

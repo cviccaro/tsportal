@@ -18,15 +18,18 @@
 
 		vm.goBack = goBack;
 		vm.save = save;
-		vm.validate = validate;
 
 		vm.isNew = true;
-		vm.model = "tradeshow";
-		vm.submitted = false;
 		vm.titlePrefix = "Creating new";
-		vm.tradeshow = {};
+		vm.tradeshow = {active: 0};
+
+		activate();
 
 		/////////
+
+		function activate() {
+			loginService.checkApiAccess();
+		}
 
 		/**
 		 * Callback to 'Back' button
@@ -39,14 +42,9 @@
 		 * Save the new tradeshow using the Tradeshow resource
 		 */
 		function save() {
-			if (vm.validate()) {
+			if (vm.tradeshowForm.$valid) {
 				// Alter the working message
 				busyService.setMessage('Saving new');
-
-				// Collect 'active' value if it is not set
-				if (!vm.tradeshow.hasOwnProperty('active')) {
-					vm.tradeshow.active = $('input[name="active"]')[0].checked;
-				}
 
 				// Create Tradeshow using Tradeshow resource
 				Tradeshow
@@ -65,31 +63,13 @@
 						.closePromise
 						.then(function(data) {
 							// Navigate to the new tradeshow's Edit page on dialog close
-							window.location.hash = '#/tradeshows/' + tradeshow_id + '/edit';
+							$state.go('tradeshowEdit', {id: tradeshow_id});
 						});
 					})
 					.catch(function(payload) {
-						messageService.addMessage({
-							type: 'danger',
-							dismissible: true,
-							icon: 'exclamation-sign',
-							iconClass: 'icon-medium',
-							message: "Sorry, something went wrong.",
-						});
+						vm.addErrorMessage();
 					});
 			}
 		}
-		/**
-		 * Validate the form
-		 */
-		function validate() {
-			vm.submitted = true;
-			return !( vm.tradeshowForm.name.$invalid || vm.tradeshowForm.location.$invalid );
-		}
-
-		/////////
-
-		// No token, no access
-		loginService.checkApiAccess();
 	}
 })();

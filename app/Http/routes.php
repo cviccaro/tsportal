@@ -15,6 +15,20 @@ $app->get('/', function() use ($app) {
     return view('angular');
 });
 
+$app->get('/test', function(Request $request) use($app) {
+    $id = 1;
+
+    //$tradeshow = App\Tradeshow::findOrFail($id);
+
+    //if ($tradeshow) {
+        $ctrl = new App\Http\Controllers\TradeshowController();
+        $tradeshow = $ctrl->show($id, $request->getFacadeRoot());
+   //}
+
+    d($tradeshow);
+
+    return '';
+});
 $app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers'], function($app) {
     $app->post('authenticate', 'Auth\ApiAuthController@authenticate');
     $app->get('authenticate/refresh','Auth\ApiAuthController@refresh');

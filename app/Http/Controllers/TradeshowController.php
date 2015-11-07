@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 //use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LeadController;
 use App\Lead;
 use App\Tradeshow;
 use Illuminate\Http\Request;
@@ -18,30 +19,25 @@ class TradeshowController extends Controller {
 	{
 		$orderBy = $request->input('orderBy', 'id');
 		$direction = $request->input('orderByReverse', 0) == 0 ? 'asc' : 'desc';
-		$paginate = $request->input('perPage', 15);
+		$perPage = $request->input('perPage', 15);
+
+		$collection = Tradeshow::orderBy($orderBy, $direction);
 
 		if ($request->has('filter') && !empty($request->input('filter'))) {
 			$columns = Schema::getColumnListing('tradeshows');
-			$collection = Tradeshow::orderBy($orderBy, $direction);
+
 			foreach($columns as $column) {
 				$collection = $collection->orWhere($column, 'LIKE', '%' . $request->input('filter') . '%');
 			}
-			$paginated = $collection->paginate();
-		}
-		else {
-			// Get paginated collection
-			$paginated = Tradeshow::orderBy($orderBy, $direction)->paginate($paginate);
 		}
 
-		$tradeshows = $paginated->getCollection();
+		$paginated = $collection->paginate($perPage);
 
 		// Attach lead_count as an attribute
-		$tradeshows->each(function($item) {
+		$paginated->getCollection()->each(function($item) {
 		    $count = Lead::where('tradeshow_id', $item->id)->count();
 		    $item->setAttribute('lead_count', $count);
 		});
-
-
 
 		return $paginated;
 	}

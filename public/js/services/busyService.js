@@ -11,40 +11,47 @@
 		.factory('busyService', busyService);
 
 	function busyService($rootScope, $timeout) {
-		var message = 'Working on it...', timer;
-
-		$rootScope.workingMessage = message;
-		$rootScope.busyServiceIsBusy = true;
+		var message, timer, amIBusy = false;
 
 		var service = {
+			defaultMessage: 'Working on it',
 			getMessage: getMessage,
 			hide: hide,
 			isBusy: isBusy,
 			isVisible: isVisible,
+			resetMessage: resetMessage,
 			setMessage: setMessage,
 			show: show
 		};
 
+		activate();
+
 		return service;
 
 		/////////
-		
+
+		function activate() {
+			$rootScope.workingMessage = service.defaultMessage;
+		}
+
 		function getMessage(msg) {
 			return message;
 		}
-		
+
 		function hide() {
-			timer = $timeout(function() {
-				$rootScope.busyServiceIsBusy = false;
-			},100);
+			amIBusy = false;
 		}
 
 		function isBusy() {
-			return $rootScope.busyServiceIsBusy;
+			return amIBusy;
 		}
 
 		function isVisible() {
 			return $('.loading-indicator').is(':visible');
+		}
+
+		function resetMessage() {
+			this.setMessage(this.defaultMessage);
 		}
 
 		function setMessage(msg) {
@@ -52,8 +59,7 @@
 		}
 
 		function show() {
-			if (timer) { $timeout.cancel(timer); }
-			$rootScope.busyServiceIsBusy = true;
+			amIBusy = true;
 		}
 	}
 })();

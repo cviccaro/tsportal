@@ -10,6 +10,7 @@
         'angular-spinkit',
         'ngAnimate',
         'ngDialog',
+        'frapontillo.bootstrap-switch',
 
         // App
         'appDirectives',
@@ -42,12 +43,25 @@
             state('tradeshows', {
                 url: '/tradeshows',
                 templateUrl: '../partials/tradeshow-list.html',
-                controller: 'TradeshowListController as ctrl'
+                controller: 'TradeshowListController as ctrl',
+                resolve: {
+                    promisedData: function promisedData(tradeshowService, $stateParams) {
+                       return tradeshowService.retrieve($stateParams.id);
+                    }
+                }
             }).
             state('tradeshowEdit', {
-                url: '/tradeshows/:tradeshowId/edit',
+                url: '/tradeshows/:id/edit',
                 templateUrl: '../partials/tradeshow-detail.html',
-                controller: 'TradeshowDetailController as ctrl'
+                controller: 'TradeshowDetailController as ctrl',
+                resolve: {
+                    promisedData: function promisedData(Tradeshow, $stateParams) {
+                       return Tradeshow.get({id:$stateParams.id}).$promise;
+                    },
+                    promisedLeadData: function promisedLeadData(leadService, $stateParams) {
+                       return leadService.retrieve($stateParams.id);
+                    }
+                }
             }).
             state('tradeshowCreate', {
                 url: '/tradeshows/create',
@@ -57,17 +71,23 @@
             state('leadEdit', {
                 url:'/leads/:id/edit',
                 templateUrl: '../partials/lead-detail.html',
-                controller: 'LeadController as ctrl'
+                controller: 'LeadController as ctrl',
+                resolve: {
+                    leadData: function leadData(Lead, $stateParams) {
+                        return Lead.get({id:$stateParams.id}).$promise;
+                    }
+                }
             });
     })
     .run(function ($http, CacheFactory) {
       if (!CacheFactory.get('defaultCache')) {
-        CacheFactory('defaultCache', {
-            maxAge: 15 * 60 * 1000, // Items added to this cache expire after 15 minutes
-            cacheFlushInterval: 60 * 60 * 1000, // This cache will clear itself every hour
-            deleteOnExpire: 'aggressive' // Items will be deleted from this cache when they expire
+        new CacheFactory('defaultCache', {
+            maxAge: 15 * 60 * 1000,
+            cacheFlushInterval: 60 * 60 * 1000,
+            deleteOnExpire: 'aggressive'
           });
       }
+
       $http.defaults.cache = CacheFactory.get('defaultCache');
     });
 })();

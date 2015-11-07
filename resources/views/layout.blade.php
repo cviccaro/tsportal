@@ -55,6 +55,7 @@
     <script src="/bower_components/angular/angular.min.js"></script>
     <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js"></script>
+    <script src="/bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js"></script>
     <script src="/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
     <script src="/bower_components/angular-jwt/dist/angular-jwt.min.js"></script>
     <script src="/bower_components/angular-cache/dist/angular-cache.min.js"></script>
@@ -66,22 +67,29 @@
     <script src="/bower_components/moment/min/moment.min.js"></script>
 
     <!-- Application Components -->
-    <script src="/js/loginService.js"></script>
-    <script src="/js/authInterceptor.js"></script>
-    <script src="/js/messageService.js"></script>
-    <script src="/js/busyService.js"></script>
-    <script src="/js/tradeshowResource.js"></script>
-    <script src="/js/tradeshowService.js"></script>
-    <script src="/js/leadResource.js"></script>
-    <script src="/js/leadService.js"></script>
-    <script src="/js/controllers.js"></script>
-    <script src="/js/tradeshowListController.js"></script>
-    <script src="/js/tradeshowDetailController.js"></script>
-    <script src="/js/tradeshowCreateController.js"></script>
-    <script src="/js/leadController.js"></script>
-    <script src="/js/authController.js"></script>
-    <script src="/js/logoutController.js"></script>
-    <script src="/js/directives.js"></script>
+    <script src="/js/services/loginService.js"></script>
+    <script src="/js/interceptors/authInterceptor.js"></script>
+
+    <script src="/js/services/messageService.js"></script>
+
+    <script src="/js/services/busyService.js"></script>
+    <script src="/js/interceptors/busyServiceInterceptor.js"></script>
+
+    <script src="/js/services/leadResource.js"></script>
+    <script src="/js/services/leadService.js"></script>
+    <script src="/js/services/tradeshowResource.js"></script>
+    <script src="/js/services/tradeshowService.js"></script>
+
+    <script src="/js/controllers/controllers.js"></script>
+    <script src="/js/controllers/authController.js"></script>
+
+    <script src="/js/controllers/tradeshowCreateController.js"></script>
+    <script src="/js/controllers/tradeshowDetailController.js"></script>
+    <script src="/js/controllers/tradeshowListController.js"></script>
+    <script src="/js/controllers/leadController.js"></script>
+    <script src="/js/controllers/logoutController.js"></script>
+
+    <script src="/js/directives/directives.js"></script>
     <script src="/js/app.angular.js"></script>
 </body>
 </html>

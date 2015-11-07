@@ -13,33 +13,58 @@
 		.module('tradeshowControllers')
 		.controller('TradeshowDetailController', TradeshowDetailController);
 
-	function TradeshowDetailController($scope, $q, $http, CacheFactory, $state, $stateParams, ngDialog, loginService, busyService, messageService, Tradeshow, leadService) {
-
+	function TradeshowDetailController($scope, $q, $http, CacheFactory, $state, ngDialog, loginService,
+		busyService, messageService, Tradeshow, leadService, promisedData, promisedLeadData)
+	{
 		var vm = this;
 
 		vm.deleteLead = deleteLead;
 		vm.getLeads = getLeads;
-		vm.getTradeshow = getTradeshow;
 		vm.goBack = goBack;
 		vm.pluckLead = pluckLead;
 		vm.refreshLeads = refreshLeads;
 		vm.save = save;
 		vm.updatePagination = updatePagination;
-		vm.validate = validate;
 
-		vm.currentPage = 1;
+		vm.currentPage = promisedLeadData.data.current_page;
 		vm.isNew = false;
 		vm.lastFetchedPage = 1;
-		vm.leads = [];
-		vm.model = 'tradeshow';
+		vm.leads = promisedLeadData.data.data;
 		vm.orderBy = "updated_at";
 		vm.orderByReverse = "0";
 		vm.perPage = "15";
 		vm.query = "";
-		vm.submitted = false;
-		vm.titlePrefix = 'Editing';
+		vm.titlePrefix = "Editing";
+		vm.tradeshow = promisedData;
+		vm.totalPages = promisedLeadData.data.last_page;
+
+		activate();
 
 		//////////
+
+		function activate() {
+			if (!CacheFactory.get('leadFormCache')) {
+				new CacheFactory('leadFormCache', {
+				  maxAge: 60 * 60 * 1000,
+				  deleteOnExpire: 'aggressive',
+				  storageMode: 'localStorage'
+				});
+			}
+
+			var formCache = CacheFactory.get('leadFormCache');
+
+			// Watch scope variables to update cache
+			angular.forEach(['currentPage', 'orderBy', 'omg', 'orderByReverse', 'perPage', 'query'], function(key) {
+				if (formCache.get(key)) {
+					vm[key] = formCache.get(key);
+				}
+				$scope.$watch('ctrl.' + key, function(newVal, oldVal) {
+					if (typeof newVal !== 'undefined') {
+					    formCache.put(key, newVal);
+					}
+				});
+			});
+		}
 
 		/**
 		 * Delete a lead
@@ -85,34 +110,6 @@
 		}
 
 		/**
-		 * Get the Tradeshow using the Tradeshow resource
-		 */
-		function getTradeshow() {
-			var deferred = $q.defer();
-			Tradeshow.
-				get({tradeshowId:$stateParams.tradeshowId}).
-				$promise.
-				then(function(payload) {
-					vm.tradeshow = payload;
-					if (vm.tradeshow.active == 1) {
-						jQuery('input[name="active"]').bootstrapSwitch('state', true);
-					}
-					vm.getLeads(vm.currentPage)
-						.then(function(payload) {
-							deferred.resolve(payload);
-						})
-						.catch(function() {
-							deferred.reject(payload);
-						});
-
-				})
-				.catch(function(payload) {
-					deferred.reject(payload);
-				});
-			return deferred.promise;
-		}
-
-		/**
 		 * Callback to 'go back' button
 		 */
 		function goBack() {
@@ -145,7 +142,7 @@
 		 * Save the currently scoped tradeshow using Tradeshow resource
 		 */
 		function save() {
-			if (vm.validate()) {
+			if (vm.tradeshowForm.$valid) {
 				// Alter the "busy" indicator message
 				busyService.setMessage('Saving');
 
@@ -156,25 +153,13 @@
 						vm.tradeshow = payload;
 
 						// Show success alert
-						messageService.addMessage({
-							icon: 'ok',
-							type: 'success',
-							iconClass: 'icon-medium',
-							dismissible: true,
-							message: 'Your changes have been saved'
-						});
+						vm.addSuccessMessage();
 
 						$http.defaults.cache.removeAll();
 					})
 					.catch(function(payload) {
 						// Show error alert
-						messageService.addMessage({
-							icon: 'exclamation-sign',
-							type: 'danger',
-							iconClass: 'icon-medium',
-							dismissible: true,
-							message: 'Sorry, something went wrong.'
-						});
+						vm.addErrorMessage();
 					});
 			}
 		}
@@ -187,50 +172,5 @@
 				vm.getLeads(1);
 			}
 		}
-
-		/**
-		 * Validate the form
-		 */
-		function validate() {
-			vm.submitted = true;
-			return ! (vm.tradeshowForm.name.$invalid || vm.tradeshowForm.location.$invalid);
-		}
-
-		/////////
-		
-		if (!CacheFactory.get('leadFormCache')) {
-			CacheFactory('leadFormCache', {
-			  maxAge: 60 * 60 * 1000,
-			  deleteOnExpire: 'aggressive',
-			  storageMode: 'localStorage'
-			});
-		}
-		var formCache = CacheFactory.get('leadFormCache');
-
-		// Watch scope variables to update cache
-		angular.forEach(['currentPage', 'orderBy', 'orderByReverse', 'perPage', 'query'], function(varName) {
-			var val = formCache.get(varName);
-			if (val !== undefined && val !== null) {
-				vm[varName] = val;
-			}
-			$scope.$watch('ctrl.' + varName, function(newVal, oldVal) {
-				if (typeof newVal !== 'undefined') {
-				    formCache.put(varName, newVal);
-				}
-			});
-		});
-
-		// Check API Access, refresh token
-		loginService.checkApiAccess().then(function() {
-			vm.getTradeshow()
-				.then()
-				.catch(function(payload) {
-					ngDialog.open({
-						plain: true,
-						className: 'dialog-save ngdialog-theme-default',
-						template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>Sorry, something went wrong.  Try again later.</span>'
-					});
-				});
-		});
 	}
 })();
