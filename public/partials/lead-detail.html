@@ -1,15 +1,16 @@
 <div class="page-header">
-    <h1>Editing Lead <em>{{::ctrl.lead.first_name}} {{::ctrl.lead.last_name}}</em></h1>
+    <h1>Editing Lead</h1>
+    <h2><small>{{::ctrl.lead.first_name}} {{::ctrl.lead.last_name}}</small></h2>
 </div>
 <messages></messages>
 <div class="toolbar row">
 	<button id="goBack" class="btn btn-primary" ng-click="ctrl.goBack()">
 		<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Go Back
 	</button>
-	<button id="save" class="btn btn-success" ng-click="ctrl.save()">
+	<button id="save" class="btn btn-success" ng-click="ctrl.save()" ng-disabled="ctrl.leadForm.$invalid || ctrl.leadForm.$pristine">
 		<span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save
 	</button>
-	<div class="col-md-4" style="text-align: right; float: right;">
+	<div class="right col-md-4 col-xs-12 col-sm-12">
 		<p>Last updated <timeago time="ctrl.lead.updated_at"></timeago></p>
 		<p>Registered on Tradeshow <em><a href="#/tradeshows/{{::ctrl.lead.tradeshow_id}}/edit">{{::ctrl.lead.tradeshow_name}}</a></em></p>
 	</div>
@@ -73,15 +74,15 @@
 			<label for="zip_code">Zip Code</label>
 			<input type="text" name="zip_code" ng-model="ctrl.lead.zip_code" />
 		</div>
-		<div class="col-md-6 form-item">
+		<div class="col-md-6 col-xs-6 col-sm-6 form-item">
 			<label for="existing_customer">Existing Customer</label>
 			<input bs-switch type="checkbox" name="existing_customer" ng-model="ctrl.lead.existing_customer" ng-true-value="1" ng-false-value="0" />
 		</div>
-		<div class="col-md-6 form-item">
+		<div class="col-md-6 col-xs-6 col-sm-6 form-item">
 			<label for="contact_by_phone">Contact By Phone</label>
 			<input bs-switch type="checkbox" name="contact_by_phone" ng-model="ctrl.lead.contact_by_phone" ng-true-value="1" ng-false-value="0" />
 		</div>
-		<div class="col-md-6 form-item">
+		<div class="col-md-6 col-xs-6 col-sm-6 form-item">
 			<label for="contact_by_email">Contact By Email</label>
 			<input bs-switch type="checkbox" name="contact_by_email" ng-model="ctrl.lead.contact_by_email" ng-true-value="1" ng-false-value="0" />
 		</div>

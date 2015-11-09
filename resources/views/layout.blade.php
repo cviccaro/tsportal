@@ -2,6 +2,9 @@
 <html ng-app="tsportal" lang="en">
 <head>
 <title>Tradeshow Portal</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <!-- Bootstrap -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/yeti/bootstrap.min.css">
 
@@ -21,19 +24,17 @@
 <body>
 
         <div class="container">
-            <nav class="navbar navbar-default">
-                <div class="container">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <img src="/images/jplogolg.png" class="logo" />
-                        <a class="navbar-brand" href="/#/">Tradeshow Portal</a>
-                    </div>
-                    <div id="navbar" class="collapse navbar-collapse">
+            <nav class="navbar navbar-default row">
+                <div class="navbar-header col-md-12 col-sm-12 col-xs-12">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <img src="/images/jplogolg.png" class="logo" />
+                    <a class="navbar-brand" href="/#/">Tradeshow Portal</a>
+                    <div id="navbar" class="collapse navbar-collapse col-md-6 col-sm-12 col-xs-12">
                         <ul class="nav navbar-nav">
                             <li><a href="/#/tradeshows">Home</a></li>
                             <li ng-show="!isLoggedIn">

@@ -17,9 +17,21 @@
 		font-weight: 300;
 	}
 }
+.navbar-toggle {
+	float: right;
+}
 #navbar ul li a
 {
 	color: #fff;
+}
+
+.page-header {
+	h1,h2,h3,h4,h5,h6 {
+		padding-left: 0;
+	}
+}
+table {
+	margin-left: 10px;
 }
 table>tbody>tr.clickable
 {
@@ -72,7 +84,7 @@ table>tbody>tr.clickable
 .toolbar
 {
 	margin: 0.5em 0 1.5em 0;
-	padding-bottom: 10px;
+	padding-bottom: 1em;
     border-bottom: 1px solid #eee;
     &.buttons
     {
@@ -85,14 +97,17 @@ table>tbody>tr.clickable
 }
 .toolbar-item
 {
-	float: left;
-	margin-right: 0.5em;
-	&.right {
-		margin-left: 0.5em;
-		float: right;
-		&:last-child {
-			margin-left: 0;
-		}
+	&:first-child {
+		padding-left: 0;
+	}
+}
+.right 
+{
+	margin-left: 0.5em;
+	float: right;
+	width: auto;
+	&:last-child {
+		margin-left: 0;
 	}
 }
 .busy-indicator
@@ -105,7 +120,8 @@ table>tbody>tr.clickable
 	right: 0;
 	bottom: 0;
 	background:rgba(255,255,255,0.9);
-	@include transition(all linear 0.5s);
+	z-index: 9999;
+	@include transition(all linear 0.15s);
 	opacity: 1;
 	text-align: center;
 	&.ng-hide
@@ -252,11 +268,21 @@ table>tbody>tr.clickable
   min-height: 50px;
   border: 0;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .26);
+  margin-left: -15px;
+  margin-right: -15px;
 }
 
 .navbar-header {
   float: left;
   padding-left: 15px;
+}
+
+.row.nomargins {
+	margin-left: 0;
+	margin-right: 0;
+}
+.row .navbar-header {
+	padding-left: 30px;
 }
 
 .navbar-brand {
@@ -303,7 +329,7 @@ table>tbody>tr.clickable
 	.alert {
 		float: left;
 		clear: both;
-		@include transition(all linear 0.5s);
+		@include transition(all linear 0.15s);
 	}
 }
 
@@ -319,6 +345,40 @@ table>tbody>tr.clickable
 .has-error {
 	.help-block {
 		display: block;
-		@include transition(all linear 0.5s);
+		@include transition(all linear 0.15s);
+	}
+}
+
+
+
+@media (max-width: 768px) {
+	.toolbar-item {
+		margin-top: 5px;
+		margin-bottom: 5px;
+		clear: both;	
+	}
+	.right {
+		float: left;
+		margin-left: 0;
+		padding-left: 0;
+		margin-top: 0.5em;
+	}
+	h1 small,
+	h2 small {
+		display: block;
+	}
+	h2 small.inline {
+		display: inline;
+	}
+
+	.trimmed {
+		max-width: 150px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow-x: hidden;
+	}
+	tr td .btn {
+		font-size: 10px;
+		padding: 2px 4px;
 	}
 }

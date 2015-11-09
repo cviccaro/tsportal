@@ -4,59 +4,62 @@
     <messages></messages>
     <div class="toolbar buttons">
         <p class="help">Clicking a row in the tradeshow table will display a preview of its Leads below the table.<br />Click the edit button to see a more detailed view of the tradeshow and its leads.</p>
-        <a class="btn btn-success" href="#/tradeshows/create" >Create</a>
+        <a class="btn btn-success" href="#/tradeshows/create">Create</a>
     </div>
     <div class="toolbar filters clearfix">
-        <div class="toolbar-item">
-            <span>Sort</span>
-            <select ng-model="ctrl.orderBy" ng-change="ctrl.refreshTradeshows()">
-              <option value="updated_at">Updated</option>
-              <option value="name">Name</option>
-              <option value="location">Location</option>
-              <option value="active">Active</option>
-            </select>
-            <select ng-model="ctrl.orderByReverse" ng-change="ctrl.refreshTradeshows()">
-              <option value="0">Ascending</option>
-              <option value="1">Descending</option>
-            </select>
-        </div>
-        <div class="toolbar-item right">
-            <span>Items Per Page</span>
-            <select ng-model="ctrl.perPage" ng-change="ctrl.refreshTradeshows()">
-                <option value="15">15</option>
-                <option value="30">30</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
-        </div>
-        <div class="toolbar-item right">
-            <span>Search</span>
-            <input type="text" ng-model="ctrl.query" ng-model-options="{debounce: 500}" ng-change="ctrl.refreshTradeshows()" />
-        </div>
+        <form id="tradeshowFilterForm" name="ctrl.tradeshowFilterForm">
+            <div class="toolbar-item col-md-4 col-xs-12 col-sm-12">
+                <input type="hidden" name="currentPage" ng-model="ctrl.currentPage" />
+                <span>Sort</span>
+                <select ng-model="ctrl.orderBy" name="orderBy" ng-change="ctrl.refreshTradeshows()">
+                  <option value="updated_at">Updated</option>
+                  <option value="name">Name</option>
+                  <option value="location">Location</option>
+                  <option value="active">Active</option>
+                </select>
+                <select ng-model="ctrl.orderByReverse" name="orderByReverse" ng-change="ctrl.refreshTradeshows()">
+                  <option value="0">Ascending</option>
+                  <option value="1">Descending</option>
+                </select>
+            </div>
+            <div class="toolbar-item right col-md-4 col-xs-12 col-sm-12">
+                <span>Items Per Page</span>
+                <select ng-model="ctrl.perPage" name="perPage" ng-change="ctrl.refreshTradeshows()">
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
+            <div class="toolbar-item right col-md-4 col-xs-12 col-sm-12">
+                <span>Search</span>
+                <input type="text" ng-model="ctrl.query" name="query" ng-model-options="{debounce: 500}" ng-change="ctrl.refreshTradeshows()" />
+            </div>
+        </form>
     </div>
     <div class="row">
-        <div class="col-md-12">
+        <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>NAME</th>
-                        <th>LOCATION</th>
+                        <th class="hidden-xs hidden-sm">LOCATION</th>
                         <th>ACTIVE</th>
-                        <th>UPDATED</th>
+                        <th class="hidden-xs hidden-sm">UPDATED</th>
                         <th class="text-right">ACTIONS</th>
                     </tr>
                 </thead>
 
                 <tbody>
                     <tr clickable ng-repeat="tradeshow in ctrl.tradeshows" ng-click="ctrl.getLeads(1, tradeshow)" data-id="{{tradeshow.id}}">
-                        <td>{{tradeshow.name}}</td>
-                        <td>{{tradeshow.location}}</td>
+                        <td class="trimmed">{{tradeshow.name}}</td>
+                        <td class="hidden-xs hidden-sm">{{tradeshow.location}}</td>
                         <td>
                             <span ng-show="{{tradeshow.active}}" class="green">Active</span>
                             <span ng-hide="{{tradeshow.active}}" class="red">Inactive</span>
                         </td>
-                        <td><timeago time="tradeshow.updated_at"></timeago></td>
-                        <td class="text-right">
+                        <td class="hidden-xs hidden-sm"><timeago time="tradeshow.updated_at"></timeago></td>
+                        <td class="col-md-4 text-right">
                             <a class="btn btn-warning" href="#/tradeshows/{{tradeshow.id}}/edit" ng-click="$event.stopPropagation()">Edit</a>
                             <a class="btn btn-danger" href="" ng-click="$event.stopPropagation(); ctrl.deleteTradeshow(tradeshow.id)">Delete</a>
                             &nbsp;&nbsp;&nbsp;
@@ -70,28 +73,30 @@
         <pager current-page="ctrl.currentPage" total-pages="ctrl.totalPages" get-results="ctrl.getTradeshows(num)"></pager>
     </div>
 
-    <div ng-show="ctrl.leads != undefined">
-        <div class="page-header">
-            <h1>Leads for Tradeshow {{ctrl.selectedTradeshow.name}}</h1>
+    <div ng-show="ctrl.leads != undefined" class="col-md-12">
+        <div class="row">
+            <div class="page-header col-md-12">
+                <h2>Leads for Tradeshow <small>{{ctrl.selectedTradeshow.name}}</small></h2>
+            </div>
         </div>
         <div class="row">
-            <div class="col-md-12">
+            <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
                         <th>FIRST NAME</th>
                         <th>LAST NAME</th>
-                        <th>EMAIL</th>
-                        <th>PHONE</th>
-                        <th>CREATED</th>
+                        <th class="hidden-xs">EMAIL</th>
+                        <th class="hidden-xs hidden-sm">PHONE</th>
+                        <th class="hidden-xs hidden-sm">CREATED</th>
                         <th>ACTIONS</th>
                     </thead>
                     <tbody>
                         <tr ng-show="ctrl.leads.length" ng-repeat="lead in ctrl.leads">
                             <td>{{lead.first_name}}</td>
                             <td>{{lead.last_name}}</td>
-                            <td>{{lead.email_address}}</td>
-                            <td>{{lead.phone_number}}</td>
-                            <td><timeago time="lead.created_at"></timeago></td>
+                            <td class="hidden-xs">{{lead.email_address}}</td>
+                            <td class="hidden-xs hidden-sm">{{lead.phone_number}}</td>
+                            <td class="hidden-xs hidden-sm"><timeago time="lead.created_at"></timeago></td>
                             <td>
                                 <a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
                             </td>

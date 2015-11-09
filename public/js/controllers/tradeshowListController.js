@@ -13,18 +13,18 @@
 		.module('tradeshowControllers')
 		.controller('TradeshowListController', TradeshowListController);
 
-	function TradeshowListController($scope, $q, CacheFactory, ngDialog, loginService, busyService, messageService, tradeshowService, leadService, promisedData) {
+	function TradeshowListController($scope, $q, $timeout, CacheFactory, ngDialog, loginService, busyService, messageService, tradeshowService, leadService, promisedData) {
 		var vm = this;
 
-		vm.deleteTradeshow = deleteTradeshow;
-		vm.downloadReport = downloadReport;
-		vm.getLeads = getLeads;
-		vm.getTradeshows = getTradeshows;
-		vm.pluckTradeshow = pluckTradeshow;
+		vm.deleteTradeshow 	 = deleteTradeshow;
+		vm.downloadReport 	 = downloadReport;
+		vm.getLeads 		 = getLeads;
+		vm.getTradeshows 	 = getTradeshows;
+		vm.pluckTradeshow 	 = pluckTradeshow;
 		vm.refreshTradeshows = refreshTradeshows;
 
 		vm.currentPage 		= promisedData.data.current_page;
-		vm.lastFetchedPage = 1;
+		vm.lastFetchedPage  = 1;
 		vm.orderBy 			= "updated_at";
 		vm.orderByReverse 	= "0";
 		vm.perPage 			= "15";
