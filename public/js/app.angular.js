@@ -45,8 +45,19 @@
                 templateUrl: '../partials/tradeshow-list.html',
                 controller: 'TradeshowListController as ctrl',
                 resolve: {
-                    promisedData: function promisedData(tradeshowService, $stateParams) {
-                       return tradeshowService.retrieve($stateParams.id);
+                    promisedData: function promisedData(tradeshowService, CacheFactory) {
+                        if (!CacheFactory.get('formCache')) {
+                            new CacheFactory('formCache', {
+                              maxAge: 60 * 60 * 1000,
+                              deleteOnExpire: 'aggressive',
+                              storageMode: 'localStorage'
+                            });
+                        }
+                       var cache = CacheFactory.get('formCache');
+                       return tradeshowService.retrieve(cache.get('currentPage'), cache.get('perPage'), cache.get('orderBy'), cache.get('orderByReverse'), cache.get('query'));
+                    },
+                    promisedFormCache: function promisedFormCache(CacheFactory) {
+                       return CacheFactory.get('formCache');
                     }
                 }
             }).
@@ -58,8 +69,21 @@
                     promisedData: function promisedData(Tradeshow, $stateParams) {
                        return Tradeshow.get({id:$stateParams.id}).$promise;
                     },
-                    promisedLeadData: function promisedLeadData(leadService, $stateParams) {
-                       return leadService.retrieve($stateParams.id);
+                    promisedLeadData: function promisedLeadData(leadService, $stateParams, CacheFactory) {
+                        var cacheKey = 'tradeshow' + $stateParams.id + 'LeadsForm';
+                        if (!CacheFactory.get(cacheKey)) {
+                            new CacheFactory(cacheKey, {
+                              maxAge: 60 * 60 * 1000,
+                              deleteOnExpire: 'aggressive',
+                              storageMode: 'localStorage'
+                            });
+                        }
+                        var cache = CacheFactory.get(cacheKey);
+                        return leadService.retrieve($stateParams.id, cache.get('currentPage'), cache.get('perPage'), cache.get('orderBy'), cache.get('orderByReverse'), cache.get('query'));
+                    },
+                    promisedFormCache: function promisedFormCache(CacheFactory, $stateParams) {
+                        var cacheKey = 'tradeshow' + $stateParams.id + 'LeadsForm';
+                        return CacheFactory.get(cacheKey);
                     }
                 }
             }).

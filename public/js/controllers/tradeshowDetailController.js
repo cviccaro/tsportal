@@ -14,7 +14,7 @@
 		.controller('TradeshowDetailController', TradeshowDetailController);
 
 	function TradeshowDetailController($scope, $q, $http, CacheFactory, $state, ngDialog, loginService,
-		busyService, messageService, Tradeshow, leadService, promisedData, promisedLeadData)
+		busyService, messageService, Tradeshow, leadService, promisedData, promisedLeadData, promisedFormCache)
 	{
 		var vm = this;
 
@@ -27,6 +27,7 @@
 		vm.updatePagination = updatePagination;
 
 		vm.currentPage = promisedLeadData.data.current_page;
+		vm.formCache = promisedFormCache;
 		vm.isNew = false;
 		vm.lastFetchedPage = 1;
 		vm.leads = promisedLeadData.data.data;
@@ -43,24 +44,14 @@
 		//////////
 
 		function activate() {
-			if (!CacheFactory.get('leadFormCache')) {
-				new CacheFactory('leadFormCache', {
-				  maxAge: 60 * 60 * 1000,
-				  deleteOnExpire: 'aggressive',
-				  storageMode: 'localStorage'
-				});
-			}
-
-			var formCache = CacheFactory.get('leadFormCache');
-
 			// Watch scope variables to update cache
 			angular.forEach(['currentPage', 'orderBy', 'omg', 'orderByReverse', 'perPage', 'query'], function(key) {
-				if (formCache.get(key)) {
-					vm[key] = formCache.get(key);
+				if (vm.formCache.get(key)) {
+					vm[key] = vm.formCache.get(key);
 				}
 				$scope.$watch('ctrl.' + key, function(newVal, oldVal) {
 					if (typeof newVal !== 'undefined') {
-					    formCache.put(key, newVal);
+					    vm.formCache.put(key, newVal);
 					}
 				});
 			});

@@ -13,7 +13,7 @@
 		.module('tradeshowControllers')
 		.controller('TradeshowListController', TradeshowListController);
 
-	function TradeshowListController($scope, $q, $timeout, CacheFactory, ngDialog, loginService, busyService, messageService, tradeshowService, leadService, promisedData) {
+	function TradeshowListController($scope, $q, $timeout, CacheFactory, ngDialog, loginService, busyService, messageService, tradeshowService, leadService, promisedData, promisedFormCache) {
 		var vm = this;
 
 		vm.deleteTradeshow 	 = deleteTradeshow;
@@ -24,6 +24,7 @@
 		vm.refreshTradeshows = refreshTradeshows;
 
 		vm.currentPage 		= promisedData.data.current_page;
+		vm.formCache		= promisedFormCache;
 		vm.lastFetchedPage  = 1;
 		vm.orderBy 			= "updated_at";
 		vm.orderByReverse 	= "0";
@@ -31,30 +32,21 @@
 		vm.query 			= "";
 		vm.totalPages		= promisedData.data.last_page;
 		vm.tradeshows		= promisedData.data.data;
-
+		
 		activate();
 
 		/////////
 
 		function activate() {
-			if (!CacheFactory.get('formCache')) {
-				new CacheFactory('formCache', {
-				  maxAge: 60 * 60 * 1000,
-				  deleteOnExpire: 'aggressive',
-				  storageMode: 'localStorage'
-				});
-			}
-			var formCache = CacheFactory.get('formCache');
-
 			// Watch scope variables to update cache
 			angular.forEach(['currentPage', 'orderBy', 'orderByReverse', 'perPage', 'query'], function(varName) {
-				var val = formCache.get(varName);
+				var val = vm.formCache.get(varName);
 				if (val !== undefined && val !== null) {
 					vm[varName] = val;
 				}
 				$scope.$watch('ctrl.' + varName, function(newVal, oldVal) {
 					if (typeof newVal !== 'undefined') {
-					    formCache.put(varName, newVal);
+					    vm.formCache.put(varName, newVal);
 					}
 				});
 			});
@@ -96,13 +88,7 @@
 					vm.leadTotalPages = response.last_page;
 				})
 				.catch(function(payload) {
-					messageService.addMessage({
-						type: 'danger',
-						dismissible: true,
-						icon: 'exclamation-sign',
-						iconClass: 'icon-medium',
-						message: "Sorry, something went wrong.",
-					});
+					vm.addErrorMessage();
 				});
 		}
 
