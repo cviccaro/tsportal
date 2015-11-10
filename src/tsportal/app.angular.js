@@ -13,7 +13,7 @@
         'frapontillo.bootstrap-switch',
 
         // App
-        'appDirectives',
+        'tsportalDirectives',
         'loginService',
         'busyService',
         'messageService',
@@ -113,5 +113,10 @@
       }
 
       $http.defaults.cache = CacheFactory.get('defaultCache');
+    })
+    .filter('unsafe', function($sce) {
+        return function(val) {
+            return $sce.trustAsHtml(val);
+        };
     });
 })();

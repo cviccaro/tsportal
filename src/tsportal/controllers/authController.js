@@ -7,7 +7,7 @@
 	'use strict';
 
 	angular
-		.module('authControllers')
+		.module('authControllers', [])
 		.controller('AuthController', AuthController);
 
 	function AuthController($rootScope, $scope, $state, loginService, $timeout, CacheFactory) {

@@ -8,7 +8,7 @@
 	'use strict';
 
 	angular
-		.module('leadControllers')
+		.module('leadControllers', [])
 		.controller('LeadController', LeadController);
 
 	function LeadController($scope, $q, $http, $state, $stateParams, ngDialog, Lead, Tradeshow, busyService, messageService, leadData,$timeout, $log) {

@@ -85,7 +85,6 @@
 		}
 
 		function loginCancelled(data,reason) {
-			console.log('loginCancelled')
 			httpBuffer.rejectAll(reason);
 			$rootScope.$broadcast('event:auth-login-cancelled', data);
 			this.logout();
