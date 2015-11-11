@@ -11,6 +11,39 @@
 
 	angular
 		.module('tradeshowControllers')
+		.config(function(slideMenuServiceProvider) {
+			slideMenuServiceProvider.registerMenu('tradeshow', {
+				title: 'Tradeshow {{tradeshow.name}}',
+				items: {
+					edit: {
+						url: 'tradeshows/{{tradeshow.id}}/edit',
+						title: 'Edit'
+					},
+					delete: {
+						click: 'ctrl.deleteTradeshow(tradeshow.id)',
+						title: 'Delete'
+					},
+					report: {
+						click: 'ctrl.downloadReport(tradeshow.id)',
+						title: 'Excel Report'
+					}
+				}
+			});
+
+			slideMenuServiceProvider.registerMenu('lead', {
+				title: 'Lead {{lead.email_address}}',
+				items: {
+					edit: {
+						url: 'leads/{{lead.id}}/edit',
+						title: 'Edit'
+					}
+				}
+				// delete: {
+				// 	click: 'ctrl.deleteTradeshow(tradeshow.id)',
+				// 	title: 'Delete'
+				// },
+			});
+		})
 		.controller('TradeshowListController', TradeshowListController);
 
 	function TradeshowListController($scope, $q, $timeout, CacheFactory, ngDialog, loginService, busyService, messageService, tradeshowService, leadService, promisedData, promisedFormCache) {
@@ -32,7 +65,7 @@
 		vm.query 			= "";
 		vm.totalPages		= promisedData.data.last_page;
 		vm.tradeshows		= promisedData.data.data;
-		
+
 		activate();
 
 		/////////
@@ -50,6 +83,7 @@
 					}
 				});
 			});
+			
 		}
 
 		/**
@@ -71,25 +105,28 @@
 		 * Use leadService to fetch leads for the tradeshow
 		 */
 		 function getLeads(pageNumber, tradeshow) {
+		 	busyService.forceHide();
 			if (tradeshow === undefined) {
 				tradeshow = vm.selectedTradeshow;
 			}
 			else {
 				vm.selectedTradeshow = tradeshow;
 			}
+			$timeout(function() {
+				leadService
+					.retrieve(tradeshow.id, pageNumber, 50, 'id', 0)
+					.then(function(payload) {
+						busyService.forceHide(true);
+						var response = payload.data;
 
-			leadService
-				.retrieve(tradeshow.id, pageNumber, 50, 'id', 0)
-				.then(function(payload) {
-					var response = payload.data;
-
-					vm.leads = response.data;
-					vm.leadCurrentPage = response.current_page;
-					vm.leadTotalPages = response.last_page;
-				})
-				.catch(function(payload) {
-					vm.addErrorMessage();
-				});
+						vm.leads = response.data;
+						vm.leadCurrentPage = response.current_page;
+						vm.leadTotalPages = response.last_page;
+					})
+					.catch(function(payload) {
+						vm.addErrorMessage();
+					});
+			});
 		}
 
 		/**

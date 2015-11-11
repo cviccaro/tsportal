@@ -11,10 +11,11 @@
 		.factory('busyService', busyService);
 
 	function busyService($rootScope, $timeout) {
-		var message, timer, amIBusy = false;
+		var message, timer, amIBusy = false, hiddenByForce = false;
 
 		var service = {
 			defaultMessage: 'Working on it',
+			forceHide: forceHide,
 			getMessage: getMessage,
 			hide: hide,
 			isBusy: isBusy,
@@ -34,6 +35,10 @@
 			$rootScope.workingMessage = service.defaultMessage;
 		}
 
+		function forceHide(reset) {
+			hiddenByForce = reset ? false : true;
+		}
+
 		function getMessage(msg) {
 			return message;
 		}
@@ -43,7 +48,7 @@
 		}
 
 		function isBusy() {
-			return amIBusy;
+			return amIBusy && !hiddenByForce;
 		}
 
 		function isVisible() {

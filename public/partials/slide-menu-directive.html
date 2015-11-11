@@ -1,5 +1,6 @@
-<div class="slide-menu menu-{{alignment}}">
-	<button type="button" class="close" ng-click="slideMenu.hideMenu()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+<div class="slide-menu menu-{{alignment}}" ng-class="{'menu-bottom': window.outerWidth <= 768, 'menu-right': window.outerWidth > 768}">
+	<button type="button" class="close" ng-click="closeMenu()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<h3>{{menuTitle}}</h3>
 	<div class="slide-menu-content" ng-transclude>
 	</div>
 </div>

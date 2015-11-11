@@ -1,3 +1,4 @@
+<slide-menu></slide-menu>
 <div class="page-header">
     <h1>Tradeshows</h1>
 </div>
@@ -45,27 +46,27 @@
                     <th>NAME</th>
                     <th class="hidden-xs hidden-sm">LOCATION</th>
                     <th>ACTIVE</th>
-                    <th class="hidden-xs hidden-sm">UPDATED</th>
-                    <th class="text-right">ACTIONS</th>
+                    <th class="">UPDATED</th>
+                    <!-- <th class="hidden-xs hidden-sm text-right">ACTIONS</th> -->
                 </tr>
             </thead>
 
             <tbody>
-                <tr clickable ng-repeat="tradeshow in ctrl.tradeshows" ng-click="ctrl.getLeads(1, tradeshow)" data-id="{{tradeshow.id}}">
+                <tr clickable ng-repeat="tradeshow in ctrl.tradeshows" ng-click="ctrl.getLeads(1, tradeshow); openMenu('tradeshow', tradeshow)">
                     <td class="trimmed">{{tradeshow.name}}</td>
                     <td class="hidden-xs hidden-sm">{{tradeshow.location}}</td>
                     <td>
                         <span ng-show="{{tradeshow.active}}" class="green">Active</span>
                         <span ng-hide="{{tradeshow.active}}" class="red">Inactive</span>
                     </td>
-                    <td class="hidden-xs hidden-sm"><timeago time="tradeshow.updated_at"></timeago></td>
-                    <td class="col-md-4 text-right">
+                    <td class=""><timeago time="tradeshow.updated_at"></timeago></td>
+     <!--                <td class="hidden-xs hidden-sm col-md-4 text-right">
                         <a class="btn btn-warning" href="#/tradeshows/{{tradeshow.id}}/edit" ng-click="$event.stopPropagation()">Edit</a>
                         <a class="btn btn-danger" href="" ng-click="$event.stopPropagation(); ctrl.deleteTradeshow(tradeshow.id)">Delete</a>
                         &nbsp;&nbsp;&nbsp;
                         <a class="btn btn-primary" ng-click="$event.stopPropagation(); ctrl.downloadReport(tradeshow.id)" ng-show="tradeshow.lead_count > 0">Excel Report</a>
                         <a class="btn btn-primary btn-disabled disabled" ng-show="tradeshow.lead_count == 0" style="visibility: hidden">Excel Report</a>
-                    </td>
+                    </td> -->
                 </tr>
             </tbody>
         </table>
@@ -85,21 +86,21 @@
                 <thead>
                     <th>FIRST NAME</th>
                     <th>LAST NAME</th>
-                    <th class="hidden-xs">EMAIL</th>
+                    <th>EMAIL</th>
                     <th class="hidden-xs hidden-sm">PHONE</th>
                     <th class="hidden-xs hidden-sm">CREATED</th>
-                    <th>ACTIONS</th>
+<!--                     <th>ACTIONS</th> -->
                 </thead>
                 <tbody>
-                    <tr ng-show="ctrl.leads.length" ng-repeat="lead in ctrl.leads">
+                    <tr ng-show="ctrl.leads.length" ng-repeat="lead in ctrl.leads" clickable ng-click="openMenu('lead', lead)">
                         <td>{{lead.first_name}}</td>
                         <td>{{lead.last_name}}</td>
-                        <td class="hidden-xs">{{lead.email_address}}</td>
+                        <td>{{lead.email_address}}</td>
                         <td class="hidden-xs hidden-sm">{{lead.phone_number}}</td>
                         <td class="hidden-xs hidden-sm"><timeago time="lead.created_at"></timeago></td>
-                        <td>
+<!--                         <td>
                             <a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
-                        </td>
+                        </td> -->
                     </tr>
                     <tr ng-show="!ctrl.leads.length">
                         <td colspan="6">No leads available.</td>

@@ -17,6 +17,7 @@
         'loginService',
         'busyService',
         'messageService',
+        'slideMenuService',
         'authInterceptor',
         'authControllers',
         'tradeshowControllers',
