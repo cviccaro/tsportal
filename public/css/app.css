@@ -373,22 +373,27 @@ table > tbody > tr.clickable.active > td {
   transition: all 0.15s linear;
 }
 
-/* line 333, ../../resources/assets/sass/app.scss */
+/* line 332, ../../resources/assets/sass/app.scss */
+.help {
+  margin-bottom: 2em;
+}
+
+/* line 335, ../../resources/assets/sass/app.scss */
 .glyphicon {
   margin-right: 0.5em;
 }
 
-/* line 337, ../../resources/assets/sass/app.scss */
+/* line 339, ../../resources/assets/sass/app.scss */
 .glyphicon-triangle-left:before {
   content: "\e251";
 }
 
-/* line 339, ../../resources/assets/sass/app.scss */
+/* line 341, ../../resources/assets/sass/app.scss */
 .help-block {
   display: none;
 }
 
-/* line 343, ../../resources/assets/sass/app.scss */
+/* line 345, ../../resources/assets/sass/app.scss */
 .has-error .help-block {
   display: block;
   -moz-transition: all 0.15s linear;
@@ -398,14 +403,14 @@ table > tbody > tr.clickable.active > td {
 }
 
 @media (max-width: 768px) {
-  /* line 352, ../../resources/assets/sass/app.scss */
+  /* line 354, ../../resources/assets/sass/app.scss */
   .toolbar-item {
     margin-top: 5px;
     margin-bottom: 5px;
     clear: both;
   }
 
-  /* line 357, ../../resources/assets/sass/app.scss */
+  /* line 359, ../../resources/assets/sass/app.scss */
   .right {
     float: left;
     margin-left: 0;
@@ -413,18 +418,18 @@ table > tbody > tr.clickable.active > td {
     margin-top: 0.5em;
   }
 
-  /* line 363, ../../resources/assets/sass/app.scss */
+  /* line 365, ../../resources/assets/sass/app.scss */
   h1 small,
   h2 small {
     display: block;
   }
 
-  /* line 367, ../../resources/assets/sass/app.scss */
+  /* line 369, ../../resources/assets/sass/app.scss */
   h2 small.inline {
     display: inline;
   }
 
-  /* line 371, ../../resources/assets/sass/app.scss */
+  /* line 373, ../../resources/assets/sass/app.scss */
   .trimmed {
     max-width: 150px;
     text-overflow: ellipsis;
@@ -432,13 +437,13 @@ table > tbody > tr.clickable.active > td {
     overflow-x: hidden;
   }
 
-  /* line 377, ../../resources/assets/sass/app.scss */
+  /* line 379, ../../resources/assets/sass/app.scss */
   tr td .btn {
     font-size: 10px;
     padding: 2px 4px;
   }
 }
-/* line 385, ../../resources/assets/sass/app.scss */
+/* line 387, ../../resources/assets/sass/app.scss */
 .slide-menu {
   overflow: hidden;
   *zoom: 1;
@@ -451,14 +456,14 @@ table > tbody > tr.clickable.active > td {
   -webkit-transition: all, 0.5s, ease-out;
   transition: all, 0.5s, ease-out;
 }
-/* line 393, ../../resources/assets/sass/app.scss */
+/* line 395, ../../resources/assets/sass/app.scss */
 .slide-menu.menu-right, .slide-menu.menu-left {
   height: 100%;
   width: 225px;
   top: 0;
   bottom: 0;
 }
-/* line 400, ../../resources/assets/sass/app.scss */
+/* line 402, ../../resources/assets/sass/app.scss */
 .slide-menu.menu-right {
   right: -100%;
   border-left: 1px solid #777777;
@@ -466,17 +471,17 @@ table > tbody > tr.clickable.active > td {
   -webkit-box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.8);
   box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.8);
 }
-/* line 401, ../../resources/assets/sass/app.scss */
+/* line 403, ../../resources/assets/sass/app.scss */
 .slide-menu.menu-right.visible {
   right: 0;
 }
-/* line 409, ../../resources/assets/sass/app.scss */
+/* line 411, ../../resources/assets/sass/app.scss */
 .slide-menu.menu-right .close {
   position: absolute;
   top: 10px;
   left: 10px;
 }
-/* line 415, ../../resources/assets/sass/app.scss */
+/* line 417, ../../resources/assets/sass/app.scss */
 .slide-menu.menu-left {
   left: -100%;
   border-right: 1px solid #777777;
@@ -484,29 +489,29 @@ table > tbody > tr.clickable.active > td {
   -webkit-box-shadow: -1px 0px 2px rgba(0, 0, 0, 0.8);
   box-shadow: -1px 0px 2px rgba(0, 0, 0, 0.8);
 }
-/* line 416, ../../resources/assets/sass/app.scss */
+/* line 418, ../../resources/assets/sass/app.scss */
 .slide-menu.menu-left.visible {
   left: 0;
 }
-/* line 424, ../../resources/assets/sass/app.scss */
+/* line 426, ../../resources/assets/sass/app.scss */
 .slide-menu.menu-left .close {
   position: absolute;
   top: 10px;
   right: 10px;
 }
-/* line 430, ../../resources/assets/sass/app.scss */
+/* line 432, ../../resources/assets/sass/app.scss */
 .slide-menu.menu-top, .slide-menu.menu-bottom {
   width: 100%;
   left: 0;
   right: 0;
 }
-/* line 436, ../../resources/assets/sass/app.scss */
+/* line 438, ../../resources/assets/sass/app.scss */
 .slide-menu.menu-top .close, .slide-menu.menu-bottom .close {
   position: absolute;
   top: 10px;
   left: 10px;
 }
-/* line 442, ../../resources/assets/sass/app.scss */
+/* line 444, ../../resources/assets/sass/app.scss */
 .slide-menu.menu-top {
   top: -100%;
   border-bottom: 1px solid #777777;
@@ -514,11 +519,11 @@ table > tbody > tr.clickable.active > td {
   -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
 }
-/* line 443, ../../resources/assets/sass/app.scss */
+/* line 445, ../../resources/assets/sass/app.scss */
 .slide-menu.menu-top.visible {
   top: 0;
 }
-/* line 451, ../../resources/assets/sass/app.scss */
+/* line 453, ../../resources/assets/sass/app.scss */
 .slide-menu.menu-bottom {
   bottom: -100%;
   border-top: 1px solid #777777;
@@ -526,17 +531,17 @@ table > tbody > tr.clickable.active > td {
   -webkit-box-shadow: 0px -1px 2px rgba(0, 0, 0, 0.8);
   box-shadow: 0px -1px 2px rgba(0, 0, 0, 0.8);
 }
-/* line 452, ../../resources/assets/sass/app.scss */
+/* line 454, ../../resources/assets/sass/app.scss */
 .slide-menu.menu-bottom.visible {
   bottom: 0;
 }
-/* line 462, ../../resources/assets/sass/app.scss */
+/* line 464, ../../resources/assets/sass/app.scss */
 .slide-menu .slide-menu-content ul {
   list-style: none;
-  margin: 2.5em 0 0 0;
+  margin: 0;
   padding: 0;
 }
-/* line 466, ../../resources/assets/sass/app.scss */
+/* line 468, ../../resources/assets/sass/app.scss */
 .slide-menu .slide-menu-content ul li {
   float: left;
   clear: both;
@@ -546,7 +551,7 @@ table > tbody > tr.clickable.active > td {
   -webkit-transition: background-color 0.15s ease-out;
   transition: background-color 0.15s ease-out;
 }
-/* line 471, ../../resources/assets/sass/app.scss */
+/* line 473, ../../resources/assets/sass/app.scss */
 .slide-menu .slide-menu-content ul li a {
   -moz-transition: color 0.15s ease-out;
   -o-transition: color 0.15s ease-out;
@@ -560,20 +565,31 @@ table > tbody > tr.clickable.active > td {
   height: 100%;
   border-bottom: 1px solid #7a7a7a;
 }
-/* line 481, ../../resources/assets/sass/app.scss */
+/* line 483, ../../resources/assets/sass/app.scss */
 .slide-menu .slide-menu-content ul li:last-child a {
   border-bottom: none;
 }
-/* line 484, ../../resources/assets/sass/app.scss */
+/* line 486, ../../resources/assets/sass/app.scss */
 .slide-menu .slide-menu-content ul li:hover {
   background-color: #444;
 }
-/* line 486, ../../resources/assets/sass/app.scss */
+/* line 488, ../../resources/assets/sass/app.scss */
 .slide-menu .slide-menu-content ul li:hover a {
   color: rgba(144, 195, 212, 0.75);
 }
+/* line 495, ../../resources/assets/sass/app.scss */
+.slide-menu .slide-menu-title {
+  padding: 0em 0em 1em 2.5em;
+  border-bottom: 1px solid #444;
+  margin-bottom: 0;
+}
 
-/* line 496, ../../resources/assets/sass/app.scss */
+/* line 503, ../../resources/assets/sass/app.scss */
 .relative {
   position: relative;
+}
+
+/* line 507, ../../resources/assets/sass/app.scss */
+.chosen-container {
+  width: auto !important;
 }

@@ -10,10 +10,10 @@
 	'use strict';
 
 	angular
-		.module('tradeshowControllers', [])
+		.module('tradeshowCreateController', [])
 		.controller('TradeshowCreateController', TradeshowCreateController);
 
-	function TradeshowCreateController($scope, $timeout, $state, $stateParams, ngDialog, Tradeshow, loginService, busyService, messageService) {
+	function TradeshowCreateController($scope, $timeout, $state, ngDialog, Tradeshow, loginService, busyService, messageService) {
 		var vm = this;
 
 		vm.goBack = goBack;

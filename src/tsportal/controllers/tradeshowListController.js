@@ -10,49 +10,18 @@
 	'use strict';
 
 	angular
-		.module('tradeshowControllers')
-		.config(function(slideMenuServiceProvider) {
-			slideMenuServiceProvider.registerMenu('tradeshow', {
-				title: 'Tradeshow {{tradeshow.name}}',
-				items: {
-					edit: {
-						url: 'tradeshows/{{tradeshow.id}}/edit',
-						title: 'Edit'
-					},
-					delete: {
-						click: 'ctrl.deleteTradeshow(tradeshow.id)',
-						title: 'Delete'
-					},
-					report: {
-						click: 'ctrl.downloadReport(tradeshow.id)',
-						title: 'Excel Report'
-					}
-				}
-			});
-
-			slideMenuServiceProvider.registerMenu('lead', {
-				title: 'Lead {{lead.email_address}}',
-				items: {
-					edit: {
-						url: 'leads/{{lead.id}}/edit',
-						title: 'Edit'
-					}
-				}
-				// delete: {
-				// 	click: 'ctrl.deleteTradeshow(tradeshow.id)',
-				// 	title: 'Delete'
-				// },
-			});
-		})
+		.module('tradeshowListController', [])
 		.controller('TradeshowListController', TradeshowListController);
 
 	function TradeshowListController($scope, $q, $timeout, CacheFactory, ngDialog, loginService, busyService, messageService, tradeshowService, leadService, promisedData, promisedFormCache) {
 		var vm = this;
 
 		vm.deleteTradeshow 	 = deleteTradeshow;
+		vm.deleteLead		 = deleteLead;
 		vm.downloadReport 	 = downloadReport;
 		vm.getLeads 		 = getLeads;
 		vm.getTradeshows 	 = getTradeshows;
+		vm.pluckLead		 = pluckLead;
 		vm.pluckTradeshow 	 = pluckTradeshow;
 		vm.refreshTradeshows = refreshTradeshows;
 
@@ -60,7 +29,7 @@
 		vm.formCache		= promisedFormCache;
 		vm.lastFetchedPage  = 1;
 		vm.orderBy 			= "updated_at";
-		vm.orderByReverse 	= "0";
+		vm.orderByReverse 	= "1";
 		vm.perPage 			= "15";
 		vm.query 			= "";
 		vm.totalPages		= promisedData.data.last_page;
@@ -84,6 +53,13 @@
 				});
 			});
 			
+		}
+
+		/**
+		 * Delete a lead
+		 */
+		function deleteLead(lead_id) {
+			leadService.deleteLead( vm.pluckLead(lead_id) );
 		}
 
 		/**
@@ -163,6 +139,16 @@
 					deferred.reject(payload);
 				});
 			return deferred.promise;
+		}
+
+		/**
+		 * Find a lead in the local array in scope by id
+		 */
+		function pluckLead(lead_id) {
+			for (var n = 0, lead; (lead = vm.leads[n]); n++) {
+				if (lead.id == lead_id) { return lead; }
+			}
+			return false;
 		}
 
 		/**

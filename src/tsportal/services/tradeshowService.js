@@ -70,10 +70,10 @@
 				pageNumber = '1';
 			}
 			if (orderBy===undefined) {
-				orderBy = 'id';
+				orderBy = 'updated_at';
 			}
 			if (orderByReverse===undefined) {
-				orderByReverse = 0;
+				orderByReverse = 1;
 			}
 			if (perPage===undefined) {
 				perPage = 15;

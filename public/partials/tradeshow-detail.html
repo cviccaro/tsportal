@@ -1,3 +1,4 @@
+<slide-menu></slide-menu>
 <div class="page-header clearfix">
     <h1>{{ctrl.titlePrefix}} Tradeshow</h1>
     <h2 ng-show="!ctrl.isNew"><small>{{::ctrl.tradeshow.name}}</small></h2>
@@ -31,22 +32,23 @@
 <div class="lead-container" ng-show="!ctrl.isNew">
     <div class="page-header">
         <h2>Leads <small class="inline" ng-show="ctrl.leads.length">({{ctrl.leads.length < ctrl.totalPages * ctrl.perPage ? ctrl.leads.length : ctrl.totalPages * ctrl.perPages}})</small></h2>
+        <h4><small>Click a Lead below to display a menu which will allow you to <em>edit</em> or <em>delete</em> it.</small></h4>
     </div>
     <div class="toolbar filters clearfix">
         <div class="toolbar-item col-md-4 col-xs-12 col-sm-12">
             <span>Sort</span>
-            <select ng-model="ctrl.orderBy" ng-change="ctrl.refreshLeads()">
+            <select chosen disable-search="true" ng-model="ctrl.orderBy" ng-change="ctrl.refreshLeads()">
               <option value="updated_at">Updated</option>
               <option value="last_name">Surname</option>
             </select>
-            <select ng-model="ctrl.orderByReverse" ng-change="ctrl.refreshLeads()">
+            <select chosen disable-search="true" ng-model="ctrl.orderByReverse" ng-change="ctrl.refreshLeads()">
               <option value="0">Ascending</option>
               <option value="1">Descending</option>
             </select>
         </div>
         <div class="toolbar-item right col-md-4 col-xs-12 col-sm-12">
             <span>Items Per Page</span>
-            <select ng-model="ctrl.perPage" ng-change="ctrl.refreshLeads()">
+            <select chosen="disableSearch" disable-search="true" ng-model="ctrl.perPage" ng-change="ctrl.refreshLeads()">
                 <option value="15">15</option>
                 <option value="30">30</option>
                 <option value="50">50</option>
@@ -64,22 +66,22 @@
                 <thead>
                     <th>First Name</th>
                     <th>Last Name</th>
-                    <th class="hidden-xs">Email</th>
+                    <th>Email</th>
                     <th class="hidden-xs hidden-sm">Phone</th>
                     <th class="hidden-xs hidden-sm">Created on</th>
-                    <th>Actions</th>
+<!--                     <th>Actions</th> -->
                 </thead>
                 <tbody>
-                    <tr class="lead-row" data-id="{{lead.id}}" ng-show="ctrl.leads.length" ng-repeat="lead in ctrl.leads">
+                    <tr clickable ng-click="openMenu('lead', {lead:lead})" class="lead-row" data-id="{{lead.id}}" ng-show="ctrl.leads.length" ng-repeat="lead in ctrl.leads">
                         <td>{{lead.first_name}}</td>
                         <td>{{lead.last_name}}</td>
-                        <td class="hidden-xs">{{lead.email_address}}</td>
+                        <td>{{lead.email_address}}</td>
                         <td class="hidden-xs hidden-sm">{{lead.phone_number}}</td>
                         <td class="hidden-xs hidden-sm"><timeago time="lead.created_at"></timeago></td>
-                        <td>
+<!--                         <td>
                         	<a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
                             <a class="btn btn-danger" href="" ng-click="ctrl.deleteLead(lead.id)">Delete</a>
-                        </td>
+                        </td> -->
                     </tr>
                     <tr ng-show="!ctrl.leads.length">
                         <td colspan="6">No leads available.</td>

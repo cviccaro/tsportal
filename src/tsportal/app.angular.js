@@ -11,6 +11,7 @@
         'ngAnimate',
         'ngDialog',
         'frapontillo.bootstrap-switch',
+        'angular-chosen',
 
         // App
         'tsportalDirectives',
@@ -20,12 +21,46 @@
         'slideMenuService',
         'authInterceptor',
         'authControllers',
-        'tradeshowControllers',
+        'tradeshowCreateController',
+        'tradeshowDetailController',
+        'tradeshowListController',
         'tradeshowServices',
         'leadControllers',
         'leadServices'
     ])
-    .config(function($stateProvider, $urlRouterProvider, $httpProvider) {
+    .config(function($stateProvider, $urlRouterProvider, $httpProvider, slideMenuServiceProvider) {
+        slideMenuServiceProvider.registerMenu('tradeshow', {
+            title: 'Tradeshow<br /><small>{{tradeshow.name}}</small>',
+            items: {
+                edit: {
+                    url: 'tradeshows/{{tradeshow.id}}/edit',
+                    title: 'Edit'
+                },
+                delete: {
+                    click: 'ctrl.deleteTradeshow(tradeshow.id)',
+                    title: 'Delete'
+                },
+                report: {
+                    click: 'ctrl.downloadReport(tradeshow.id)',
+                    title: 'Excel Report',
+                    show: 'tradeshow.lead_count > 0'
+                }
+            }
+        });
+        slideMenuServiceProvider.registerMenu('lead', {
+            title: 'Lead<br /><small>{{lead.first_name}} {{lead.last_name}}</small><br /><small>{{lead.email_address}}</small>',
+            items: {
+                edit: {
+                    url: 'leads/{{lead.id}}/edit',
+                    title: 'Edit'
+                },
+                delete: {
+                    click: 'ctrl.deleteLead(lead.id)',
+                    title: 'Delete'
+                }
+            },
+        });
+
         $httpProvider.useLegacyPromiseExtensions = false;
 
         $urlRouterProvider.otherwise('/auth');

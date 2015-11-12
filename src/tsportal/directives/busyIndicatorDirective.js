@@ -29,7 +29,6 @@
 
             function activate() {
                 $rootScope.$on('$stateChangeStart', function() {
-                    console.log(scope);
                     busyService.resetMessage();
                     busyService.show();
                 });

@@ -93,18 +93,23 @@ class LeadController extends Controller {
 		$paginate = $request->input('perPage', 15);
 
 		if ($request->has('filter') && !empty($request->input('filter'))) {
+			$filter = $request->input('filter');
 			$columns = Schema::getColumnListing('leads');
 			$collection = Lead::orderBy($orderBy, $direction);
-			foreach($columns as $column) {
-				if ($column != 'tradeshow_id') {
-					$collection = $collection->orWhere($column, 'LIKE', '%' . $request->input('filter') . '%');
-				}
-			}
+			$collection
+				->where('tradeshow_id', $tradeshow_id)
+				->where(function($query) use ($columns, $filter) {
+					foreach($columns as $column) {
+						if ($column != 'tradeshow_id') {
+							$query->orWhere($column, 'LIKE', '%' . $filter . '%');
+						}
+					}
+				});
 			$paginated = $collection->where('tradeshow_id', $tradeshow_id)->paginate($paginate);
 		}
 		else {
 			// Get paginated collection
-			$paginated = Lead::where('tradeshow_id', (int)$tradeshow_id)->orderBy($orderBy, $direction)->paginate($paginate);
+			$paginated = Lead::where('tradeshow_id', $tradeshow_id)->orderBy($orderBy, $direction)->paginate($paginate);
 		}
 		return $paginated;
 	}
