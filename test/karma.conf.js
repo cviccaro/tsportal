@@ -15,21 +15,33 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'public/bower_components/angular/angular.js',
-      'public/bower_components/angular-resource/angular-resource.js',
-      'public/bower_components/angular-ui-router/release/angular-ui-router.js',
-      'public/bower_components/angular-mocks/angular-mocks.js',
-      'public/bower_components/angular-jwt/dist/angular-jwt.js',
-      'public/bower_components/angular-spinkit/build/angular-spinkit.js',
-      'public/bower_components/satellizer/satellizer.min.js',
-      'public/bower_components/angular-animate/angular-animate.js',
-      'public/bower_components/ng-dialog/js/ngDialog.min.js',
-      'public/bower_components/jquery/dist/jquery.min.js',
-      'public/bower_components/angular-http-auth/src/http-auth-interceptor.js',
-      'public/bower_components/angular-cache/dist/angular-cache.min.js',
-      'public/js/controllers.js',
-      'public/js/**/*.js',
-      'test/unit/**/*.js'
+      "src/bower_components/jquery/dist/jquery.min.js",
+      "src/bower_components/jquery-migrate/jquery-migrate.min.js",
+      "src/bower_components/chosen/chosen.jquery.min.js",
+      "src/bower_components/angular/angular.min.js",
+      'src/bower_components/angular-mocks/angular-mocks.js',
+      "src/bower_components/bootstrap/dist/js/bootstrap.min.js",
+      "src/bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js",
+      "src/bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js",
+      "src/bower_components/angular-ui-router/release/angular-ui-router.min.js",
+      "src/bower_components/angular-jwt/dist/angular-jwt.min.js",
+      "src/bower_components/angular-cache/dist/angular-cache.min.js",
+      "src/bower_components/angular-resource/angular-resource.min.js",
+      "src/bower_components/angular-resource/angular-resource.min.js",
+      "src/bower_components/angular-animate/angular-animate.min.js",
+      "src/bower_components/ng-dialog/js/ngDialog.min.js",
+      "src/bower_components/angular-spinkit/build/angular-spinkit.min.js",
+      "src/bower_components/angular-chosen/angular-chosen.js",
+      "src/bower_components/moment/min/moment.min.js",
+      'src/tsportal/shared/**/*.module.js', 
+      'src/tsportal/components/**/*.module.js', 
+      'src/tsportal/shared/**/*Directive.js', 
+      'src/tsportal/shared/**/*Interceptor.js', 
+      'src/tsportal/shared/**/*Service.js', 
+      'src/tsportal/shared/**/*Resource.js', 
+      'src/tsportal/components/**/*Controller.js', 
+      'src/tsportal/app.js',
+      'test/unit/*.js'
     ],
 
 
@@ -41,12 +53,13 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'public/js/authController.js': 'coverage',
-      'public/js/leadController.js': 'coverage',
-      'public/js/tradeshowListController.js': 'coverage',
-      'public/js/tradeshowDetailController.js': 'coverage',
-      'public/js/tradeshowCreateController.js': 'coverage',
-      'public/js/services.js': 'coverage'
+      'src/tsportal/shared/**/*.module.js': 'coverage',
+      'src/tsportal/components/**/*.module.js': 'coverage', 
+      'src/tsportal/shared/**/*Directive.js': 'coverage',
+      'src/tsportal/shared/**/*Interceptor.js': 'coverage',
+      'src/tsportal/shared/**/*Service.js': 'coverage',
+      'src/tsportal/shared/**/*Resource.js': 'coverage',
+      'src/tsportal/components/**/*Controller.js': 'coverage'
     },
 
 

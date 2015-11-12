@@ -48,9 +48,10 @@
         </div>
 
     <!-- Application Dependencies -->
+    <script src="/js/app.plugins.js"></script>
 
-<script src="/js/app.plugins.js"></script>
     <!-- Application Components -->
     <script src="/js/app.base.js"></script>
+    
 </body>
 </html>

@@ -4,6 +4,15 @@ var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
 var ngAnnotate = require('gulp-ng-annotate');
 var minifyCss = require('gulp-minify-css');
+var flatten = require('gulp-flatten');
+
+gulp.task('html', function() {
+	gulp.src([
+		"src/tsportal/**/*.html"
+	])
+	.pipe(flatten())
+	.pipe(gulp.dest('public/views'))
+});
 
 gulp.task('css-bower', function() {
 	gulp.src([
@@ -45,17 +54,29 @@ gulp.task('js-bower', function() {
 });
 
 gulp.task('js', function() {
-	gulp.src(['src/tsportal/services/*.js', 'src/tsportal/directives/*.js', 'src/tsportal/interceptors/*.js', 'src/tsportal/controllers/*.js', 'src/tsportal/app.angular.js'])
-		.pipe(sourcemaps.init())
-			.pipe(concat('public/js/app.base.js'))
-			.pipe(ngAnnotate())
-			.pipe(uglify())
-		.pipe(sourcemaps.write())
-		.pipe(gulp.dest('.'))
+	gulp.src([
+		'src/tsportal/shared/**/*.module.js', 
+		'src/tsportal/components/**/*.module.js', 
+		'src/tsportal/shared/**/*Directive.js', 
+		'src/tsportal/shared/**/*Interceptor.js', 
+		'src/tsportal/shared/**/*Service.js', 
+		'src/tsportal/shared/**/*Resource.js', 
+		'src/tsportal/components/**/*Controller.js', 
+		'src/tsportal/app.js'
+	])
+	.pipe(sourcemaps.init())
+		.pipe(concat('public/js/app.base.js'))
+		.pipe(ngAnnotate())
+		.pipe(uglify())
+	.pipe(sourcemaps.write())
+	.pipe(gulp.dest('.'))
 })
 
-gulp.task('watch', ['js', 'js-bower', 'css-bower'], function () {
+gulp.task('watch', ['html', 'js', 'js-bower', 'css-bower'], function () {
   gulp.watch('src/tsportal/**/*.js', ['js']);
+  gulp.watch('src/tsportal/**/*.html', ['html']);
   // gulp.watch('src/bower_components/**/*.js', ['js-bower']);
   // gulp.watch('src/bower_components/**/*.css', ['css-bower']);
-})
+});
+
+gulp.task('build', ['html', 'js', 'js-bower', 'css-bower']);
