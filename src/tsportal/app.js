@@ -12,7 +12,6 @@
         'ngDialog',
         'ngResource',
         'frapontillo.bootstrap-switch',
-        'angular-chosen',
 
         // app/shared
         'tsportal.auth',
@@ -32,33 +31,33 @@
     ])
     .config(function($stateProvider, $urlRouterProvider, $httpProvider, slideMenuServiceProvider) {
         slideMenuServiceProvider.registerMenu('tradeshow', {
-            title: 'Tradeshow<br /><small>{{tradeshow.name}}</small><br /><small>{{tradeshow.lead_count}} leads',
+            title: 'Tradeshow<br><small>{{tradeshow.name}}</small><br><br><span class="badge">{{tradeshow.lead_count}}</span><span>&nbsp;leads</span>',
             items: {
                 edit: {
                     url: 'tradeshows/{{tradeshow.id}}/edit',
-                    title: 'Edit'
+                    title: '<span class="glyphicon glyphicon-edit"></span>&nbsp;&nbsp;&nbsp;Edit'
                 },
                 delete: {
                     click: 'ctrl.deleteTradeshow(tradeshow.id)',
-                    title: 'Delete'
+                    title: '<span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;&nbsp;Delete'
                 },
                 report: {
                     click: 'ctrl.downloadReport(tradeshow.id)',
-                    title: 'Excel Report',
+                    title: '<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;&nbsp;Excel Report',
                     show: 'tradeshow.lead_count > 0'
                 }
             }
         });
         slideMenuServiceProvider.registerMenu('lead', {
-            title: 'Lead<br /><small>{{lead.first_name}} {{lead.last_name}}</small><br /><small>{{lead.email_address}}</small>',
+            title: 'Lead<br><small>{{lead.first_name}} {{lead.last_name}}</small><br><small>{{lead.email_address}}</small>',
             items: {
                 edit: {
                     url: 'leads/{{lead.id}}/edit',
-                    title: 'Edit'
+                    title: '<span class="glyphicon glyphicon-edit"></span>&nbsp;&nbsp;&nbsp;Edit'
                 },
                 delete: {
                     click: 'ctrl.deleteLead(lead.id)',
-                    title: 'Delete'
+                    title: '<span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;&nbsp;Delete'
                 }
             },
         });

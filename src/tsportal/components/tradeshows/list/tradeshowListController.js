@@ -21,6 +21,7 @@
 		vm.downloadReport 	 = downloadReport;
 		vm.getLeads 		 = getLeads;
 		vm.getTradeshows 	 = getTradeshows;
+		vm.isRecent			 = isRecent;
 		vm.pluckLead		 = pluckLead;
 		vm.pluckTradeshow 	 = pluckTradeshow;
 		vm.refreshTradeshows = refreshTradeshows;
@@ -139,6 +140,14 @@
 					deferred.reject(payload);
 				});
 			return deferred.promise;
+		}
+
+		/**
+		 * Calculate if tradeshow was updated recently
+		 */
+		function isRecent(tradeshow) {
+			if (tradeshow.updated_at.substr(0,1) === '-') { return false; }
+			return moment().format('x') - moment(tradeshow.updated_at).format('x') < (60 * 60 * 1000);
 		}
 
 		/**

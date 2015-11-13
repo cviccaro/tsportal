@@ -1,83 +1,90 @@
 <slide-menu></slide-menu>
-<div class="page-header clearfix">
-    <h1>{{ctrl.titlePrefix}} Tradeshow</h1>
-    <h2 ng-show="!ctrl.isNew"><small>{{::ctrl.tradeshow.name}}</small></h2>
+<div class="page-header row">
+    <h1 class="col-md-12">{{ctrl.titlePrefix}} Tradeshow</h1>
+    <h2 class="col-md-12" ng-show="!ctrl.isNew"><small>{{::ctrl.tradeshow.name}}</small></h2>
 </div>
 <messages></messages>
 <div class="row toolbar">
-	<button id="goBack" class="btn btn-primary" ng-click="ctrl.goBack()"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Go Back</button>
-	<button id="save" class="btn btn-success" ng-click="ctrl.save()" ng-disabled="ctrl.tradeshowForm.$invalid || ctrl.tradeshowForm.$pristine"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save</button>
-    <div class="right col-md-4 col-xs-12 col-sm-12" ng-show="!ctrl.isNew">
+    <div class="col-md-4">
+    	<button id="goBack" class="btn btn-primary" ng-click="ctrl.goBack()">
+            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Go Back
+        </button>
+        <button id="save" class="btn btn-success" ng-click="ctrl.save()" ng-disabled="ctrl.tradeshowForm.$invalid || ctrl.tradeshowForm.$pristine">
+            <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save
+        </button>
+    </div>
+    <div class="col-md-offset-5 col-md-3 col-xs-12 col-sm-12 text-right" ng-show="!ctrl.isNew">
         <p>Last updated <timeago time="ctrl.tradeshow.updated_at"></timeago></p>
     </div>
 </div>
 
-<div class="row">
-    <form name="ctrl.tradeshowForm">
-    	<div class="col-md-6 col-xs-10 col-sm-10 form-item required"
-            ng-class="{'has-error': (ctrl.tradeshowForm.name.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.name.$invalid && ctrl.tradeshowForm.name.$error.required}">
-            <label for="name">Name</label><input id="ctrl.tradeshow_name" type="text" name="name" ng-model="ctrl.tradeshow.name" required />
-            <span class="help-block" ng-show="(ctrl.tradeshowForm.name.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.name.$invalid && ctrl.tradeshowForm.name.$error.required">Tradeshow name is required.</span>
-        </div>
-    	<div class="col-md-6 col-xs-10 col-sm-10 form-item required" ng-class="{'has-error': (ctrl.tradeshowForm.location.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.location.$invalid && ctrl.tradeshowForm.location.$error.required}">
-            <label for="location">Location</label><input type="text" name="location" ng-model="ctrl.tradeshow.location" required />
-            <span class="help-block" ng-show="(ctrl.tradeshowForm.location.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.location.$invalid && ctrl.tradeshowForm.location.$error.required">Tradeshow location is required.
-        </div>
-    	<div class="col-md-6 col-xs-10 col-sm-10 form-item omega">
-    		<input bs-switch type="checkbox" switch-label="Active" ng-model="ctrl.tradeshow.active" name="active" ng-true-value="1" ng-false-value="0" />
-    	</div>
-    </form>
-</div>
+<form name="ctrl.tradeshowForm" class="row">
+	<div class="col-md-6 col-xs-10 col-sm-10 form-group required"
+        ng-class="{'has-error': (ctrl.tradeshowForm.name.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.name.$invalid && ctrl.tradeshowForm.name.$error.required}">
+        <label class="control-label" for="name">Name</label>
+        <input class="form-control" type="text" id="ctrl.tradeshow_name" name="name" ng-model="ctrl.tradeshow.name" required />
+        <span class="help-block" ng-show="(ctrl.tradeshowForm.name.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.name.$invalid && ctrl.tradeshowForm.name.$error.required">Tradeshow name is required.</span>
+    </div>
+	<div class="col-md-6 col-xs-10 col-sm-10 form-group required" ng-class="{'has-error': (ctrl.tradeshowForm.location.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.location.$invalid && ctrl.tradeshowForm.location.$error.required}">
+        <label class="control-label" for="location">Location</label>
+        <input type="text" class="form-control" name="location" ng-model="ctrl.tradeshow.location" required />
+        <span class="help-block" ng-show="(ctrl.tradeshowForm.location.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.location.$invalid && ctrl.tradeshowForm.location.$error.required">Tradeshow location is required.
+    </div>
+	<div class="col-md-6 col-xs-10 col-sm-10 form-group omega">
+		<input bs-switch type="checkbox" switch-label="Active" ng-model="ctrl.tradeshow.active" name="active" ng-true-value="1" ng-false-value="0" />
+	</div>
+</form>
 
 <div class="lead-container" ng-show="!ctrl.isNew">
-    <div class="page-header">
-        <h2>Leads <small class="inline" ng-show="ctrl.leads.length">({{ctrl.leads.length < ctrl.totalPages * ctrl.perPage ? ctrl.leads.length : ctrl.totalPages * ctrl.perPages}})</small></h2>
-        <h4><small>Click a Lead below to display a menu which will allow you to <em>edit</em> or <em>delete</em> it.</small></h4>
+    <div class="page-header row">
+        <h2 class="col-md-12">Leads <small class="inline" ng-show="ctrl.leads.length">({{ctrl.leads.length < ctrl.totalPages * ctrl.perPage ? ctrl.leads.length : ctrl.totalPages * ctrl.perPages}})</small></h2>
+        <p class="col-md-12 help text-muted"><small>Click a Lead below to display a menu which will allow you to <em>edit</em> or <em>delete</em> it.</small></p>
     </div>
-    <div class="toolbar filters clearfix">
-        <div class="toolbar-item col-md-4 col-xs-12 col-sm-12">
-            <span>Sort</span>
-            <select chosen disable-search="true" ng-model="ctrl.orderBy" ng-change="ctrl.refreshLeads()">
+    <div class="toolbar filters row">
+        <div class="toolbar-item col-md-4 col-xs-12 col-sm-12 form-inline">
+            <label class="control-label" for="orderBy">Sort</label>
+            <select class="form-control input-sm" name="orderBy" ng-model="ctrl.orderBy" ng-change="ctrl.refreshLeads()">
               <option value="updated_at">Updated</option>
               <option value="last_name">Surname</option>
             </select>
-            <select chosen disable-search="true" ng-model="ctrl.orderByReverse" ng-change="ctrl.refreshLeads()">
+            <label class="control-label sr-only" for="orderByReverse">Sort Order</label>
+            <select class="form-control input-sm" name="orderByReverse" ng-model="ctrl.orderByReverse" ng-change="ctrl.refreshLeads()">
               <option value="0">Ascending</option>
               <option value="1">Descending</option>
             </select>
         </div>
-        <div class="toolbar-item right col-md-4 col-xs-12 col-sm-12">
-            <span>Items Per Page</span>
-            <select chosen="disableSearch" disable-search="true" ng-model="ctrl.perPage" ng-change="ctrl.refreshLeads()">
+        <div class="toolbar-item col-md-offset-3 col-md-3 col-xs-12 col-sm-12 text-right form-inline">
+            <label class="control-label" for="query">Search</label>
+            <input class="form-control input-sm" type="text" name="query" ng-model="ctrl.query" ng-model-options="{debounce: 500}" ng-change="ctrl.refreshLeads()" />
+        </div>
+        <div class="toolbar-item col-md-2 col-xs-12 col-sm-12 text-right form-inline">
+            <label class="control-label" for="perPage">Items Per Page</span>
+            <select class="form-control input-sm" name="perPage" ng-model="ctrl.perPage" ng-change="ctrl.refreshLeads()">
                 <option value="15">15</option>
                 <option value="30">30</option>
                 <option value="50">50</option>
                 <option value="100">100</option>
             </select>
         </div>
-        <div class="toolbar-item right col-md-4 col-xs-12 col-sm-12">
-            <span>Search</span>
-            <input type="text" ng-model="ctrl.query" ng-model-options="{debounce: 500}" ng-change="ctrl.refreshLeads()" />
-        </div>
     </div>
     <div class="row">
-        <div class="table-responsive">
+        <div class="table-responsive col-md-12">
             <table class="table table-striped">
-                <thead>
+                <thead class="text-uppercase">
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Email</th>
                     <th class="hidden-xs hidden-sm">Phone</th>
-                    <th class="hidden-xs hidden-sm">Created on</th>
+                    <th class="hidden-xs hidden-sm">Updated</th>
 <!--                     <th>Actions</th> -->
                 </thead>
                 <tbody>
                     <tr clickable ng-click="openMenu('lead', {lead:lead})" class="lead-row" data-id="{{lead.id}}" ng-show="ctrl.leads.length" ng-repeat="lead in ctrl.leads">
-                        <td>{{lead.first_name}}</td>
+                        <td>{{lead.first_name}}<span class="label label-info" ng-show="ctrl.isRecent(lead)">UPDATED</span></td>
                         <td>{{lead.last_name}}</td>
                         <td>{{lead.email_address}}</td>
                         <td class="hidden-xs hidden-sm">{{lead.phone_number}}</td>
-                        <td class="hidden-xs hidden-sm"><timeago time="lead.created_at"></timeago></td>
+                        <td class="hidden-xs hidden-sm"><timeago time="lead.updated_at"></timeago></td>
 <!--                         <td>
                         	<a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
                             <a class="btn btn-danger" href="" ng-click="ctrl.deleteLead(lead.id)">Delete</a>

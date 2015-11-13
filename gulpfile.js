@@ -19,8 +19,7 @@ gulp.task('css-bower', function() {
 		"src/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css",
 		"src/bower_components/angular-spinkit/build/angular-spinkit.min.css",
 		"src/bower_components/ng-dialog/css/ngDialog.min.css",
-		"src/bower_components/ng-dialog/css/ngDialog-theme-default.min.css",
-		"src/bower_components/chosen-bootstrap/chosen.bootstrap.min.css"
+		"src/bower_components/ng-dialog/css/ngDialog-theme-default.min.css"
 	])
 	.pipe(concat('public/css/app.plugins.css'))
 	.pipe(minifyCss())
@@ -30,7 +29,6 @@ gulp.task('js-bower', function() {
 	gulp.src([
 		"src/bower_components/jquery/dist/jquery.min.js",
 		"src/bower_components/jquery-migrate/jquery-migrate.min.js",
-		"src/bower_components/chosen/chosen.jquery.min.js",
 		"src/bower_components/angular/angular.min.js",
 		"src/bower_components/bootstrap/dist/js/bootstrap.min.js",
 		"src/bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js",
@@ -43,7 +41,6 @@ gulp.task('js-bower', function() {
 		"src/bower_components/angular-animate/angular-animate.min.js",
 		"src/bower_components/ng-dialog/js/ngDialog.min.js",
 		"src/bower_components/angular-spinkit/build/angular-spinkit.min.js",
-		"src/bower_components/angular-chosen/angular-chosen.js",
 		"src/bower_components/moment/min/moment.min.js"
 		])
 		.pipe(sourcemaps.init())

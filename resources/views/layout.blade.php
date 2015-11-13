@@ -3,7 +3,7 @@
 <head>
 <title>Tradeshow Portal</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/yeti/bootstrap.min.css">
@@ -33,12 +33,12 @@
                     <a class="navbar-brand" href="/#/">Tradeshow Portal</a>
                     <div id="navbar" class="collapse navbar-collapse col-md-6 col-sm-12 col-xs-12">
                         <ul class="nav navbar-nav">
-                            <li><a href="/#/tradeshows">Home</a></li>
+                            <li><a href="/#/tradeshows" title="Tradeshows"><span class="glyphicon glyphicon-home"></span>Tradeshows</a></li>
                             <li ng-show="!isLoggedIn">
-                                <a href="/#/auth">Login</a>
+                                <a href="/#/auth" title="Login"><span class="glyphicon glyphicon-log-in"></span>Login</a>
                             </li>
                             <li ng-show="isLoggedIn" class="ng-hide">
-                                <a href="/#/logout">Logout</a>
+                                <a href="/#/logout" title="Logout"><span class="glyphicon glyphicon-log-out"></span>Logout</a>
                             </li>
                         </ul>
                     </div><!--/.nav-collapse -->

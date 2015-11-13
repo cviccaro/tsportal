@@ -42,7 +42,7 @@
 			function deleteLead(lead) {
 				var lead_name = lead.first_name + ' ' + lead.last_name;
 				var dialog_html = '<span class="glyphicon glyphicon-trash red icon-large"></span><span>Are you sure you want to delete Lead <em>' + lead_name +
-								  '</em>?<br /><strong>This cannot be undone.</strong></span><div class="dialog-buttons">' +
+								  '</em>?<br><strong>This cannot be undone.</strong></span><div class="dialog-buttons">' +
 								  '<button class="btn btn-danger" ng-click="confirm()">Yes, delete</button> ' +
 								  '<button class="btn btn-cancel" ng-click="closeThisDialog()">Cancel</button></div>';
 				ngDialog.openConfirm({

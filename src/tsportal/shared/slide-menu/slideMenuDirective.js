@@ -66,7 +66,7 @@
 					}
 					var menu = slideMenuService.menus[menuName];
 					
-					var compiledTitle = $compile('<h5 class="slide-menu-title">' + menu.title + '</h5>')($scope);
+					var compiledTitle = $compile('<h5 class="slide-menu-title bg-primary">' + menu.title + '</h5>')($scope);
 
 					elem.find('h5').replaceWith(compiledTitle);
 

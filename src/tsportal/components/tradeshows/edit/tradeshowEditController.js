@@ -21,6 +21,7 @@
 		vm.deleteLead = deleteLead;
 		vm.getLeads = getLeads;
 		vm.goBack = goBack;
+		vm.isRecent = isRecent;
 		vm.pluckLead = pluckLead;
 		vm.refreshLeads = refreshLeads;
 		vm.save = save;
@@ -105,6 +106,14 @@
 		 */
 		function goBack() {
 			$state.go('tradeshows');
+		}
+
+		/**
+		 * Is lead recently updated?
+		 */
+		function isRecent(lead) {
+			if (lead.updated_at.substr(0,1) === '-') { return false; }
+			return moment().format('x') - moment(lead.updated_at).format('x') < (60 * 60 * 1000);
 		}
 
 		/**

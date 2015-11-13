@@ -1,49 +1,51 @@
 <slide-menu></slide-menu>
-<div class="page-header">
-    <h1>Tradeshows</h1>
+<div class="page-header row">
+    <h1 class="col-md-12">Tradeshows</h1>
 </div>
 <messages></messages>
-<div class="toolbar buttons">
-    <p class="help">
+<div class="toolbar buttons row">
+    <p class="help col-md-12 text-muted">
         Click a row in the tradeshow table to display a menu which allows you to <em>edit</em> it, <em>delete</em> it, or <em>download an Excel report</em>.
-        <br />
+        <br>
         Selecting a tradeshow will load its leads below the tradeshow table.
+        <br><br>
+        <a class="btn btn-success col-md-1" href="#/tradeshows/create"><span class="glyphicon glyphicon-pencil"></span>Create</a>
     </p>
-    <a class="btn btn-success" href="#/tradeshows/create">Create</a>
 </div>
 <div class="toolbar filters clearfix">
-    <form id="tradeshowFilterForm" name="ctrl.tradeshowFilterForm">
-        <div class="toolbar-item col-md-4 col-xs-12 col-sm-12">
+    <form id="tradeshowFilterForm" name="ctrl.tradeshowFilterForm" class="row">
+        <div class="toolbar-item col-md-4 col-xs-12 col-sm-12 form-inline">
             <input type="hidden" name="currentPage" ng-model="ctrl.currentPage" />
-            <span>Sort</span>
-            <select chosen disable-search="true" ng-model="ctrl.orderBy" name="orderBy" ng-change="ctrl.refreshTradeshows()">
+            <label class="control-label" for="orderBy">Sort</label>
+            <select class="form-control input-sm" name="orderBy" ng-model="ctrl.orderBy" ng-change="ctrl.refreshTradeshows()">
               <option value="updated_at">Updated</option>
               <option value="name">Name</option>
               <option value="location">Location</option>
               <option value="active">Active</option>
             </select>
-            <select chosen disable-search="true" ng-model="ctrl.orderByReverse" name="orderByReverse" ng-change="ctrl.refreshTradeshows()">
+            <label class="control-label sr-only" for="orderByReverse">Sort Order</label>
+            <select class="form-control input-sm" name="orderByReverse" ng-model="ctrl.orderByReverse" name="orderByReverse" ng-change="ctrl.refreshTradeshows()">
               <option value="0">Ascending</option>
               <option value="1">Descending</option>
             </select>
         </div>
-        <div class="toolbar-item right col-md-4 col-xs-12 col-sm-12">
-            <span>Items Per Page</span>
-            <select chosen disable-search="true" ng-model="ctrl.perPage" name="perPage" ng-change="ctrl.refreshTradeshows()">
+        <div class="toolbar-item col-md-offset-3 col-md-3 col-xs-12 col-sm-12 text-right form-inline">
+            <label class="control-label" for="query">Search</label>
+            <input class="form-control input-sm" type="text" name="query" ng-model="ctrl.query" ng-model-options="{debounce: 500}" ng-change="ctrl.refreshTradeshows()" />
+        </div>
+        <div class="toolbar-item col-md-2 col-xs-12 col-sm-12 text-right form-inline">
+            <label class="control-label" for="perPage">Items Per Page</span>
+            <select class="form-control input-sm" name="perPage" ng-model="ctrl.perPage" ng-change="ctrl.refreshTradeshows()">
                 <option value="15">15</option>
                 <option value="30">30</option>
                 <option value="50">50</option>
                 <option value="100">100</option>
             </select>
         </div>
-        <div class="toolbar-item right col-md-4 col-xs-12 col-sm-12">
-            <span>Search</span>
-            <input type="text" ng-model="ctrl.query" name="query" ng-model-options="{debounce: 500}" ng-change="ctrl.refreshTradeshows()" />
-        </div>
     </form>
 </div>
 <div class="row">
-    <div class="table-responsive">
+    <div class="table-responsive col-md-12">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -57,8 +59,8 @@
             </thead>
 
             <tbody>
-                <tr clickable ng-repeat="tradeshow in ctrl.tradeshows" ng-click="ctrl.getLeads(1, tradeshow); openMenu('tradeshow', {tradeshow:tradeshow})">
-                    <td class="trimmed">{{tradeshow.name}}</td>
+                <tr clickable ng-repeat="tradeshow in ctrl.tradeshows" ng-click="ctrl.getLeads(1, tradeshow); openMenu('tradeshow', {tradeshow:tradeshow})" ng-class="{danger: tradeshow.active === 0}">
+                    <td class="trimmed">{{tradeshow.name}}<span class="label label-info" ng-show="ctrl.isRecent(tradeshow)">UPDATED</span></td>
                     <td class="hidden-xs hidden-sm">{{tradeshow.location}}</td>
                     <td>
                         <span ng-show="{{tradeshow.active}}" class="green">Active</span>
@@ -88,7 +90,7 @@
 <div ng-show="ctrl.leads != undefined" class="col-md-12">
     <div class="row">
         <div class="page-header col-md-12">
-            <h2>Leads for Tradeshow<br /><small>{{ctrl.selectedTradeshow.name}}</small></h2>
+            <h2>Leads for Tradeshow<br><small>{{ctrl.selectedTradeshow.name}}</small></h2>
         </div>
     </div>
     <div class="row">

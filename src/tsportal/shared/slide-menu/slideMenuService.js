@@ -39,7 +39,7 @@
 				for (var actionName in config.items) {
 					var action 	= config.items[actionName],
 						title 	= action.title || actionName,
-						link 	= '<a title="' + title + '"',
+						link 	= '<a title="' + actionName + '"',
 						url 	= action.url,
 						onClick = action.click,
 						show	= action.show;
@@ -64,7 +64,7 @@
 					html += '<li>' + link + '</li>';
 				}
 
-				return '<ul>' + html + '</ul>';
+				return '<ul class="list-unstyled">' + html + '</ul>';
 			}
 
 		}
