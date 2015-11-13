@@ -1,16 +1,20 @@
 <slide-menu></slide-menu>
+
 <div class="page-header row">
-    <h1 class="col-md-12">{{ctrl.titlePrefix}} Tradeshow</h1>
+    <h1 class="col-md-12">{{ctrl.isNew ? "Creating new" : "Editing"}} Tradeshow</h1>
     <h2 class="col-md-12" ng-show="!ctrl.isNew"><small>{{::ctrl.tradeshow.name}}</small></h2>
 </div>
+
 <messages></messages>
+
+<!-- Toolbar, Buttons -->
 <div class="row toolbar">
-    <div class="col-md-4">
+    <div class="col-md-4 col-xs-12 col-sm-12">
     	<button id="goBack" class="btn btn-primary" ng-click="ctrl.goBack()">
-            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Go Back
+            <span class="glyphicon glyphicon-chevron-left"></span> Go Back
         </button>
         <button id="save" class="btn btn-success" ng-click="ctrl.save()" ng-disabled="ctrl.tradeshowForm.$invalid || ctrl.tradeshowForm.$pristine">
-            <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save
+            <span class="glyphicon glyphicon-save"></span> Save
         </button>
     </div>
     <div class="col-md-offset-5 col-md-3 col-xs-12 col-sm-12 text-right" ng-show="!ctrl.isNew">
@@ -18,28 +22,32 @@
     </div>
 </div>
 
+<!-- Tradeshow Form -->
 <form name="ctrl.tradeshowForm" class="row">
 	<div class="col-md-6 col-xs-10 col-sm-10 form-group required"
         ng-class="{'has-error': (ctrl.tradeshowForm.name.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.name.$invalid && ctrl.tradeshowForm.name.$error.required}">
         <label class="control-label" for="name">Name</label>
         <input class="form-control" type="text" id="ctrl.tradeshow_name" name="name" ng-model="ctrl.tradeshow.name" required />
-        <span class="help-block" ng-show="(ctrl.tradeshowForm.name.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.name.$invalid && ctrl.tradeshowForm.name.$error.required">Tradeshow name is required.</span>
+        <span class="help-block">Tradeshow name is required.</span>
     </div>
 	<div class="col-md-6 col-xs-10 col-sm-10 form-group required" ng-class="{'has-error': (ctrl.tradeshowForm.location.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.location.$invalid && ctrl.tradeshowForm.location.$error.required}">
         <label class="control-label" for="location">Location</label>
         <input type="text" class="form-control" name="location" ng-model="ctrl.tradeshow.location" required />
-        <span class="help-block" ng-show="(ctrl.tradeshowForm.location.$dirty || ctrl.tradeshowForm.$submitted) && ctrl.tradeshowForm.location.$invalid && ctrl.tradeshowForm.location.$error.required">Tradeshow location is required.
+        <span class="help-block">Tradeshow location is required.</span>
     </div>
 	<div class="col-md-6 col-xs-10 col-sm-10 form-group omega">
 		<input bs-switch type="checkbox" switch-label="Active" ng-model="ctrl.tradeshow.active" name="active" ng-true-value="1" ng-false-value="0" />
 	</div>
 </form>
 
+<!-- Leads on Tradeshow -->
 <div class="lead-container" ng-show="!ctrl.isNew">
     <div class="page-header row">
         <h2 class="col-md-12">Leads <small class="inline" ng-show="ctrl.leads.length">({{ctrl.leads.length < ctrl.totalPages * ctrl.perPage ? ctrl.leads.length : ctrl.totalPages * ctrl.perPages}})</small></h2>
         <p class="col-md-12 help text-muted"><small>Click a Lead below to display a menu which will allow you to <em>edit</em> or <em>delete</em> it.</small></p>
     </div>
+
+    <!-- Toolbar, Sorting, Filters -->
     <div class="toolbar filters row">
         <div class="toolbar-item col-md-4 col-xs-12 col-sm-12 form-inline">
             <label class="control-label" for="orderBy">Sort</label>
@@ -67,8 +75,11 @@
             </select>
         </div>
     </div>
+
+    <!-- Lead Table -->
     <div class="row">
         <div class="table-responsive col-md-12">
+
             <table class="table table-striped">
                 <thead class="text-uppercase">
                     <th>First Name</th>
@@ -76,26 +87,17 @@
                     <th>Email</th>
                     <th class="hidden-xs hidden-sm">Phone</th>
                     <th class="hidden-xs hidden-sm">Updated</th>
-<!--                     <th>Actions</th> -->
                 </thead>
                 <tbody>
-                    <tr clickable ng-click="openMenu('lead', {lead:lead})" class="lead-row" data-id="{{lead.id}}" ng-show="ctrl.leads.length" ng-repeat="lead in ctrl.leads">
-                        <td>{{lead.first_name}}<span class="label label-info" ng-show="ctrl.isRecent(lead)">UPDATED</span></td>
-                        <td>{{lead.last_name}}</td>
-                        <td>{{lead.email_address}}</td>
-                        <td class="hidden-xs hidden-sm">{{lead.phone_number}}</td>
-                        <td class="hidden-xs hidden-sm"><timeago time="lead.updated_at"></timeago></td>
-<!--                         <td>
-                        	<a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
-                            <a class="btn btn-danger" href="" ng-click="ctrl.deleteLead(lead.id)">Delete</a>
-                        </td> -->
-                    </tr>
+                    <tr lead model="lead" ng-repeat="lead in ctrl.leads"></tr>
                     <tr ng-show="!ctrl.leads.length">
                         <td colspan="6">No leads available.</td>
                     </tr>
                 </tbody>
             </table>
-            <pager current-page="ctrl.currentPage" total-pages="ctrl.totalPages" tradeshow="ctrl.tradeshow" get-results="ctrl.getLeads(num)"></pager>
+
+            <!-- Pager for Leads Table -->
+            <pager current-page="ctrl.currentPage" total-pages="ctrl.totalPages" tradeshow-model="ctrl.tradeshow" get-results="ctrl.getLeads(num)"></pager>
         </div>
     </div>
 </div>

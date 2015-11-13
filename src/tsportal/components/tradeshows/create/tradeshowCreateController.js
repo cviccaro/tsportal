@@ -20,7 +20,6 @@
 		vm.save = save;
 
 		vm.isNew = true;
-		vm.titlePrefix = "Creating new";
 		vm.tradeshow = {active: 0};
 
 		activate();

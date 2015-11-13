@@ -56,7 +56,21 @@ table>tbody>tr.clickable
 	&:nth-child(2n+1) {
 		clear: left;
 	}
+	.help-block {
+		@include transition(all linear 0.25s);
+		opacity: 0;
+		line-height: 0;
+		margin: 0;
+	}
+	&.has-error {
+		.help-block {
+			opacity: 1;
+			margin-top: 5px;
+			line-height: normal;
+		}
+	}
 }
+
 .toolbar
 {
 	//margin: 0.5em 0 1.5em 0;
@@ -104,31 +118,38 @@ table>tbody>tr.clickable
 		margin: 25px auto;
 	}
 }
+
 .red
 {
 	color: red;
 }
+
 .green
 {
 	color:#5cb85c;
 }
-.ngdialog-content
+
+.ngdialog > .ngdialog-content,
+.ngdialog.ngdialog-theme-default > .ngdialog-content
 {
 	text-align: center;
+	background: #fff;
+	@include border-radius(0px);
+	@include box-shadow(0px 5px 15px rgba(0,0,0,0.5));
+	font-family: 'Open Sans';
 }
+
 .icon-medium {
 	font-size: 18px;
 	margin-right: 0.66em;
 	position: relative;
 	top: 2px;
 }
-.icon-large
+.icon-large,
+.icon-large.glyphicon
 {
 	font-size: 28px;
-	margin: 0;
-	position: relative;
-	top: 8px;
-	margin-right: 1em;
+	margin: 6px 5px 0 0;
 }
 .icon-float
 {
@@ -300,18 +321,6 @@ table>tbody>tr.clickable
 
 .glyphicon-triangle-left:before{content:"\e251"}
 
-.help-block {
-	display: none;
-}
-.has-error {
-	.help-block {
-		display: block;
-		@include transition(all linear 0.15s);
-	}
-}
-
-
-
 @media (max-width: 768px) {
 	.toolbar-item {
 		margin-top: 5px;
@@ -341,6 +350,10 @@ table>tbody>tr.clickable
 	tr td .btn {
 		font-size: 10px;
 		padding: 2px 4px;
+	}
+	.text-right {
+		margin-top: 1em;
+		text-align: left;
 	}
 }
 

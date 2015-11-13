@@ -19,7 +19,6 @@
 		vm.save = save;
 
 		vm.lead = leadData;
-		vm.title = 'Editing Lead';
 
 		activate();
 

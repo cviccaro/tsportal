@@ -33,10 +33,9 @@
 		vm.lastFetchedPage = 1;
 		vm.leads = promisedLeadData.data.data;
 		vm.orderBy = "updated_at";
-		vm.orderByReverse = "0";
+		vm.orderByReverse = "1";
 		vm.perPage = "15";
 		vm.query = "";
-		vm.titlePrefix = "Editing";
 		vm.tradeshow = promisedData;
 		vm.totalPages = promisedLeadData.data.last_page;
 
@@ -120,9 +119,9 @@
 		 * Find a lead in the local array in scope by id
 		 */
 		function pluckLead(lead_id) {
-			for (var n = 0, lead; (lead = vm.leads[n]); n++) {
-				if (lead.id == lead_id) { return lead; }
-			}
+			angular.forEach(vm.leads, function(value, key) {
+				if (value.id == lead_id) { return lead; }
+			});
 			return false;
 		}
 

@@ -25,7 +25,7 @@
 				{
 					plain: true,
 					className: 'dialog-destroy ngdialog-theme-default',
-					template: '<span class="glyphicon glyphicon-trash red icon-large"></span><span>Are you sure you want to delete Tradeshow <em>' + tradeshow_name + '</em>?<br><strong>This cannot be undone.</strong></span><div class="dialog-buttons"><button class="btn btn-danger" ng-click="confirm()">Yes, delete</button> <button class="btn btn-cancel" ng-click="closeThisDialog()">Cancel</button></div>',
+					template: '<span class="glyphicon glyphicon-trash red icon-large pull-left"></span><span>Are you sure you want to delete Tradeshow <em>' + tradeshow_name + '</em>?  <strong>This cannot be undone.</strong></span><div class="dialog-buttons"><button class="btn btn-danger" ng-click="confirm()">Yes, delete</button> <button class="btn btn-cancel" ng-click="closeThisDialog()">Cancel</button></div>',
 					showClose: false
 				}
 			).
@@ -41,7 +41,7 @@
 							ngDialog.open({
 								plain: true,
 								className: 'dialog-success ngdialog-theme-default',
-								template: '<span class="glyphicon glyphicon-check green icon-large"></span><span>Tradeshow <em>' + tradeshow_name + '</em> has been successfully deleted.</span>',
+								template: '<span class="glyphicon glyphicon-check green icon-large pull-left"></span><span>Tradeshow <em>' + tradeshow_name + '</em> has been successfully deleted.</span>',
 							})
 							.closePromise
 							.then(function() {
@@ -52,14 +52,14 @@
 							ngDialog.open({
 								plain: true,
 								className: 'dialog-error ngdialog-theme-default',
-								template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>An error occured when trying to delete Tradeshow <em>' + tradeshow_name + '</em>.</span>  Please try again or contact support.',
+								template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large pull-left"></span><span>An error occured when trying to delete Tradeshow <em>' + tradeshow_name + '</em>.</span>  Please try again or contact support.',
 							});
 						}
 					}, function(errorResponse) {
 						ngDialog.open({
 							plain: true,
 							className: 'dialog-error ngdialog-theme-default',
-							template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>An error occured when trying to delete Tradeshow <em>' + tradeshow_name + '</em>.</span>  Please try again or contact support.',
+							template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large pull-left"></span><span>An error occured when trying to delete Tradeshow <em>' + tradeshow_name + '</em>.</span>  Please try again or contact support.',
 						});
 					});
 			});

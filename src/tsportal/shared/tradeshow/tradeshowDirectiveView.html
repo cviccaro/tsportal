@@ -1,0 +1,17 @@
+<tr clickable ng-click="ctrl.getLeads(1, tradeshow); openMenu('tradeshow', {tradeshow:tradeshow})" ng-class="{danger: tradeshow.active === 0}">
+    <td class="trimmed">
+        {{tradeshow.name}}
+        <span class="label label-info" ng-show="ctrl.isRecent(tradeshow)">UPDATED</span>
+        <span class="badge">{{tradeshow.lead_count}} leads</span>
+    </td>
+    <td class="hidden-xs hidden-sm">
+        {{tradeshow.location}}
+    </td>
+    <td>
+        <span ng-show="{{tradeshow.active}}" class="green">Active</span>
+        <span ng-hide="{{tradeshow.active}}" class="red">Inactive</span>
+    </td>
+    <td>
+        <timeago time="tradeshow.updated_at"></timeago>
+    </td>
+</tr>

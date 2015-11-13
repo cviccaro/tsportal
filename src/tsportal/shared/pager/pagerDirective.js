@@ -12,7 +12,7 @@
           currentPage: '=',
           totalPages: '=',
           getResults: '&getResults',
-          tradeshow: '='
+          tradeshow: '=tradeshowModel'
         },
         templateUrl: '../views/pagerView.html',
         link: pagerDirectiveLink

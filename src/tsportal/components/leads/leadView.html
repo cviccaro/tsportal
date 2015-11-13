@@ -4,14 +4,17 @@
     	<h2><small>{{::ctrl.lead.first_name}} {{::ctrl.lead.last_name}}</small></h2>
 	</div>
 </div>
+
 <messages></messages>
+
+<!-- Toolbar, Buttons -->
 <div class="toolbar row">
-	<div class="col-md-4">
+	<div class="col-md-4 col-xs-12 col-sm-12">
 		<button id="goBack" class="btn btn-primary" ng-click="ctrl.goBack()">
-			<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Go Back
+			<span class="glyphicon glyphicon-chevron-left"></span> Go Back
 		</button>
 		<button id="save" class="btn btn-success" ng-click="ctrl.save()" ng-disabled="ctrl.leadForm.$invalid || ctrl.leadForm.$pristine">
-			<span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save
+			<span class="glyphicon glyphicon-save"></span> Save
 		</button>
 	</div>
 	<div class="col-md-3 col-md-offset-5 col-xs-12 col-sm-12 text-right">
@@ -20,6 +23,7 @@
 	</div>
 </div>
 
+<!-- Lead Form -->
 <form name="ctrl.leadForm" class="row">
 	<div class="col-md-6 form-group required" ng-class="{'has-error': (ctrl.leadForm.first_name.$dirty || ctrl.leadForm.$submitted) && ctrl.leadForm.first_name.$invalid && ctrl.leadForm.first_name.$error.required}">
 		<label class="control-label" for="first_name">First Name</label>
@@ -45,7 +49,7 @@
 	</div>
 	<div class="col-md-6 form-group required" ng-class="{'has-error': (ctrl.leadForm.phone_number.$dirty || ctrl.leadForm.$submitted) && ctrl.leadForm.phone_number.$invalid && ctrl.leadForm.phone_number.$error.required}">
 		<label class="control-label" for="phone_number">Phone Number</label>
-		<input type="text" class="form-control" name="phone_number" ng-model="ctrl.lead.phone_number" />
+		<input type="text" class="form-control" name="phone_number" ng-model="ctrl.lead.phone_number" required />
 		<span class="help-block">Phone number is required.</span>
 	</div>
 	<div class="col-md-6 form-group required" ng-class="{'has-error': (ctrl.leadForm.email_address.$dirty || ctrl.leadForm.$submitted) && ctrl.leadForm.email_address.$invalid && ctrl.leadForm.email_address.$error.required}">
@@ -71,7 +75,8 @@
 	</div>
 	<div class="col-md-6 form-group">
 		<label class="control-label" for="state">State</label>
-		<input type="text" class="form-control" name="state" ng-model="ctrl.lead.state" />
+		<!-- <input type="text" class="form-control" name="state" ng-model="ctrl.lead.state" /> -->
+		<ang-select-usstates class="form-control" name="state" ng-model="ctrl.lead.state"></ang-select-usstates>
 	</div>
 	<div class="col-md-6 form-group">
 		<label class="control-label" for="zip_code">Zip Code</label>

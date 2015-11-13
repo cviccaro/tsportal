@@ -21,6 +21,7 @@
         'tsportal.messages',
         'tsportal.pager',
         'tsportal.slideMenu',
+        'tsportal.select-us-state',
         'tsportal.timeago',
         'tsportal.tradeshow',
 
@@ -39,7 +40,7 @@
                 },
                 delete: {
                     click: 'ctrl.deleteTradeshow(tradeshow.id)',
-                    title: '<span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;&nbsp;Delete'
+                    title: '<span class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;&nbsp;Delete'
                 },
                 report: {
                     click: 'ctrl.downloadReport(tradeshow.id)',
@@ -57,7 +58,7 @@
                 },
                 delete: {
                     click: 'ctrl.deleteLead(lead.id)',
-                    title: '<span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;&nbsp;Delete'
+                    title: '<span class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;&nbsp;Delete'
                 }
             },
         });

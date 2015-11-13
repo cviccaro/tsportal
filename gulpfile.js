@@ -27,20 +27,20 @@ gulp.task('css-bower', function() {
 });
 gulp.task('js-bower', function() {
 	gulp.src([
-		"src/bower_components/jquery/dist/jquery.min.js",
+		"src/bower_components/jquery/dist/jquery.js",
 		"src/bower_components/jquery-migrate/jquery-migrate.min.js",
-		"src/bower_components/angular/angular.min.js",
-		"src/bower_components/bootstrap/dist/js/bootstrap.min.js",
-		"src/bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js",
-		"src/bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js",
-		"src/bower_components/angular-ui-router/release/angular-ui-router.min.js",
-		"src/bower_components/angular-jwt/dist/angular-jwt.min.js",
-		"src/bower_components/angular-cache/dist/angular-cache.min.js",
-		"src/bower_components/angular-resource/angular-resource.min.js",
-		"src/bower_components/angular-resource/angular-resource.min.js",
-		"src/bower_components/angular-animate/angular-animate.min.js",
-		"src/bower_components/ng-dialog/js/ngDialog.min.js",
-		"src/bower_components/angular-spinkit/build/angular-spinkit.min.js",
+		"src/bower_components/angular/angular.js",
+		"src/bower_components/bootstrap/dist/js/bootstrap.js",
+		"src/bower_components/bootstrap-switch/dist/js/bootstrap-switch.js",
+		"src/bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js",
+		"src/bower_components/angular-ui-router/release/angular-ui-router.js",
+		"src/bower_components/angular-jwt/dist/angular-jwt.js",
+		"src/bower_components/angular-cache/dist/angular-cache.js",
+		"src/bower_components/angular-resource/angular-resource.js",
+		"src/bower_components/angular-resource/angular-resource.js",
+		"src/bower_components/angular-animate/angular-animate.js",
+		"src/bower_components/ng-dialog/js/ngDialog.js",
+		"src/bower_components/angular-spinkit/build/angular-spinkit.js",
 		"src/bower_components/moment/min/moment.min.js"
 		])
 		.pipe(sourcemaps.init())
@@ -54,6 +54,7 @@ gulp.task('js', function() {
 	gulp.src([
 		'src/tsportal/shared/**/*.module.js', 
 		'src/tsportal/components/**/*.module.js', 
+		'src/tsportal/components/**/*Directive.js', 
 		'src/tsportal/shared/**/*Directive.js', 
 		'src/tsportal/shared/**/*Interceptor.js', 
 		'src/tsportal/shared/**/*Service.js', 

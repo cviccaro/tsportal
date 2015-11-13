@@ -19,33 +19,32 @@
 
 </head>
 <body>
-
-        <div class="container relative">
-            <nav class="navbar navbar-default row">
-                <div class="navbar-header col-md-12 col-sm-12 col-xs-12">
-                    <button type="button" class="navbar-toggle navbar-right collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <img src="/images/jplogolg.png" class="logo" />
-                    <a class="navbar-brand" href="/#/">Tradeshow Portal</a>
-                    <div id="navbar" class="collapse navbar-collapse col-md-6 col-sm-12 col-xs-12">
-                        <ul class="nav navbar-nav">
-                            <li><a href="/#/tradeshows" title="Tradeshows"><span class="glyphicon glyphicon-home"></span>Tradeshows</a></li>
-                            <li ng-show="!isLoggedIn">
-                                <a href="/#/auth" title="Login"><span class="glyphicon glyphicon-log-in"></span>Login</a>
-                            </li>
-                            <li ng-show="isLoggedIn" class="ng-hide">
-                                <a href="/#/logout" title="Logout"><span class="glyphicon glyphicon-log-out"></span>Logout</a>
-                            </li>
-                        </ul>
-                    </div><!--/.nav-collapse -->
-                </div>
-            </nav>
-            @yield('content')
-        </div>
+    <div class="container relative">
+        <nav class="navbar navbar-default row">
+            <div class="navbar-header col-md-12 col-sm-12 col-xs-12">
+                <button type="button" class="navbar-toggle navbar-right collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <img src="/images/jplogolg.png" class="logo" />
+                <a class="navbar-brand" href="/#/">Tradeshow Portal</a>
+                <div id="navbar" class="collapse navbar-collapse col-md-6 col-sm-12 col-xs-12">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/#/tradeshows" title="Tradeshows"><span class="glyphicon glyphicon-home"></span>Tradeshows</a></li>
+                        <li ng-show="!isLoggedIn">
+                            <a href="/#/auth" title="Login"><span class="glyphicon glyphicon-log-in"></span>Login</a>
+                        </li>
+                        <li ng-show="isLoggedIn" class="ng-hide">
+                            <a href="/#/logout" title="Logout"><span class="glyphicon glyphicon-log-out"></span>Logout</a>
+                        </li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </nav>
+        @yield('content')
+    </div>
 
     <!-- Application Dependencies -->
     <script src="/js/app.plugins.js"></script>

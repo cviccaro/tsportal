@@ -1,17 +1,26 @@
 <slide-menu></slide-menu>
+
 <div class="page-header row">
     <h1 class="col-md-12">Tradeshows</h1>
 </div>
+
 <messages></messages>
+
+<!-- Toolbar, Buttons -->
 <div class="toolbar buttons row">
     <p class="help col-md-12 text-muted">
-        Click a row in the tradeshow table to display a menu which allows you to <em>edit</em> it, <em>delete</em> it, or <em>download an Excel report</em>.
+        Click a row in the tradeshow table to display a menu which allows you to 
+        <em>edit</em> it, <em>delete</em> it, or <em>download an Excel report</em>.
         <br>
         Selecting a tradeshow will load its leads below the tradeshow table.
         <br><br>
-        <a class="btn btn-success col-md-1" href="#/tradeshows/create"><span class="glyphicon glyphicon-pencil"></span>Create</a>
+        <a class="btn btn-success col-md-1" href="#/tradeshows/create">
+            <span class="glyphicon glyphicon-pencil"></span>Create
+        </a>
     </p>
 </div>
+
+<!-- Filters, Sorting -->
 <div class="toolbar filters clearfix">
     <form id="tradeshowFilterForm" name="ctrl.tradeshowFilterForm" class="row">
         <div class="toolbar-item col-md-4 col-xs-12 col-sm-12 form-inline">
@@ -44,55 +53,44 @@
         </div>
     </form>
 </div>
+
+<!-- Tradeshow Table -->
 <div class="row">
     <div class="table-responsive col-md-12">
+
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>NAME</th>
                     <th class="hidden-xs hidden-sm">LOCATION</th>
                     <th>ACTIVE</th>
-                    <th>TOTAL LEADS</th>
                     <th>UPDATED</th>
-                    <!-- <th class="hidden-xs hidden-sm text-right">ACTIONS</th> -->
                 </tr>
             </thead>
 
             <tbody>
-                <tr clickable ng-repeat="tradeshow in ctrl.tradeshows" ng-click="ctrl.getLeads(1, tradeshow); openMenu('tradeshow', {tradeshow:tradeshow})" ng-class="{danger: tradeshow.active === 0}">
-                    <td class="trimmed">{{tradeshow.name}}<span class="label label-info" ng-show="ctrl.isRecent(tradeshow)">UPDATED</span></td>
-                    <td class="hidden-xs hidden-sm">{{tradeshow.location}}</td>
-                    <td>
-                        <span ng-show="{{tradeshow.active}}" class="green">Active</span>
-                        <span ng-hide="{{tradeshow.active}}" class="red">Inactive</span>
-                    </td>
-                    <td>
-                        {{tradeshow.lead_count}}
-                    </td>
-                    <td><timeago time="tradeshow.updated_at"></timeago></td>
-     <!--                <td class="hidden-xs hidden-sm col-md-4 text-right">
-                        <a class="btn btn-warning" href="#/tradeshows/{{tradeshow.id}}/edit" ng-click="$event.stopPropagation()">Edit</a>
-                        <a class="btn btn-danger" href="" ng-click="$event.stopPropagation(); ctrl.deleteTradeshow(tradeshow.id)">Delete</a>
-                        &nbsp;&nbsp;&nbsp;
-                        <a class="btn btn-primary" ng-click="$event.stopPropagation(); ctrl.downloadReport(tradeshow.id)" ng-show="tradeshow.lead_count > 0">Excel Report</a>
-                        <a class="btn btn-primary btn-disabled disabled" ng-show="tradeshow.lead_count == 0" style="visibility: hidden">Excel Report</a>
-                    </td> -->
-                </tr>
+                <tr tradeshow model="tradeshow" ng-repeat="tradeshow in ctrl.tradeshows"></tr>
                 <tr ng-show="!ctrl.tradeshows.length">
                     <td colspan="5">No tradeshows available.</td>
                 </tr>
             </tbody>
         </table>
-    <div>
-    <pager current-page="ctrl.currentPage" total-pages="ctrl.totalPages" get-results="ctrl.getTradeshows(num)"></pager>
+
+        <!-- Tradeshow Pager -->
+        <pager current-page="ctrl.currentPage" total-pages="ctrl.totalPages" get-results="ctrl.getTradeshows(num)"></pager>
+    </div>
 </div>
 
+
+<!-- Leads for Tradeshow -->
 <div ng-show="ctrl.leads != undefined" class="col-md-12">
     <div class="row">
         <div class="page-header col-md-12">
             <h2>Leads for Tradeshow<br><small>{{ctrl.selectedTradeshow.name}}</small></h2>
         </div>
     </div>
+
+    <!-- Lead Table -->
     <div class="row">
         <div class="table-responsive">
             <table class="table table-striped">
@@ -101,26 +99,18 @@
                     <th>LAST NAME</th>
                     <th>EMAIL</th>
                     <th class="hidden-xs hidden-sm">PHONE</th>
-                    <th class="hidden-xs hidden-sm">CREATED</th>
-<!--                     <th>ACTIONS</th> -->
+                    <th class="hidden-xs hidden-sm">UPDATED</th>
                 </thead>
                 <tbody>
-                    <tr ng-show="ctrl.leads.length" ng-repeat="lead in ctrl.leads" clickable ng-click="openMenu('lead', {lead:lead})">
-                        <td>{{lead.first_name}}</td>
-                        <td>{{lead.last_name}}</td>
-                        <td>{{lead.email_address}}</td>
-                        <td class="hidden-xs hidden-sm">{{lead.phone_number}}</td>
-                        <td class="hidden-xs hidden-sm"><timeago time="lead.created_at"></timeago></td>
-<!--                         <td>
-                            <a class="btn btn-warning" href="#/leads/{{lead.id}}/edit">Edit</a>
-                        </td> -->
-                    </tr>
+                    <tr lead model="lead" ng-repeat="lead in ctrl.leads"></tr>
                     <tr ng-show="!ctrl.leads.length">
                         <td colspan="5">No leads available.</td>
                     </tr>
                 </tbody>
             </table>
-            <pager current-page="ctrl.leadCurrentPage" total-pages="ctrl.leadTotalPages" tradeshow="ctrl.selectedTradeshow" get-results="ctrl.getLeads(num)"></pager>
+
+            <!-- Lead Pager -->
+            <pager current-page="ctrl.leadCurrentPage" total-pages="ctrl.leadTotalPages" tradeshow-model="ctrl.selectedTradeshow" get-results="ctrl.getLeads(num)"></pager>
         </div>
     </div>
 </div>

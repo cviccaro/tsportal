@@ -7,6 +7,7 @@ use App\Lead;
 use App\Tradeshow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use App\USStates;
 
 class LeadController extends Controller {
 	/**
@@ -76,6 +77,13 @@ class LeadController extends Controller {
 		$lead = Lead::findOrFail($id);
         if ($lead) {
             $lead->tradeshow_name = Tradeshow::find(1)->pluck('name');
+            $states = new USStates();
+            $states = $states->getStates();
+            foreach($states as $state) {
+            	if ($lead->state == $state['name']) {
+            		$lead->state = $state['abbreviation'];
+            	}
+            }
         }
         return $lead;
 	}
