@@ -76,6 +76,9 @@
                         <a class="btn btn-primary btn-disabled disabled" ng-show="tradeshow.lead_count == 0" style="visibility: hidden">Excel Report</a>
                     </td> -->
                 </tr>
+                <tr ng-show="!ctrl.tradeshows.length">
+                    <td colspan="5">No tradeshows available.</td>
+                </tr>
             </tbody>
         </table>
     <div>
@@ -111,7 +114,7 @@
                         </td> -->
                     </tr>
                     <tr ng-show="!ctrl.leads.length">
-                        <td colspan="6">No leads available.</td>
+                        <td colspan="5">No leads available.</td>
                     </tr>
                 </tbody>
             </table>

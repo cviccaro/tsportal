@@ -34,7 +34,7 @@
 				busyService.setMessage('Deleting');
 
 				Tradeshow.
-					delete({tradeshowId:tradeshow_id}).
+					delete({id:tradeshow_id}).
 					$promise.
 					then(function(payload) {
 						if (payload.hasOwnProperty('success') && payload.success === true) {
@@ -64,7 +64,7 @@
 					});
 			});
 		}
-		
+
 		function retrieve(pageNumber, perPage, orderBy, orderByReverse, filter) {
 			if(pageNumber===undefined){
 				pageNumber = '1';
