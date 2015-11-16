@@ -10,11 +10,11 @@
 		.module('tsportal.login')
 		.controller('LoginController', LoginController);
 
-	function LoginController($rootScope, $scope, $state, authService, $timeout, CacheFactory) {
+	function LoginController($rootScope, $scope, $state, authService, $timeout, promisedCache) {
 
 		var vm = this;
 
-		vm.cache = null;
+		vm.cache = promisedCache;
 		vm.rememberMe = false;
 		vm.login = login;
 
@@ -23,16 +23,6 @@
 		////////
 
 		function activate() {
-			if (!CacheFactory.get('loginForm')) {
-				new CacheFactory('loginForm', {
-					maxAge: 60 * 60 * 24 * 7 * 4 * 1000,
-					deleteOnExpire: 'aggressive',
-					storageMode: 'localStorage'
-				});
-			}
-
-			vm.cache = CacheFactory.get('loginForm');
-			
 			if (vm.cache.get('rememberMe') && vm.cache.get('email')) {
 				vm.rememberMe = vm.cache.get('rememberMe');
 				vm.email = vm.cache.get('email');

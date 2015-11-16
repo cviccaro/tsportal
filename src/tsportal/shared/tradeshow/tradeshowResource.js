@@ -6,9 +6,9 @@
 		.module('tsportal.tradeshow')
 		.factory('Tradeshow', Tradeshow);
 
-	function Tradeshow($resource, CacheFactory) {
+	function Tradeshow($resource, CachingService) {
 		return $resource('api/tradeshows/:id', {id: '@id'}, {
-			get: {cache: CacheFactory.get('defaultCache')},
+			get: {cache: CachingService.getCache('defaultCache')},
 			create: {method: 'POST', url:'api/tradeshows/create'},
 			delete: {method: 'DELETE'}
 		});

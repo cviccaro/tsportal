@@ -13,7 +13,7 @@
 		.module('tsportal.tradeshows')
 		.controller('TradeshowListController', TradeshowListController);
 
-	function TradeshowListController($scope, $q, $timeout, CacheFactory, ngDialog, authService, busyService, messageService, tradeshowService, leadService, promisedData, promisedFormCache) {
+	function TradeshowListController($scope, $q, $timeout, ngDialog, authService, busyService, messageService, tradeshowService, leadService, promisedData, promisedFormCache) {
 		var vm = this;
 
 		vm.deleteTradeshow 	 = deleteTradeshow;

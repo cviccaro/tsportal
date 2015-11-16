@@ -16,9 +16,16 @@
     <!--[if lte IE 9]>
         <script src="//cdnjs.cloudflare.com/ajax/libs/Base64/0.3.0/base64.min.js"></script>
     <![endif]-->
-
+    <!--[if lte IE 8]>
+        <style type="text/css">
+            body { text-align: center; }
+           #browserWarning { display:block!important; margin: 75px auto 0; font-size: 22px; font-family: 'Open Sans'; }
+           .container { display: none; }
+        </style>
+    <![endif]-->
 </head>
 <body>
+    <div id="browserWarning" style="display: none">Sorry, IE8 and older versions are not supported.  Please upgrade to at least IE9 or higher to use this web-app.</div>
     <div class="container relative">
         <nav class="navbar navbar-default row">
             <div class="navbar-header col-md-12 col-sm-12 col-xs-12">

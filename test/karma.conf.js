@@ -25,13 +25,10 @@ module.exports = function(config) {
       "src/bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js",
       "src/bower_components/angular-ui-router/release/angular-ui-router.min.js",
       "src/bower_components/angular-jwt/dist/angular-jwt.min.js",
-      "src/bower_components/angular-cache/dist/angular-cache.min.js",
-      "src/bower_components/angular-resource/angular-resource.min.js",
       "src/bower_components/angular-resource/angular-resource.min.js",
       "src/bower_components/angular-animate/angular-animate.min.js",
       "src/bower_components/ng-dialog/js/ngDialog.min.js",
       "src/bower_components/angular-spinkit/build/angular-spinkit.min.js",
-      "src/bower_components/angular-chosen/angular-chosen.js",
       "src/bower_components/moment/min/moment.min.js",
       'src/tsportal/shared/**/*.module.js', 
       'src/tsportal/components/**/*.module.js', 
@@ -53,8 +50,6 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'src/tsportal/shared/**/*.module.js': 'coverage',
-      'src/tsportal/components/**/*.module.js': 'coverage', 
       'src/tsportal/shared/**/*Directive.js': 'coverage',
       'src/tsportal/shared/**/*Interceptor.js': 'coverage',
       'src/tsportal/shared/**/*Service.js': 'coverage',

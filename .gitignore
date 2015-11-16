@@ -16,3 +16,7 @@ ftpsync.settings
 .gitignore
 /bootstrap/cache
 composer.lock
+public/css
+public/js
+public/views
+src/bower_components

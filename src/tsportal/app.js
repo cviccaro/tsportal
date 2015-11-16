@@ -17,6 +17,7 @@
         'tsportal.auth',
         'tsportal.busyIndicator',
         'tsportal.clickable',
+        'tsportal.cache',
         'tsportal.lead',
         'tsportal.messages',
         'tsportal.pager',
@@ -38,7 +39,7 @@
                     url: 'tradeshows/{{tradeshow.id}}/edit',
                     title: '<span class="glyphicon glyphicon-edit"></span>&nbsp;&nbsp;&nbsp;Edit'
                 },
-                delete: {
+                "delete": {
                     click: 'ctrl.deleteTradeshow(tradeshow.id)',
                     title: '<span class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;&nbsp;Delete'
                 },
@@ -56,7 +57,7 @@
                     url: 'leads/{{lead.id}}/edit',
                     title: '<span class="glyphicon glyphicon-edit"></span>&nbsp;&nbsp;&nbsp;Edit'
                 },
-                delete: {
+                "delete": {
                     click: 'ctrl.deleteLead(lead.id)',
                     title: '<span class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;&nbsp;Delete'
                 }
@@ -67,16 +68,24 @@
 
         $urlRouterProvider.otherwise('/auth');
 
-        $stateProvider.
-            state('test', {
-                url:'/test',
-                template: 'test',
-                controller:'TradeshowListController as ctrl'
-            })
+        $stateProvider
             .state('auth', {
                 url: '/auth',
                 templateUrl: '../views/loginView.html',
-                controller: 'LoginController as ctrl'
+                controller: 'LoginController as ctrl',
+                resolve: {
+                    promisedCache: function promisedCache(CachingService) {
+                        if (!CachingService.getCache('loginForm')) {
+                            CachingService.createNewCache('loginForm', {
+                                maxAge: 60 * 60 * 24 * 7 * 4 * 1000,
+                                deleteOnExpire: 'aggressive',
+                                storageMode: 'localStorage'
+                            });
+                        }
+
+                        return CachingService.getCache('loginForm');
+                    }
+                }
             })
             .state('logout', {
                 url: '/logout',
@@ -88,19 +97,19 @@
                 templateUrl: '../views/tradeshowListView.html',
                 controller: 'TradeshowListController as ctrl',
                 resolve: {
-                    promisedData: function promisedData(tradeshowService, CacheFactory) {
-                        if (!CacheFactory.get('formCache')) {
-                            new CacheFactory('formCache', {
+                    promisedData: function promisedData(tradeshowService, CachingService) {
+                        if (!CachingService.getCache('formCache')) {
+                            CachingService.createNewCache('formCache', {
                               maxAge: 60 * 60 * 1000,
                               deleteOnExpire: 'aggressive',
                               storageMode: 'localStorage'
                             });
                         }
-                       var cache = CacheFactory.get('formCache');
+                       var cache = CachingService.getCache('formCache');
                        return tradeshowService.retrieve(cache.get('currentPage'), cache.get('perPage'), cache.get('orderBy'), cache.get('orderByReverse'), cache.get('query'));
                     },
-                    promisedFormCache: function promisedFormCache(CacheFactory) {
-                       return CacheFactory.get('formCache');
+                    promisedFormCache: function promisedFormCache(CachingService) {
+                       return CachingService.getCache('formCache')
                     }
                 }
             })
@@ -112,21 +121,20 @@
                     promisedData: function promisedData(Tradeshow, $stateParams) {
                        return Tradeshow.get({id:$stateParams.id}).$promise;
                     },
-                    promisedLeadData: function promisedLeadData(leadService, $stateParams, CacheFactory) {
+                    promisedLeadData: function promisedLeadData(leadService, $stateParams, CachingService) {
                         var cacheKey = 'tradeshow' + $stateParams.id + 'LeadsForm';
-                        if (!CacheFactory.get(cacheKey)) {
-                            new CacheFactory(cacheKey, {
+                        if (!CachingService.getCache(cacheKey)) {
+                            CachingService.createNewCache(cacheKey, {
                               maxAge: 60 * 60 * 1000,
                               deleteOnExpire: 'aggressive',
                               storageMode: 'localStorage'
                             });
                         }
-                        var cache = CacheFactory.get(cacheKey);
+                        var cache = CachingService.getCache(cacheKey);
                         return leadService.retrieve($stateParams.id, cache.get('currentPage'), cache.get('perPage'), cache.get('orderBy'), cache.get('orderByReverse'), cache.get('query'));
                     },
-                    promisedFormCache: function promisedFormCache(CacheFactory, $stateParams) {
-                        var cacheKey = 'tradeshow' + $stateParams.id + 'LeadsForm';
-                        return CacheFactory.get(cacheKey);
+                    promisedFormCache: function promisedFormCache(CachingService, $stateParams) {
+                        return CachingService.getCache('tradeshow' + $stateParams.id + 'LeadsForm');
                     }
                 }
             })
@@ -146,16 +154,16 @@
                 }
             });
     })
-    .run(function ($http, CacheFactory) {
-      if (!CacheFactory.get('defaultCache')) {
-        new CacheFactory('defaultCache', {
+    .run(function ($http, CachingService) {
+      if (CachingService.getCache('defaultCache')) {
+        CachingService.createNewCache('defaultCache', {
             maxAge: 15 * 60 * 1000,
             cacheFlushInterval: 60 * 60 * 1000,
             deleteOnExpire: 'aggressive'
           });
       }
 
-      $http.defaults.cache = CacheFactory.get('defaultCache');
+      $http.defaults.cache = CachingService.getCache('defaultCache');
     })
     .filter('unsafe', function($sce) {
         return function(val) {

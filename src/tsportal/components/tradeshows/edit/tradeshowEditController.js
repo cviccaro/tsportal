@@ -13,7 +13,7 @@
 		.module('tsportal.tradeshows')
 		.controller('TradeshowEditController', TradeshowEditController);
 
-	function TradeshowEditController($scope, $q, $http, CacheFactory, $state, ngDialog, authService,
+	function TradeshowEditController($scope, $q, $http, $state, ngDialog, authService,
 		busyService, messageService, Tradeshow, leadService, promisedData, promisedLeadData, promisedFormCache)
 	{
 		var vm = this;
