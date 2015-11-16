@@ -1,4 +1,1 @@
-(function() {
-	'use strict';
-	angular.module('tsportal.auth', []);
-})();
+angular.module('tsportal.auth', []);

@@ -1,3 +1,1 @@
-(function() {
-	angular.module('tsportal.slideMenu', []);
-})();
+angular.module('tsportal.slideMenu', []);

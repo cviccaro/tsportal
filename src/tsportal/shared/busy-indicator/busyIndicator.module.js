@@ -1,3 +1,1 @@
-(function() {
-	angular.module('tsportal.busyIndicator', []);
-})();
+angular.module('tsportal.busyIndicator', []);

@@ -1,3 +1,1 @@
-(function() {
-	angular.module('tsportal.tradeshow', ['ngResource']);
-})();
+angular.module('tsportal.tradeshow', ['ngResource']);

@@ -1,3 +1,1 @@
-(function() {
-	angular.module('tsportal.pager', []);
-})();
+angular.module('tsportal.pager', []);

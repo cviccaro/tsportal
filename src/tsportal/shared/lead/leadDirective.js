@@ -9,7 +9,7 @@
 		var directive = {
 			restrict: 'EA',
 			scope: {
-				lead: '=model',
+				lead: '=model'
 			},
 			priority: 1001, // Fix for ng-repeat
 			replace: true,

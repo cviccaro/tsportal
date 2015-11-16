@@ -1,4 +1,1 @@
-(function() {
-	'use strict';
-	angular.module('tsportal.messages', []);
-})();
+angular.module('tsportal.messages', []);

@@ -1,3 +1,1 @@
-(function() {
-	angular.module('tsportal.select-us-state', []);
-})();
+angular.module('tsportal.select-us-state', []);

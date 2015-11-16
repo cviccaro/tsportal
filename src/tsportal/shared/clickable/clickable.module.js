@@ -1,4 +1,1 @@
-(function() {
-	'use strict';
-	angular.module('tsportal.clickable', []);
-})();
+angular.module('tsportal.clickable', []);

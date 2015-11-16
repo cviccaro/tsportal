@@ -1,3 +1,1 @@
-(function() {
-	angular.module('tsportal.timeago', []);
-})();
+angular.module('tsportal.timeago', []);

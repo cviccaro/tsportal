@@ -1,4 +1,1 @@
-(function() {
-	'use strict';
-	angular.module('tsportal.leads', []);
-})();
+angular.module('tsportal.leads', []);
