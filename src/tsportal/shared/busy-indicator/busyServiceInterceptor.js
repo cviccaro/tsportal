@@ -9,11 +9,11 @@
 
     function busyServiceInterceptor(busyService, $q) {
 
-        var apiPattern = /\/{0,1}api\/[a-zA-Z\/0-9\?\=\&\%\+\-\_]*/g;
+        var apiPattern = busyService.apiPattern;
 
         return {
             request: function(config) {
-                if (config.url.match(apiPattern)) {
+                if (config.url.match(busyService.apiPattern)) {
                     busyService.show();
                 }
                 return config;

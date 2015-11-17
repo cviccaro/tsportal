@@ -24,10 +24,9 @@
 			var service = {
 				checkApiAccess: checkApiAccess,
 				hasToken: hasToken,
-				isValidEmail: isValidEmail,
 				login: login,
 				loginUrl: this.loginUrl,
-				refreshurl: this.refreshUrl,
+				refreshUrl: this.refreshUrl,
 				loginCancelled: loginCancelled,
 				loginConfirmed: loginConfirmed,
 				logout: logout,
@@ -82,14 +81,8 @@
 				return t !== undefined && t !== null;
 			}
 
-			function isValidEmail(email) {
-				var pattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-			    return pattern.test(email);
-			}
-
 			function login(credentials) {
 				var deferred = $q.defer();
-				console.log(this);
 				$http.post(this.loginUrl, credentials, {cache: false})
 					.then(function(payload) {
 						deferred.resolve(payload);

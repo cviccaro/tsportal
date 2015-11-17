@@ -248,14 +248,4 @@ angular.module('tsportal.select-us-state')
   };
 });
 
-angular.module('templates-angular-directive-select-usstates', ['angular-directive-select-usstates/index.tpl.html']);
-
-angular.module("angular-directive-select-usstates/index.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("angular-directive-select-usstates/index.tpl.html",
-    "\n" +
-    "  <select ng-options=\"state.abbreviation as state.name for state in states\">\n" +
-    "    <option value=\"\">{{ emptyName }}</option>\n" +
-    "  </select>\n" +
-    "");
-}]);
 })(window, window.angular);

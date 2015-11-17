@@ -124,7 +124,7 @@
 					break;
 					case 401:
 						// If token is expired, refresh it
-						if (rejection.data.hasOwnProperty('error') && rejection.data.error == 'token_expired') {
+						if (rejection.hasOwnProperty('data') && typeof rejection.data.error != "undefined" && rejection.data.error == 'token_expired') {
 					    	httpBuffer.append(rejection.config, deferred);
 					    	$rootScope.$broadcast('event:auth-login-required', rejection);
 					    	if (authService.hasToken()) {
@@ -144,6 +144,7 @@
 				    		className: 'dialog-save ngdialog-theme-default',
 				    		template: '<span class="glyphicon glyphicon-exclamation-sign red icon-large"></span><span>Sorry, something went wrong.  Try again later.</span>'
 				    	});
+				    	authService.loginCancelled();
 			      	break;
 				}
 

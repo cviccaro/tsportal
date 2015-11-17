@@ -8,63 +8,75 @@
 
 	angular
 		.module('tsportal.busyIndicator')
-		.factory('busyService', busyService);
+		.provider('busyService', busyServiceProvider);
+	function busyServiceProvider() {
+		this.setApiPattern = function setApiPattern(pattern) {
+			this.apiPattern = pattern;
+		}
+		this.apiPattern = /\/{0,1}api\/[a-zA-Z\/0-9\?\=\&\%\+\-\_]*/g;
+		this.$get = busyService;
 
-	function busyService($rootScope, $timeout) {
-		var message, timer, amIBusy = false, hiddenByForce = false;
-
-		var service = {
-			defaultMessage: 'Working on it',
-			forceHide: forceHide,
-			getMessage: getMessage,
-			hide: hide,
-			isBusy: isBusy,
-			isVisible: isVisible,
-			resetMessage: resetMessage,
-			setMessage: setMessage,
-			show: show
-		};
-
-		activate();
-
-		return service;
+		return this;
 
 		/////////
+		
+		function busyService($rootScope, $timeout) {
+			var message = 'Working on it', timer, amIBusy = false, hiddenByForce = false;
 
-		function activate() {
-			$rootScope.workingMessage = service.defaultMessage;
-		}
+			var service = {
+				apiPattern: this.apiPattern,
+				defaultMessage: message,
+				forceHide: forceHide,
+				getMessage: getMessage,
+				hide: hide,
+				isBusy: isBusy,
+				isVisible: isVisible,
+				resetMessage: resetMessage,
+				setMessage: setMessage,
+				show: show
+			};
 
-		function forceHide(reset) {
-			hiddenByForce = reset ? false : true;
-		}
+			activate();
 
-		function getMessage(msg) {
-			return message;
-		}
+			return service;
 
-		function hide() {
-			amIBusy = false;
-		}
+			/////////
 
-		function isBusy() {
-			return amIBusy && !hiddenByForce;
-		}
+			function activate() {
+				$rootScope.workingMessage = service.defaultMessage;
+			}
 
-		function isVisible() {
-			return $('.loading-indicator').is(':visible');
-		}
+			function forceHide(reset) {
+				hiddenByForce = !reset;
+			}
 
-		function resetMessage() {
-			this.setMessage(this.defaultMessage);
-		}
+			function getMessage(msg) {
+				return message;
+			}
 
-		function setMessage(msg) {
-			message = $rootScope.workingMessage = msg;
-		}
+			function hide() {
+				amIBusy = false;
+			}
 
-		function show() {
-			amIBusy = true;
+			function isBusy() {
+				return amIBusy && !hiddenByForce;
+			}
+
+			function isVisible() {
+				return $('.loading-indicator').is(':visible');
+			}
+
+			function resetMessage() {
+				this.setMessage(this.defaultMessage);
+			}
+
+			function setMessage(msg) {
+				message = $rootScope.workingMessage = msg;
+			}
+
+			function show() {
+				amIBusy = true;
+			}
 		}
 	}
 })();

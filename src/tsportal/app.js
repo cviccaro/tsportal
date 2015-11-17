@@ -31,7 +31,8 @@
         'tsportal.tradeshows',
         'tsportal.login'
     ])
-    .config(function($stateProvider, $urlRouterProvider, $httpProvider, slideMenuServiceProvider) {
+    .config(function($stateProvider, $urlRouterProvider, $httpProvider, slideMenuServiceProvider, busyServiceProvider) {
+        busyServiceProvider.setApiPattern(/\/{0,1}api\/[a-zA-Z\/0-9\?\=\&\%\+\-\_]*/g);
         slideMenuServiceProvider.registerMenu('tradeshow', {
             title: 'Tradeshow<br><small>{{tradeshow.name}}</small><br><br><span class="badge">{{tradeshow.lead_count}}</span><span>&nbsp;leads</span>',
             items: {
