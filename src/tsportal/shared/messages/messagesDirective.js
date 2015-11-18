@@ -9,7 +9,7 @@
 
         var directive = {
             restrict: 'E',
-            templateUrl: '../views/messagesView.html',
+            templateUrl: 'shared/messages/messagesView.html',
             replace: true,
             link: messagesDirectiveLink
         };
@@ -26,7 +26,7 @@
                     vm.messages = newVal;
                 }
             });
-
+            
             $rootScope.$on('$stateChangeSuccess', function() {
                 messageService.purge();
             });

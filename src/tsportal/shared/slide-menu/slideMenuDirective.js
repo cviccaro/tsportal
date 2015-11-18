@@ -5,12 +5,12 @@
 	angular.module('tsportal.slideMenu')
 		.directive('slideMenu', slideMenuDirective);
 
-	function slideMenuDirective($timeout, $rootScope, slideMenuService, $compile, $document) {
+	function slideMenuDirective($timeout, $rootScope, slideMenuService, $compile, $document, $window) {
 		var directive = {
 			restrict: 'E',
 			replace: true,
 			transclude: true,
-			templateUrl: '../views/slideMenuView.html',
+			templateUrl: 'shared/slide-menu/slideMenuView.html',
 			link: slideMenuDirectiveLink
 		};
 
@@ -19,39 +19,46 @@
 		////////
 		
 		function slideMenuDirectiveLink($scope, elem, attrs) {
-			var slideMenu;
+			var slideMenu, activeMenu;
 
 			$scope.openMenu = openMenu;
 			$scope.closeMenu = closeMenu;
-			$scope.setAlignment = setAlignment;
-
+			$scope.slideMenuClasses = slideMenuCssClasses;
+			
 			activate();
 
 			/////////
 			
 			function activate() {
+
 				slideMenu = {
 					hide: function() {
 						elem.removeClass('visible');
 					},
 					show: function() {
 						elem.addClass('visible');
-					},
-					setAlignment: function(pos) {
-						$scope.alignment = pos;
-						elem.attr('alignment', pos);
 					}
 				};
 
-				$scope.alignment = $scope.alignment || (window.outerWidth <= 768 ? "bottom" : "right");
+				$scope.slideMenuAlignment = attrs.slideMenuAlignment || (window.outerWidth <= 768 ? "bottom" : "right");
 
+				// Hide menu on state change
 				$rootScope.$on('$stateChangeStart', function() {
-					slideMenu.hide();
+					$scope.closeMenu();
 				});
+
+				// Hide menu on ESC
 				$document.bind('keyup', function(e) {
 				     if (e.which === 27) {
-				   		slideMenu.hide();  	
+				   		$scope.closeMenu();	
 				     }
+				});
+
+				// Recalculate classes on resize if activeMenu calls for it
+				angular.element($window).on('resize', function () {
+					if (activeMenu && activeMenu.responsive) {
+						$scope.$apply();
+					}
 				});
 			}
 
@@ -66,6 +73,11 @@
 					}
 					var menu = slideMenuService.menus[menuName];
 					
+					if (typeof menu.alignment == "undefined" && typeof $scope.slideMenuAlignment != "undefined") {
+						menu.alignment = $scope.slideMenuAlignment;
+					}
+					activeMenu = menu;
+
 					var compiledTitle = $compile('<h5 class="slide-menu-title bg-primary">' + menu.title + '</h5>')($scope);
 
 					elem.find('h5').replaceWith(compiledTitle);
@@ -80,8 +92,28 @@
 				}
 			}
 
-			function setAlignment(pos) {
-				slideMenu.setAlignment(pos);
+			function slideMenuCssClasses() {
+				var cssClasses = [];
+				if (activeMenu === undefined) {
+					activeMenu = {
+						responsive: false,
+						alignment: $scope.slideMenuAlignment
+					};
+				}
+
+				if (activeMenu.responsive === true) {
+					if ($window.outerWidth >= 768) {
+						cssClasses.push('menu-right');
+					}
+					else {
+						cssClasses.push('menu-bottom');
+					}
+				}
+				else {
+					cssClasses.push('menu-' + activeMenu.alignment);
+				}
+				
+				return cssClasses.join(' ');
 			}
 		}
 	}

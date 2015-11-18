@@ -14,7 +14,7 @@
           getResults: '&getResults',
           tradeshow: '=tradeshowModel'
         },
-        templateUrl: '../views/pagerView.html',
+        templateUrl: 'shared/pager/pagerView.html',
         link: pagerDirectiveLink
      };
 

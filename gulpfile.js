@@ -4,14 +4,14 @@ var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
 var ngAnnotate = require('gulp-ng-annotate');
 var minifyCss = require('gulp-minify-css');
-var flatten = require('gulp-flatten');
+var templateCache = require('gulp-angular-templatecache');
 
-gulp.task('html', function() {
+gulp.task('templates', function() {
 	gulp.src([
 		"src/tsportal/**/*.html"
 	])
-	.pipe(flatten())
-	.pipe(gulp.dest('public/views'));
+	.pipe(templateCache('templates.js', {standalone: true}))
+	.pipe(gulp.dest('src/tsportal'));
 });
 
 gulp.task('css-bower', function() {
@@ -68,6 +68,7 @@ var srcJs = [
 	'src/tsportal/shared/**/*Service.js', 
 	'src/tsportal/shared/**/*Resource.js', 
 	'src/tsportal/components/**/*Controller.js', 
+	'src/tsportal/templates.js',
 	'src/tsportal/app.js'
 ];
 
@@ -88,10 +89,10 @@ gulp.task('js-dev', function() {
 	.pipe(gulp.dest('.'));
 });
 
-gulp.task('watch', ['html', 'js', 'js-bower', 'css-bower'], function () {
+gulp.task('watch', ['templates', 'js', 'js-bower', 'css-bower'], function () {
   gulp.watch('src/tsportal/**/*.js', ['js']);
-  gulp.watch('src/tsportal/**/*.html', ['html']);
+  gulp.watch('src/tsportal/**/*.html', ['templates']);
 });
 
-gulp.task('build', ['html', 'js', 'js-bower', 'css-bower']);
-gulp.task('build-dev', ['html', 'js-dev', 'js-bower-dev', 'css-bower']);
+gulp.task('build', ['templates', 'js', 'js-bower', 'css-bower']);
+gulp.task('build-dev', ['templates', 'js-dev', 'js-bower-dev', 'css-bower']);

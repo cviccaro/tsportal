@@ -12,6 +12,7 @@
         'ngDialog',
         'ngResource',
         'frapontillo.bootstrap-switch',
+        'templates',
 
         // app/shared
         'tsportal.auth',
@@ -34,6 +35,7 @@
     .config(function($stateProvider, $urlRouterProvider, $httpProvider, slideMenuServiceProvider, busyServiceProvider) {
         busyServiceProvider.setApiPattern(/\/{0,1}api\/[a-zA-Z\/0-9\?\=\&\%\+\-\_]*/g);
         slideMenuServiceProvider.registerMenu('tradeshow', {
+            responsive: true,
             title: 'Tradeshow<br><small>{{tradeshow.name}}</small><br><br><span class="badge">{{tradeshow.lead_count}}</span><span>&nbsp;leads</span>',
             items: {
                 edit: {
@@ -52,6 +54,7 @@
             }
         });
         slideMenuServiceProvider.registerMenu('lead', {
+            responsive: true,
             title: 'Lead<br><small>{{lead.first_name}} {{lead.last_name}}</small><br><small>{{lead.email_address}}</small>',
             items: {
                 edit: {
@@ -72,7 +75,7 @@
         $stateProvider
             .state('auth', {
                 url: '/auth',
-                templateUrl: '../views/loginView.html',
+                templateUrl: 'components/login/loginView.html',
                 controller: 'LoginController as ctrl',
                 resolve: {
                     promisedCache: function promisedCache(CachingService) {
@@ -95,7 +98,7 @@
             })
             .state('tradeshows', {
                 url: '/tradeshows',
-                templateUrl: '../views/tradeshowListView.html',
+                templateUrl: 'components/tradeshows/list/tradeshowListView.html',
                 controller: 'TradeshowListController as ctrl',
                 resolve: {
                     promisedData: function promisedData(tradeshowService, CachingService) {
@@ -116,7 +119,7 @@
             })
             .state('tradeshowEdit', {
                 url: '/tradeshows/:id/edit',
-                templateUrl: '../views/tradeshowView.html',
+                templateUrl: 'components/tradeshows/tradeshowView.html',
                 controller: 'TradeshowEditController as ctrl',
                 resolve: {
                     promisedData: function promisedData(Tradeshow, $stateParams) {
@@ -141,12 +144,12 @@
             })
             .state('tradeshowCreate', {
                 url: '/tradeshows/create',
-                templateUrl: '../views/tradeshowView.html',
+                templateUrl: 'componenst/tradeshows/tradeshowView.html',
                 controller: 'TradeshowCreateController as ctrl'
             })
             .state('leadEdit', {
                 url:'/leads/:id/edit',
-                templateUrl: '../views/leadView.html',
+                templateUrl: 'components/leads/leadView.html',
                 controller: 'LeadEditController as ctrl',
                 resolve: {
                     leadData: function leadData(Lead, $stateParams) {

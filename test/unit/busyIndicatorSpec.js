@@ -8,7 +8,7 @@ describe('tsportal.busyIndicator config', function() {
 		});
 		module('tsportal.busyIndicator');
 		module('test.tsportal.busy.config');
-		
+
 		inject(function(_$rootScope_) {
 			$rootScope = _$rootScope_;
 		});
@@ -33,7 +33,7 @@ describe('tsportal.busyIndicator', function() {
 	var busyService, $rootScope, $scope, $http, $httpBackend;
 	beforeEach(function() {
 		module('tsportal.busyIndicator');
-		
+		module('templates');
 		inject(function(_$rootScope_, _busyService_, _$httpBackend_, _$http_) {
 			$rootScope = _$rootScope_;
 			$scope = $rootScope.$new();
@@ -100,5 +100,34 @@ describe('tsportal.busyIndicator', function() {
 			$httpBackend.flush();
 			expect(busyService.hide).toHaveBeenCalled();
 		});		
+	});
+
+	describe('busyIndicatorDirective', function() {
+		var $compile, element;
+		beforeEach(function() {
+			inject(function(_$compile_) {
+				$compile = _$compile_;
+			});
+			element = $compile('<busy-indicator></busy-indicator>')($rootScope);
+			$rootScope.$digest();
+			spyOn(busyService, "hide").and.callThrough();
+			spyOn(busyService, "show").and.callThrough();
+			spyOn(busyService, "resetMessage").and.callThrough();
+		});
+		it('should replace directive with template', function() {
+	        expect(element.html()).toContain('<div class="loading-indicator-body">');
+			expect(element.html()).toContain('<h3 class="loading-title ng-binding">Working on it...</h3>');
+		});
+
+		it('should reset message and show busyIndicator on $stateChangeStart', function() {
+			$rootScope.$emit('$stateChangeStart');
+			expect(busyService.resetMessage).toHaveBeenCalled();
+			expect(busyService.show).toHaveBeenCalled();
+		});
+
+		it('should hide busyIndicator on $stateChangeSuccess', function() {
+			$rootScope.$emit('$stateChangeSuccess');
+			expect(busyService.hide).toHaveBeenCalled();
+		});
 	});
 });

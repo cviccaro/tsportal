@@ -13,7 +13,7 @@
 			},
 			replace: true,
 			priority: 1001, // Fix for ng-repeat
-			templateUrl: '../views/tradeshowDirectiveView.html'
+			templateUrl: 'shared/tradeshow/tradeshowDirectiveView.html'
 		};
 
 		return directive;

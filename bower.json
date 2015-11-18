@@ -5,16 +5,16 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "angular": "1.4.x",
-    "angular-mocks": "1.4.x",
+    "angular": "1.x",
+    "angular-mocks": "1.x",
     "jquery": "~2.1.1",
     "bootstrap": "~3.3.5",
-    "angular-route": "1.4.x",
-    "angular-resource": "1.4.x",
+    "angular-route": "1.x",
+    "angular-resource": "1.x",
     "angular-jwt": "~0.0.9",
     "angular-spinkit": "~0.3.3",
     "angular-ui-router": "~0.2.15",
-    "angular-animate": "~1.4.7",
+    "angular-animate": "~1.x",
     "ng-dialog": "*",
     "angular-cache": "~4.4.2",
     "moment": "~2.10.6",
@@ -22,9 +22,5 @@
     "jquery-migrate": "~1.2.1",
     "angular-bootstrap-switch": "~0.4.1",
     "angular-directive-select-usstate": "~0.2.1"
-  },
-  "resolutions": {
-    "angular": "1.4.7",
-    "angular-animate": "~1.4.7"
   }
 }

@@ -11,7 +11,7 @@
 
         var directive = {
             restrict: 'E',
-            templateUrl: '../views/busyIndicatorView.html',
+            templateUrl: 'shared/busy-indicator/busyIndicatorView.html',
             replace: true,
             link: busyIndicatorDirectiveLink
         };

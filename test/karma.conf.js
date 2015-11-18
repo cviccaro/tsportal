@@ -36,8 +36,10 @@ module.exports = function(config) {
       'src/tsportal/shared/**/*Interceptor.js', 
       'src/tsportal/shared/**/*Service.js', 
       'src/tsportal/shared/**/*Resource.js', 
-      'src/tsportal/components/**/*Controller.js', 
+      'src/tsportal/components/**/*Controller.js',
+      'src/tsportal/templates.js',
       'src/tsportal/app.js',
+      'test/mockCacheFactory.js',
       'test/unit/*.js'
     ],
 
@@ -54,7 +56,7 @@ module.exports = function(config) {
       'src/tsportal/shared/**/*Interceptor.js': 'coverage',
       'src/tsportal/shared/**/*Service.js': 'coverage',
       'src/tsportal/shared/**/*Resource.js': 'coverage',
-      'src/tsportal/components/**/*Controller.js': 'coverage'
+      'src/tsportal/components/**/*Controller.js': 'coverage',
     },
 
 

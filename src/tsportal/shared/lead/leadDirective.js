@@ -13,7 +13,7 @@
 			},
 			priority: 1001, // Fix for ng-repeat
 			replace: true,
-			templateUrl: '../views/leadDirectiveView.html'
+			templateUrl: 'shared/lead/leadDirectiveView.html'
 		};
 
 		return directive;

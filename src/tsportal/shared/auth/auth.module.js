@@ -1,1 +1,5 @@
-angular.module('tsportal.auth', []);
+angular.module('tsportal.auth', [
+	'ui.router',
+	'ngDialog',
+	'tsportal.cache'
+]);

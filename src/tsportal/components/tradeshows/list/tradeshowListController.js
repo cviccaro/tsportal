@@ -35,7 +35,7 @@
 		vm.query 			= "";
 		vm.totalPages		= promisedData.data.last_page;
 		vm.tradeshows		= promisedData.data.data;
-
+		
 		activate();
 
 		/////////
@@ -175,6 +175,7 @@
 		 */
 		 function refreshTradeshows() {
 			vm.getTradeshows().then(function(payload) {
+				console.log(vm.lastFetchedPage)
 				// Page number was out of range, fetching last page available
 				if (vm.lastFetchedPage > payload.data.current_page) {
 					vm.getTradeshows(payload.data.last_page);

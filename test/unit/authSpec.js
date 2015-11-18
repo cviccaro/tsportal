@@ -7,11 +7,7 @@ describe('tsportal.auth', function() {
 	caches = {};
 	
 	beforeEach(function() {
-		module('ui.router');
-		module('tsportal.cache');
 		module('tsportal.auth');
-		module('ngDialog');
-
 		$stateMock = jasmine.createSpyObj('$state', ['go']);
 		mockCacheFactory = jasmine.createSpyObj('CacheFactory', ['create', 'new', 'get']);
 
@@ -133,7 +129,7 @@ describe('tsportal.auth', function() {
 			$httpBackend.expectGET('/api/test').respond(500);
 			$httpBackend.flush();
 			expect($stateMock.go).toHaveBeenCalledWith('auth');
-		})
+		});
 		it('should trigger a refresh when receiving a 401 response and token is set', function() {
 			// Set a token in order to refresh when 401 received
 			authService.token.set('test');

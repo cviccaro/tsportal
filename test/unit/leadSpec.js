@@ -4,10 +4,8 @@ describe('tsportal.lead', function() {
 	var $rootScope, $scope, $httpBackend, $http, leadService, cachingService, mockCacheFactory, mockLeadResource, mockNgDialog, $q, caches = {};
 
 	beforeEach(function() {
-		module('tsportal.cache');
-		module('tsportal.busyIndicator');
 		module('tsportal.lead');
-		
+		module('templates');
 
 		mockCacheFactory = jasmine.createSpyObj('CacheFactory', ['create', 'new', 'get']);
 		mockLeadResource = jasmine.createSpyObj('Lead', ['delete']);
@@ -89,6 +87,30 @@ describe('tsportal.lead', function() {
 			expect(mockLeadResource.delete).toHaveBeenCalled();
 			expect(finalDialogWasOpened).toBeTruthy();
 			expect(window.location.reload).toHaveBeenCalled();
+		});
+	});
+
+	describe('leadDirective', function() {
+		var $compile;
+		beforeEach(function() {
+			inject(function(_$compile_) {
+				$compile = _$compile_;
+			});
+		});
+		it('should replace directive with template', function() {
+			$rootScope.lead = {
+				first_name: 'john',
+				last_name: 'doe',
+				email_address: 'johndoe@gmail.com',
+				phone_number: '1-234-567-8901',
+				updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+				id: 1
+			};
+			var element = $compile('<tr lead model="lead"></tr>')($rootScope);
+			$rootScope.$digest();
+			expect(element.html()).toContain('<td class="ng-binding">john</td>');
+			expect(element.html()).toContain('<td class="ng-binding">doe</td>');
+			expect(element.html()).toContain('<td class="ng-binding">johndoe@gmail.com</td>');
 		});
 	});
 });

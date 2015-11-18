@@ -1,5 +1,5 @@
 <div class="row messages">
-    <div ng-repeat="message in ctrl.messages" message-id="{{message.id}}" class="alert fade alert-{{message.type}} {{message.dismissible ? 'alert-dismissible' : ''}}" role="alert">
+    <div ng-repeat="message in ctrl.messages" message-id="{{message.id}}" class="alert fade alert-{{message.type}}{{message.dismissible ? ' alert-dismissible' : ''}}" role="alert">
         <button type="button" class="close" ng-click="ctrl.removeMessage(message.id)" aria-label="Close" ng-show="message.dismissible">
             <span aria-hidden="true">×</span>
         </button>

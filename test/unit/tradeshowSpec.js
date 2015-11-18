@@ -4,10 +4,8 @@ describe('tsportal.tradeshow', function() {
 	var $rootScope, $scope, $httpBackend, $http, tradeshowService, cachingService, mockCacheFactory, mockTradeshowResource, mockNgDialog, $q, caches = {};
 
 	beforeEach(function() {
-		module('tsportal.cache');
-		module('tsportal.busyIndicator');
 		module('tsportal.tradeshow');
-		
+		module('templates');
 
 		mockCacheFactory = jasmine.createSpyObj('CacheFactory', ['create', 'new', 'get']);
 		mockTradeshowResource = jasmine.createSpyObj('Tradeshow', ['delete']);
@@ -89,6 +87,28 @@ describe('tsportal.tradeshow', function() {
 			expect(mockTradeshowResource.delete).toHaveBeenCalled();
 			expect(finalDialogWasOpened).toBeTruthy();
 			expect(window.location.reload).toHaveBeenCalled();
+		});
+	});
+
+	describe('tradeshowDirective', function() {
+		var $compile;
+		beforeEach(function() {
+			inject(function(_$compile_) {
+				$compile = _$compile_;
+			});
+		});
+		it('should replace directive with template', function() {
+			$rootScope.tradeshow = {
+				name: 'test',
+				location: 'show',
+				active: 1,
+				updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+				id: 1
+			};
+			var element = $compile('<tr tradeshow model="tradeshow"></tr>')($rootScope);
+			$rootScope.$digest();
+			expect(element.html().replace(/\s{3}|\n|\t|\r/g, "")).toContain('<td class="trimmed ng-binding">test');
+			expect(element.html().replace(/\s{3}|\n|\t|\r/g, "")).toContain('<td class="hidden-xs hidden-sm ng-binding">show');
 		});
 	});
 });
