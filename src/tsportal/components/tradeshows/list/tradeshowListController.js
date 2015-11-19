@@ -13,7 +13,7 @@
 		.module('tsportal.tradeshows')
 		.controller('TradeshowListController', TradeshowListController);
 
-	function TradeshowListController($scope, $q, $timeout, ngDialog, authService, busyService, messageService, tradeshowService, leadService, promisedData, promisedFormCache) {
+	function TradeshowListController($scope, $q, $timeout, $window, authService, busyService, tradeshowService, leadService, promisedData, promisedFormCache) {
 		var vm = this;
 
 		vm.deleteTradeshow 	 = deleteTradeshow;
@@ -42,14 +42,14 @@
 
 		function activate() {
 			// Watch scope variables to update cache
-			angular.forEach(['currentPage', 'orderBy', 'orderByReverse', 'perPage', 'query'], function(varName) {
-				var val = vm.formCache.get(varName);
+			angular.forEach(['currentPage', 'orderBy', 'orderByReverse', 'perPage', 'query'], function(key) {
+				var val = vm.formCache.get(key);
 				if (val !== undefined && val !== null) {
-					vm[varName] = val;
+					vm[key] = val;
 				}
-				$scope.$watch('ctrl.' + varName, function(newVal, oldVal) {
+				$scope.$watch('ctrl.' + key, function(newVal, oldVal) {
 					if (typeof newVal !== 'undefined') {
-					    vm.formCache.put(varName, newVal);
+					    vm.formCache.put(key, newVal);
 					}
 				});
 			});
@@ -75,7 +75,7 @@
 		 * Checks if a tradeshow has leads, and routes user to URL to download report
 		 */
 		function downloadReport(tradeshow_id) {
-			window.location.href = '/api/tradeshows/' + tradeshow_id + '/report?token=' + authService.token.get();
+			$window.location.href = '/api/tradeshows/' + tradeshow_id + '/report?token=' + authService.token.get();
 		}
 
 		/**
@@ -175,7 +175,6 @@
 		 */
 		 function refreshTradeshows() {
 			vm.getTradeshows().then(function(payload) {
-				console.log(vm.lastFetchedPage)
 				// Page number was out of range, fetching last page available
 				if (vm.lastFetchedPage > payload.data.current_page) {
 					vm.getTradeshows(payload.data.last_page);

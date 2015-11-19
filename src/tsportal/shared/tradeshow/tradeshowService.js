@@ -6,7 +6,7 @@
 		.module('tsportal.tradeshow')
 		.factory('tradeshowService', tradeshowService);
 
-	function tradeshowService($http, Tradeshow, $rootScope, ngDialog, busyService) {
+	function tradeshowService($http, $window, Tradeshow, $rootScope, ngDialog, busyService) {
 		var activeDialog;
 
 		var service = {
@@ -45,7 +45,7 @@
 							})
 							.closePromise
 							.then(function() {
-								window.location.reload();
+								$window.location.reload();
 							});
 						}
 						else {

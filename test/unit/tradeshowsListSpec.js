@@ -1,14 +1,25 @@
 'use strict';
 
-describe('tsportal.tradeshows', function() {
+describe('tsportal.tradeshows.TradeshowListController', function() {
 
-	var $rootScope, $scope, $controller, mockCacheFactory, formCache, ctrl, tradeshowService, leadService, $q, promisedData;
+	var $rootScope, $scope, $controller, mockCacheFactory, formCache,
+		ctrl, tradeshowService, leadService, $q, promisedData,
+		$timeout, $windowMock, authService;
 
 	beforeEach(function() {
 		module('mockCacheFactory');
 		module('tsportal.tradeshows');
 
-		inject(function(_$rootScope_, _$controller_, _CacheFactory_, _tradeshowService_, _leadService_, _$q_) {
+		$windowMock = {
+			location: {
+				href: ''
+			}
+		};
+
+		module(function($provide) {
+			$provide.value('$window', $windowMock);
+		});
+		inject(function(_$rootScope_, _$controller_, _CacheFactory_, _tradeshowService_, _leadService_, _$q_, _$timeout_, _authService_) {
 			$rootScope = _$rootScope_;
 			$scope = $rootScope.$new();
 			$controller = _$controller_;
@@ -17,6 +28,8 @@ describe('tsportal.tradeshows', function() {
 			mockCacheFactory = _CacheFactory_;
 			formCache = mockCacheFactory.get('formCache');
 			$q = _$q_;
+			$timeout = _$timeout_;
+			authService = _authService_;
 		});	
 	});
 
@@ -50,8 +63,10 @@ describe('tsportal.tradeshows', function() {
 				promisedFormCache: formCache,
 				leadService: leadService,
 				tradeshowService: tradeshowService,
-				promisedData: promisedData
+				promisedData: promisedData,
+				authService: authService
 			});
+			authService.token.set('test');
 			$rootScope.$digest();
 		});
 		it('should have a tradeshowListController and set page state based on promisedData and defaults (when formCache is empty)', function() {
@@ -98,12 +113,12 @@ describe('tsportal.tradeshows', function() {
 			// updated over an hour ago = not recent
 			expect(ctrl.isRecent(ctrl.tradeshows[1])).toBeFalsy();
 		});
-		it('should call getTradeshows when refreshTradeshows is called', function() {
+		it('should call getTradeshows() when refreshTradeshows() is called', function() {
 			spyOn(ctrl, "getTradeshows").and.callThrough();
 			ctrl.refreshTradeshows();
 			expect(ctrl.getTradeshows).toHaveBeenCalled();
 		});
-		it('should call getTradeshows with pageNum set to last available page when refreshTradeshows is called and lastFetchedPage is larger than the new data set\'s last page', function() {
+		it('should call getTradeshows() with pageNum set to last available page when refreshTradeshows() is called and lastFetchedPage is larger than the new data set\'s last page', function() {
 			var tradeshows = ctrl.tradeshows;
 			spyOn(ctrl, "getTradeshows").and.callThrough();
 			spyOn(tradeshowService, "retrieve").and.callFake(function() {
@@ -113,7 +128,41 @@ describe('tsportal.tradeshows', function() {
 			ctrl.refreshTradeshows();
 			$rootScope.$digest();
 			expect(ctrl.getTradeshows.calls.mostRecent().args[0]).toEqual(4);
-		});		
+		});
+		it('should call leadService.retrieve() when getLeads() is called', function() {
+			spyOn(leadService, "retrieve").and.callFake(function() {
+				return $q.when({
+					status: 200, 
+					data: {
+						current_page: 1,
+						last_page: 1,
+						data: [
+							{id: 1, first_name: "john", last_name: "doe"}
+						]
+					}
+				});
+			});
+			var tradeshow = {id: 1};
+			ctrl.getLeads(1, tradeshow);
+			$rootScope.$digest();
+			$timeout.flush();
+			expect(leadService.retrieve).toHaveBeenCalledWith(1, 1, 50, 'id', 0);
+		});
+		it('should use tradeshow stored in variable selectedTradeshow if getLeads is passed an undefined tradeshow', function() {
+			spyOn(leadService, "retrieve").and.callFake(function() {
+				return $q.when({data: {}});
+			});
+			ctrl.selectedTradeshow = {id: 49};
+			ctrl.getLeads(1, undefined);
+			$rootScope.$digest();
+			$timeout.flush();
+			expect(leadService.retrieve.calls.mostRecent().args[0]).toEqual(49);
+		});
+		it('should change $window.location.href when calling downloadReport()', function() {
+			ctrl.downloadReport(1);
+			$rootScope.$digest();
+			expect($windowMock.location.href).toContain('/api/tradeshows/1/report');
+		});
 	});
 	describe('TradeshowListController with cache', function() {
 		it('should defer to formCache to set page state if it is available', function() {

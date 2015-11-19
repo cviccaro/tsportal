@@ -40,7 +40,7 @@
 					}
 				};
 
-				$scope.slideMenuAlignment = attrs.slideMenuAlignment || (window.outerWidth <= 768 ? "bottom" : "right");
+				$scope.slideMenuAlignment = attrs.slideMenuAlignment || ($window.outerWidth <= 768 ? "bottom" : "right");
 
 				// Hide menu on state change
 				$rootScope.$on('$stateChangeStart', function() {

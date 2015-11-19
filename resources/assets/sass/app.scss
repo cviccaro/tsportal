@@ -137,6 +137,7 @@ table>tbody>tr.clickable
 	@include border-radius(0px);
 	@include box-shadow(0px 5px 15px rgba(0,0,0,0.5));
 	font-family: 'Open Sans';
+	padding: 2em 1.22em 2em;
 }
 
 .icon-medium {

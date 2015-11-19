@@ -6,7 +6,7 @@
 		.module('tsportal.lead')
 		.factory('leadService', leadService);
 
-	function leadService($http, ngDialog, Lead, $rootScope, busyService) {
+	function leadService($http, $window, ngDialog, Lead, $rootScope, busyService) {
 			var activeDialog;
 
 			var service = {
@@ -65,7 +65,7 @@
 								})
 								.closePromise
 								.then(function() {
-									window.location.reload();
+									$window.location.reload();
 								});
 							}
 							else {

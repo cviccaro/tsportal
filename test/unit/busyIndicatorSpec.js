@@ -55,7 +55,7 @@ describe('tsportal.busyIndicator', function() {
 			expect(busyService.getMessage()).toEqual('test message');
 			expect($rootScope.workingMessage).toEqual('test message');
 		});
-		it('should reset message when resetMessage() is called', function() {
+		it('should return message to default when resetMessage() is called', function() {
 			busyService.setMessage('test message');
 			expect(busyService.getMessage()).toEqual('test message');
 			expect($rootScope.workingMessage).toEqual('test message');

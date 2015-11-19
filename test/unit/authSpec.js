@@ -8,6 +8,7 @@ describe('tsportal.auth', function() {
 	
 	beforeEach(function() {
 		module('tsportal.auth');
+		module('mockCacheFactory');
 		$stateMock = jasmine.createSpyObj('$state', ['go']);
 		mockCacheFactory = jasmine.createSpyObj('CacheFactory', ['create', 'new', 'get']);
 
@@ -30,15 +31,16 @@ describe('tsportal.auth', function() {
 		});
 		module(function($provide) {
 			$provide.value('$state', $stateMock);
-			$provide.value('CacheFactory', mockCacheFactory);
+			// $provide.value('CacheFactory', mockCacheFactory);
 		});
-		inject(function(_$rootScope_, _authService_, _CachingService_, _$httpBackend_, _$http_) {
+		inject(function(_$rootScope_, _authService_, _CachingService_, _$httpBackend_, _$http_, _CacheFactory_) {
 			$rootScope = _$rootScope_;
 			$scope = $rootScope.$new();
 			authService = _authService_;
 			cachingService = _CachingService_;
 			$httpBackend = _$httpBackend_;
 			$http = _$http_;
+			mockCacheFactory = _CacheFactory_;
 		});
 		spyOn(authService, "refresh").and.callThrough();
 		spyOn(authService, "logout").and.callThrough();

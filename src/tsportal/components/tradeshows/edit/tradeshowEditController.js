@@ -25,7 +25,6 @@
 		vm.pluckLead = pluckLead;
 		vm.refreshLeads = refreshLeads;
 		vm.save = save;
-		vm.updatePagination = updatePagination;
 
 		vm.currentPage = promisedLeadData.data.current_page;
 		vm.formCache = promisedFormCache;
@@ -45,9 +44,10 @@
 
 		function activate() {
 			// Watch scope variables to update cache
-			angular.forEach(['currentPage', 'orderBy', 'omg', 'orderByReverse', 'perPage', 'query'], function(key) {
-				if (vm.formCache.get(key)) {
-					vm[key] = vm.formCache.get(key);
+			angular.forEach(['currentPage', 'orderBy', 'orderByReverse', 'perPage', 'query'], function(key) {
+				var val = vm.formCache.get(key);
+				if (val !== undefined && val !== null) {
+					vm[key] = val;
 				}
 				$scope.$watch('ctrl.' + key, function(newVal, oldVal) {
 					if (typeof newVal !== 'undefined') {
@@ -119,10 +119,13 @@
 		 * Find a lead in the local array in scope by id
 		 */
 		function pluckLead(lead_id) {
+			var output = false;
 			angular.forEach(vm.leads, function(value, key) {
-				if (value.id == lead_id) { return lead; }
+				if (value.id == lead_id) { 
+					output = value;
+				}
 			});
-			return false;
+			return output;
 		}
 
 		/**
@@ -160,15 +163,6 @@
 						// Show error alert
 						vm.addErrorMessage();
 					});
-			}
-		}
-
-		/**
-		 * Ensure we don't go out-of-bounds
-		 */
-		function updatePagination() {
-			if (vm.currentPage != 1) {
-				vm.getLeads(1);
 			}
 		}
 	}

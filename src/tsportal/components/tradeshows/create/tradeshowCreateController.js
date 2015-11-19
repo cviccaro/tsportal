@@ -13,7 +13,7 @@
 		.module('tsportal.tradeshows')
 		.controller('TradeshowCreateController', TradeshowCreateController);
 
-	function TradeshowCreateController($scope, $timeout, $state, ngDialog, Tradeshow, authService, busyService, messageService) {
+	function TradeshowCreateController($scope, $state, ngDialog, Tradeshow, authService, busyService) {
 		var vm = this;
 
 		vm.goBack = goBack;
